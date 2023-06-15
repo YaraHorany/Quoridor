@@ -1,7 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../models/player_model.dart';
 
 class GameController extends GetxController {
   List<String> board = [];
+  late Player player1, player2;
 
   @override
   void onInit() {
@@ -11,6 +15,9 @@ class GameController extends GetxController {
   }
 
   void buildBoard() {
+    player1 = Player(position: 8, color: Colors.green);
+    player2 = Player(position: 280, color: Colors.orange);
+
     for (int i = 0; i < 17 * 17; i++) {
       if ((i ~/ 17) % 2 == 0) {
         if (i % 2 == 0) {
