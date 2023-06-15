@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../models/fence_model.dart';
 import '../models/player_model.dart';
 
 class GameController extends GetxController {
-  List<String> board = [];
   late Player player1, player2;
+  List<Fence> fence = [];
+  List<int> path = [];
 
   @override
   void onInit() {
@@ -21,24 +23,28 @@ class GameController extends GetxController {
     for (int i = 0; i < 17 * 17; i++) {
       if ((i ~/ 17) % 2 == 0) {
         if (i % 2 == 0) {
-          if (i == 8) {
-            board.add('p1');
-          } else if (i == 280) {
-            board.add('p2');
-          } else {
-            board.add('path');
-          }
+          path.add(i);
         } else {
-          board.add('vertical empty fence');
+          print(i);
+          fence.add(Fence(
+              position: i,
+              color: Colors.blue,
+              type: FenceType.verticalRectangle));
         }
       } else {
         if (i % 2 == 0) {
-          board.add('horizontal empty fence');
+          fence.add(Fence(
+            position: i,
+            color: Colors.blue,
+            type: FenceType.square,
+          ));
         } else {
-          board.add('square empty fence');
+          fence.add(Fence(
+              position: i,
+              color: Colors.blue,
+              type: FenceType.horizontalRectangle));
         }
       }
     }
-    print(board);
   }
 }

@@ -1,55 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
-import 'cell.dart';
+import '../../models/fence_model.dart';
 import 'package:quoridor/controllers/game_controller.dart';
 
 class Board extends StatelessWidget {
   final GameController gameController = Get.put(GameController());
-  List<String> board = [];
 
   List<StaggeredGridTile> _boardCells() {
-    board = gameController.board;
     List<StaggeredGridTile> boardCells = [];
     for (int i = 0; i < 289; i++) {
-      if (board[i] == 'path' || board[i] == 'p1' || board[i] == 'p2') {
+      if (gameController.path.contains(i)) {
         boardCells.add(StaggeredGridTile.count(
           crossAxisCellCount: 2,
           mainAxisCellCount: 2,
-          child: Cell(
-            color: board[i] == 'p1'
-                ? Colors.green
-                : board[i] == 'p2'
-                    ? Colors.orange
-                    : null,
-          ),
-        ));
-      } else if (board[i] == 'vertical empty fence' ||
-          board[i] == 'vertical taken fence') {
-        boardCells.add(StaggeredGridTile.count(
-          crossAxisCellCount: 1,
-          mainAxisCellCount: 2,
-          child: Container(
-              color: board[i] == 'vertical empty fence'
-                  ? Colors.blue
-                  : Colors.grey),
-        ));
-      } else if (board[i] == 'horizontal empty fence' ||
-          board[i] == 'horizontal taken fence') {
-        boardCells.add(StaggeredGridTile.count(
-          crossAxisCellCount: 2,
-          mainAxisCellCount: 1,
           child: GestureDetector(
             child: Container(
-                color: board[i] == 'horizontal empty fence'
-                    ? Colors.blue
-                    : Colors.grey),
+              color: Colors.white,
+              child: (gameController.player1.position == i ||
+                      gameController.player2.position == i)
+                  ? Container(
+                      margin: const EdgeInsets.all(3),
+                      decoration: BoxDecoration(
+                        color: gameController.player1.position == i
+                            ? gameController.player1.color
+                            : gameController.player2.color,
+                        shape: BoxShape.circle,
+                      ),
+                    )
+                  : Center(
+                      child: Text(
+                        i.toString(),
+                        style: const TextStyle(color: Colors.blue),
+                      ),
+                    ),
+            ),
           ),
         ));
       } else {
+        int index =
+            gameController.fence.indexWhere((element) => element.position == i);
+        print(gameController.fence[index].position);
+        print(gameController.fence[index].type);
         boardCells.add(StaggeredGridTile.count(
-          crossAxisCellCount: 1,
-          mainAxisCellCount: 1,
+          crossAxisCellCount:
+              gameController.fence[index].type == FenceType.horizontalRectangle
+                  ? 2
+                  : 1,
+          mainAxisCellCount:
+              gameController.fence[index].type == FenceType.verticalRectangle
+                  ? 2
+                  : 1,
           child: Container(color: Colors.blue),
         ));
       }
