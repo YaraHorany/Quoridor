@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 enum FenceType {
   square,
   horizontalRectangle,
