@@ -12,11 +12,19 @@ class Player {
     required this.color,
   });
 
-  void moveForward() {
-    position += (GameConstants.squaresInRow * 2);
+  void moveUp(int steps) {
+    position -= (GameConstants.totalInRow * 2 * steps);
   }
 
-  void moveBackward() {
-    position -= (GameConstants.squaresInRow * 2);
+  void moveDown(int steps) {
+    position += (GameConstants.totalInRow * 2 * steps);
+  }
+
+  void moveRight(int steps) {
+    position += (2 * steps);
+  }
+
+  void moveLeft(int steps) {
+    position -= (2 * steps);
   }
 }

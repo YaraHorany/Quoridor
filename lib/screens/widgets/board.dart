@@ -87,7 +87,10 @@ class Board extends StatelessWidget {
                   print(i);
                 }
               },
-              child: Container(color: gameController.fence[index].color)),
+              child: Container(
+                  color: gameController.fence[index].placed
+                      ? Colors.grey
+                      : Colors.blue)),
         ));
       }
     }

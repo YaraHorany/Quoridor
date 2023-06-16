@@ -8,12 +8,12 @@ enum FenceType {
 
 class Fence {
   final int position;
-  Color color;
+  bool placed;
   final FenceType type;
 
   Fence({
     required this.position,
-    required this.color,
+    required this.placed,
     required this.type,
   });
 }

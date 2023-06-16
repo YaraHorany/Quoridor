@@ -25,33 +25,66 @@ class GameController extends GetxController {
           path.add(i);
         } else {
           fence.add(Fence(
-              position: i,
-              color: Colors.blue,
-              type: FenceType.verticalRectangle));
+              position: i, placed: false, type: FenceType.verticalRectangle));
         }
       } else {
         if (i % 2 == 0) {
           fence.add(Fence(
             position: i,
-            color: Colors.blue,
+            placed: false,
             type: FenceType.square,
           ));
         } else {
           fence.add(Fence(
-              position: i,
-              color: Colors.blue,
-              type: FenceType.horizontalRectangle));
+              position: i, placed: false, type: FenceType.horizontalRectangle));
         }
       }
     }
   }
 
   void play() {
-    player1.moveForward();
-    player2.moveBackward();
+    // player1.moveForward();
+    checkOptionalMove();
     update();
   }
 
   // The pawns are moved one square at a time, horizontally or vertically, forwards or backwards, never diagonally.
-  void checkOptionalMove() {}
+  void checkOptionalMove() {
+    moveForward();
+  }
+
+  void moveForward() {
+    // Check if it's possible to move forward for player2.
+    if (!inBoardRange(player2.position - 17)) {
+      print("can't move forward");
+      return;
+    }
+
+    int index = fence.indexWhere((element) =>
+        element.position == player2.position - GameConstants.totalInRow);
+
+    if (fence[index].placed == true) {
+      print("Fence in front of me, can't move forward");
+    } else if (player1.position ==
+        player2.position - (GameConstants.totalInRow * 2)) {
+      if (!inBoardRange(player2.position - 51)) {
+        print("can't move forward");
+        return;
+      }
+
+      index = fence.indexWhere((element) =>
+          element.position ==
+          player2.position - (GameConstants.totalInRow * 3));
+
+      if (fence[index].placed == false) {
+        player2.moveUp(2); // move 2 steps up
+      } else {
+        print("unfortunately, can't move forward!!!");
+      }
+    } else {
+      player2.moveUp(1); // move one step up
+    }
+  }
+
+  bool inBoardRange(index) => index >= 0 && index < 289;
 }
