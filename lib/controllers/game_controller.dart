@@ -24,123 +24,208 @@ class GameController extends GetxController {
         if (i % 2 == 0) {
           path.add(i);
         } else {
-          fence.add(Fence(
-              position: i, placed: false, type: FenceType.verticalRectangle));
+          fence.add(
+              Fence(position: i, placed: false, type: FenceType.verticalFence));
         }
       } else {
         if (i % 2 == 0) {
           fence.add(Fence(
             position: i,
             placed: false,
-            type: FenceType.square,
+            type: FenceType.squareFence,
           ));
         } else {
           fence.add(Fence(
-              position: i, placed: false, type: FenceType.horizontalRectangle));
+              position: i, placed: false, type: FenceType.horizontalFence));
         }
       }
     }
   }
 
-  void play() {
-    checkOptionalMove();
+  void play(int index) {
+    if (checkPossibleMoves().contains(index)) {
+      player2.position = index;
+    }
     update();
   }
 
   // The pawns are moved one square at a time, horizontally or vertically, forwards or backwards, never diagonally.
-  void checkOptionalMove() {
-    movingLeft(); // movingDown();
-  }
+  List<int> checkPossibleMoves() =>
+      [canMoveUp(1), canMoveDown(1), canMoveRight(1), canMoveLeft(1)];
 
-  // Check if it's possible to move forward for player2.
-  void movingUp() {
-    if (inBoardRange(player2.position - GameConstants.totalInRow)) {
+  // Recursion function which check if it's possible to move up.
+  // Returns the index of the square (one step or two steps up). -1 if the player can't move up.
+  int canMoveUp(int steps) {
+    if (steps == 3) return -1;
+    if (inBoardRange(
+        player2.position - (GameConstants.totalInRow * steps * 2))) {
       int index = fence.indexWhere((element) =>
-          element.position == player2.position - GameConstants.totalInRow);
-
+          element.position ==
+          player2.position - GameConstants.totalInRow * ((steps * 2) - 1));
       if (fence[index].placed == false) {
         if (player1.position ==
-            player2.position - (GameConstants.totalInRow * 2)) {
-          if (inBoardRange(player2.position - (GameConstants.totalInRow * 3))) {
-            index = fence.indexWhere((element) =>
-                element.position ==
-                player2.position - (GameConstants.totalInRow * 3));
-            if (fence[index].placed == false) {
-              player2.moveUp(2); // move 2 steps up
-            }
-          }
+            player2.position - (GameConstants.totalInRow * steps * 2)) {
+          return canMoveUp(steps + 1);
         } else {
-          player2.moveUp(1); // move one step up
+          return player2.position - (GameConstants.totalInRow * steps * 2);
         }
       }
     }
+    return -1;
   }
 
-  void movingDown() {
-    if (inBoardRange(player2.position + GameConstants.totalInRow)) {
+  // Recursion function which check if it's possible to move down.
+  // Returns the index of the square (one step or two steps down). -1 if the player can't move down.
+  int canMoveDown(int steps) {
+    if (steps == 3) return -1;
+    if (inBoardRange(
+        player2.position + (GameConstants.totalInRow * steps * 2))) {
       int index = fence.indexWhere((element) =>
-          element.position == player2.position + GameConstants.totalInRow);
-
+          element.position ==
+          player2.position + GameConstants.totalInRow * ((steps * 2) - 1));
       if (fence[index].placed == false) {
         if (player1.position ==
-            player2.position + (GameConstants.totalInRow * 2)) {
-          if (inBoardRange(player2.position + (GameConstants.totalInRow * 3))) {
-            index = fence.indexWhere((element) =>
-                element.position ==
-                player2.position + (GameConstants.totalInRow * 3));
-            if (fence[index].placed == false) {
-              player2.moveUp(2); // move 2 steps up
-            }
-          }
+            player2.position + (GameConstants.totalInRow * steps * 2)) {
+          return canMoveDown(steps + 1);
         } else {
-          player2.moveUp(1); // move one step up
+          return player2.position + (GameConstants.totalInRow * steps * 2);
         }
       }
     }
+    return -1;
   }
 
-  void movingRight() {
-    if (inBoardRange(player2.position + 1)) {
-      int index = fence
-          .indexWhere((element) => element.position == player2.position + 1);
-
+  // Recursion function which check if it's possible to move right.
+  // Returns the index of the square (one step or two steps to the right). -1 if the player can't move right.
+  int canMoveRight(int steps) {
+    if (steps == 3) return -1;
+    if (inBoardRange(player2.position + (steps * 2))) {
+      int index = fence.indexWhere(
+          (element) => element.position == player2.position + (steps * 2) - 1);
       if (fence[index].placed == false) {
-        if (player1.position == player2.position + 2) {
-          if (inBoardRange(player2.position + 3)) {
-            index = fence.indexWhere(
-                (element) => element.position == player2.position + 3);
-            if (fence[index].placed == false) {
-              player2.moveRight(2); // move 2 steps up
-            }
-          }
+        if (player1.position == player2.position + (steps * 2)) {
+          return canMoveDown(steps + 1);
         } else {
-          player2.moveRight(1); // move one step up
+          return player2.position + (steps * 2);
         }
       }
     }
+    return -1;
   }
 
-  void movingLeft() {
-    if (inBoardRange(player2.position - 1)) {
-      int index = fence
-          .indexWhere((element) => element.position == player2.position - 1);
-
+  // Recursion function which check if it's possible to move left.
+  // Returns the index of the square (one step or two steps to the left). -1 if the player can't move left.
+  int canMoveLeft(int steps) {
+    if (steps == 3) return -1;
+    if (inBoardRange(player2.position - (steps * 2))) {
+      int index = fence.indexWhere((element) =>
+          element.position == player2.position - ((steps * 2) - 1));
       if (fence[index].placed == false) {
-        if (player1.position == player2.position - 2) {
-          if (inBoardRange(player2.position - 3)) {
-            index = fence.indexWhere(
-                (element) => element.position == player2.position - 3);
-            if (fence[index].placed == false) {
-              player2.moveLeft(2); // move 2 steps up
-            }
-          }
+        if (player1.position == player2.position - (steps * 2)) {
+          return canMoveDown(steps + 1);
         } else {
-          player2.moveLeft(1); // move one step up
+          return player2.position - (steps * 2);
         }
       }
     }
+    return -1;
   }
 
   bool inBoardRange(index) =>
       index >= 0 && index < 289 && (index ~/ GameConstants.totalInRow) % 2 == 0;
 }
+
+// int canMoveUp() {
+//   if (inBoardRange(player2.position - (GameConstants.totalInRow * 2))) {
+//     int index = fence.indexWhere((element) =>
+//     element.position == player2.position - GameConstants.totalInRow);
+//
+//     if (fence[index].placed == false) {
+//       if (player1.position ==
+//           player2.position - (GameConstants.totalInRow * 2)) {
+//         if (inBoardRange(player2.position - (GameConstants.totalInRow * 4))) {
+//           index = fence.indexWhere((element) =>
+//           element.position ==
+//               player2.position - (GameConstants.totalInRow * 3));
+//           if (fence[index].placed == false) {
+//             return player2.position - (GameConstants.totalInRow * 4);
+//           }
+//         }
+//       } else {
+//         return player2.position - (GameConstants.totalInRow * 2);
+//       }
+//     }
+//   }
+//   return -1;
+// }
+
+// // Check if it's possible to move down for player2.
+// int canMoveDown() {
+//   if (inBoardRange(player2.position + (GameConstants.totalInRow * 2))) {
+//     int index = fence.indexWhere((element) =>
+//     element.position == player2.position + GameConstants.totalInRow);
+//
+//     if (fence[index].placed == false) {
+//       if (player1.position ==
+//           player2.position + (GameConstants.totalInRow * 2)) {
+//         if (inBoardRange(player2.position + (GameConstants.totalInRow * 4))) {
+//           index = fence.indexWhere((element) =>
+//           element.position ==
+//               player2.position + (GameConstants.totalInRow * 3));
+//           if (fence[index].placed == false) {
+//             return player2.position + (GameConstants.totalInRow * 4);
+//           }
+//         }
+//       } else {
+//         return player2.position + (GameConstants.totalInRow * 2);
+//       }
+//     }
+//   }
+//   return -1;
+// }
+
+// // Check if it's possible to move right for player2.
+// int canMoveRight() {
+//   if (inBoardRange(player2.position + 2)) {
+//     int index = fence
+//         .indexWhere((element) => element.position == player2.position + 1);
+//
+//     if (fence[index].placed == false) {
+//       if (player1.position == player2.position + 2) {
+//         if (inBoardRange(player2.position + 4)) {
+//           index = fence.indexWhere(
+//                   (element) => element.position == player2.position + 3);
+//           if (fence[index].placed == false) {
+//             return player2.position + 4;
+//           }
+//         }
+//       } else {
+//         return player2.position + 2;
+//       }
+//     }
+//   }
+//   return -1;
+// }
+
+// // Check if it's possible to move left for player2.
+// int canMoveLeft() {
+//   if (inBoardRange(player2.position - 2)) {
+//     int index = fence
+//         .indexWhere((element) => element.position == player2.position - 1);
+//
+//     if (fence[index].placed == false) {
+//       if (player1.position == player2.position - 2) {
+//         if (inBoardRange(player2.position - 4)) {
+//           index = fence.indexWhere(
+//                   (element) => element.position == player2.position - 3);
+//           if (fence[index].placed == false) {
+//             return player2.position - 4;
+//           }
+//         }
+//       } else {
+//         return player2.position - 2;
+//       }
+//     }
+//   }
+//   return -1;
+// }

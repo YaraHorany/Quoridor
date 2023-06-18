@@ -41,7 +41,7 @@ class Board extends StatelessWidget {
           mainAxisCellCount: 2,
           child: GestureDetector(
             onTap: () {
-              gameController.play();
+              gameController.play(i);
             },
             child: Container(
               color: Colors.white,
@@ -71,20 +71,25 @@ class Board extends StatelessWidget {
 
         boardCells.add(StaggeredGridTile.count(
           crossAxisCellCount:
-              gameController.fence[index].type == FenceType.horizontalRectangle
+              gameController.fence[index].type == FenceType.horizontalFence
                   ? 2
                   : 1,
           mainAxisCellCount:
-              gameController.fence[index].type == FenceType.verticalRectangle
+              gameController.fence[index].type == FenceType.verticalFence
                   ? 2
                   : 1,
           child: GestureDetector(
               onHorizontalDragUpdate: (details) {
                 if (gameController.fence[index].type ==
-                        FenceType.horizontalRectangle ||
-                    gameController.fence[index].type == FenceType.square) {
-                  print(details.primaryDelta);
-                  print(i);
+                        FenceType.horizontalFence ||
+                    gameController.fence[index].type == FenceType.squareFence) {
+                  if (details.primaryDelta! < 0) {
+                    print(gameController.fence[index].position);
+                    print('moving left');
+                  } else {
+                    print(gameController.fence[index].position);
+                    print('moving right');
+                  }
                 }
               },
               child: Container(

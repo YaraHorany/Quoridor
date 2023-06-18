@@ -1,7 +1,7 @@
 enum FenceType {
-  square,
-  horizontalRectangle,
-  verticalRectangle,
+  squareFence,
+  horizontalFence,
+  verticalFence,
 }
 
 class Fence {
