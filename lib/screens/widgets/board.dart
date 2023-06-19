@@ -5,6 +5,7 @@ import 'package:quoridor/screens/widgets/square.dart';
 import '../../models/fence_model.dart';
 import 'package:quoridor/controllers/game_controller.dart';
 import 'package:quoridor/constants/game_constants.dart';
+import 'fence.dart';
 
 class Board extends StatelessWidget {
   final GameController gameController = Get.find<GameController>();
@@ -55,24 +56,7 @@ class Board extends StatelessWidget {
               gameController.fence[index].type == FenceType.verticalFence
                   ? 2
                   : 1,
-          child: GestureDetector(
-              onHorizontalDragUpdate: (details) {
-                if (gameController.fence[index].type ==
-                        FenceType.horizontalFence ||
-                    gameController.fence[index].type == FenceType.squareFence) {
-                  if (details.primaryDelta! < 0) {
-                    print(gameController.fence[index].position);
-                    print('moving left');
-                  } else {
-                    print(gameController.fence[index].position);
-                    print('moving right');
-                  }
-                }
-              },
-              child: Container(
-                  color: gameController.fence[index].placed
-                      ? Colors.grey
-                      : Colors.blue)),
+          child: Fence(gameController: gameController, index: index),
         ));
       }
     }

@@ -19,7 +19,7 @@ class Player {
     turn = !turn;
   }
 
-  List<int> showPossibleMoves(List<Fence> fence, int opponentPosition) => [
+  List<int> showPossibleMoves(List<FenceModel> fence, int opponentPosition) => [
         canMoveUp(fence, opponentPosition, 1),
         canMoveDown(fence, opponentPosition, 1),
         canMoveRight(fence, opponentPosition, 1),
@@ -28,7 +28,7 @@ class Player {
 
   // Recursion function which check if it's possible to move up.
   // Returns the index of the square (one step or two steps up). -1 if the player can't move up.
-  int canMoveUp(List<Fence> fence, int opponentPosition, int steps) {
+  int canMoveUp(List<FenceModel> fence, int opponentPosition, int steps) {
     if (steps == 3) return -1;
     if (inBoardRange(position - (GameConstants.totalInRow * steps * 2))) {
       if (fence[fence.indexWhere((element) =>
@@ -49,7 +49,7 @@ class Player {
 
   // Recursion function which check if it's possible to move down.
   // Returns the index of the square (one step or two steps down). -1 if the player can't move down.
-  int canMoveDown(List<Fence> fence, int opponentPosition, int steps) {
+  int canMoveDown(List<FenceModel> fence, int opponentPosition, int steps) {
     if (steps == 3) return -1;
     if (inBoardRange(position + (GameConstants.totalInRow * steps * 2))) {
       if (fence[fence.indexWhere((element) =>
@@ -70,7 +70,7 @@ class Player {
 
   // Recursion function which check if it's possible to move right.
   // Returns the index of the square (one step or two steps to the right). -1 if the player can't move right.
-  int canMoveRight(List<Fence> fence, int opponentPosition, int steps) {
+  int canMoveRight(List<FenceModel> fence, int opponentPosition, int steps) {
     if (steps == 3) return -1;
     if (inBoardRange(position + (steps * 2))) {
       if (fence[fence.indexWhere(
@@ -89,7 +89,7 @@ class Player {
 
   // Recursion function which check if it's possible to move left.
   // Returns the index of the square (one step or two steps to the left). -1 if the player can't move left.
-  int canMoveLeft(List<Fence> fence, int opponentPosition, int steps) {
+  int canMoveLeft(List<FenceModel> fence, int opponentPosition, int steps) {
     if (steps == 3) return -1;
     if (inBoardRange(position - (steps * 2))) {
       if (fence[fence.indexWhere((element) =>

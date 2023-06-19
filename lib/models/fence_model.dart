@@ -4,12 +4,12 @@ enum FenceType {
   verticalFence,
 }
 
-class Fence {
+class FenceModel {
   final int position;
   bool placed;
   final FenceType type;
 
-  Fence({
+  FenceModel({
     required this.position,
     required this.placed,
     required this.type,

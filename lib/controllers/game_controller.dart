@@ -6,7 +6,7 @@ import 'package:quoridor/constants/game_constants.dart';
 
 class GameController extends GetxController {
   late Player player1, player2;
-  List<Fence> fence = [];
+  List<FenceModel> fence = [];
   List<int> path = [];
   List<int> possibleMoves = [];
 
@@ -25,18 +25,18 @@ class GameController extends GetxController {
         if (i % 2 == 0) {
           path.add(i);
         } else {
-          fence.add(
-              Fence(position: i, placed: false, type: FenceType.verticalFence));
+          fence.add(FenceModel(
+              position: i, placed: false, type: FenceType.verticalFence));
         }
       } else {
         if (i % 2 == 0) {
-          fence.add(Fence(
+          fence.add(FenceModel(
             position: i,
             placed: false,
             type: FenceType.squareFence,
           ));
         } else {
-          fence.add(Fence(
+          fence.add(FenceModel(
               position: i, placed: false, type: FenceType.horizontalFence));
         }
       }
