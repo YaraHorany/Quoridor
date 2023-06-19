@@ -20,10 +20,8 @@ class Fence extends StatelessWidget {
               gameController.fence[index].type == FenceType.squareFence) {
             if (details.primaryDelta! < 0) {
               print(gameController.fence[index].position);
-              print('moving left');
             } else {
               print(gameController.fence[index].position);
-              print('moving right');
             }
           }
         },

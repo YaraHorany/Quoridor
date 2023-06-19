@@ -3,9 +3,15 @@ import 'package:get/get.dart';
 import '../../controllers/game_controller.dart';
 import '../widgets/board.dart';
 
-class GameScreen extends StatelessWidget {
-  const GameScreen({Key? key}) : super(key: key);
+class GameScreen extends StatefulWidget {
+  GameScreen({Key? key}) : super(key: key);
 
+  @override
+  State<GameScreen> createState() => _GameScreenState();
+}
+
+class _GameScreenState extends State<GameScreen> {
+  Color color = Colors.red;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,6 +40,14 @@ class GameScreen extends StatelessWidget {
                   ],
                 ),
               ],
+            ),
+          ),
+          Expanded(
+            child: TextButton(
+              onPressed: () {
+                Get.find<GameController>().resetGame();
+              },
+              child: const Text('Restart'),
             ),
           ),
         ],

@@ -36,6 +36,7 @@ class Board extends StatelessWidget {
 
   List<StaggeredGridTile> _boardCells() {
     List<StaggeredGridTile> boardCells = [];
+
     for (int i = 0; i < GameConstants.totalInBoard; i++) {
       if (gameController.path.contains(i)) {
         boardCells.add(StaggeredGridTile.count(
@@ -47,17 +48,19 @@ class Board extends StatelessWidget {
         int index =
             gameController.fence.indexWhere((element) => element.position == i);
 
-        boardCells.add(StaggeredGridTile.count(
-          crossAxisCellCount:
-              gameController.fence[index].type == FenceType.horizontalFence
-                  ? 2
-                  : 1,
-          mainAxisCellCount:
-              gameController.fence[index].type == FenceType.verticalFence
-                  ? 2
-                  : 1,
-          child: Fence(gameController: gameController, index: index),
-        ));
+        boardCells.add(
+          StaggeredGridTile.count(
+            crossAxisCellCount:
+                gameController.fence[index].type == FenceType.horizontalFence
+                    ? 2
+                    : 1,
+            mainAxisCellCount:
+                gameController.fence[index].type == FenceType.verticalFence
+                    ? 2
+                    : 1,
+            child: Fence(gameController: gameController, index: index),
+          ),
+        );
       }
     }
     return boardCells;

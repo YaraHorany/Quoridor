@@ -13,10 +13,14 @@ class GameController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    buildBoard();
+    _buildBoard();
   }
 
-  void buildBoard() {
+  void resetGame() {
+    _buildBoard();
+  }
+
+  void _buildBoard() {
     player1 = Player(position: 8, color: Colors.green, turn: false);
     player2 = Player(position: 280, color: Colors.orange, turn: true);
 
@@ -45,6 +49,8 @@ class GameController extends GetxController {
     possibleMoves = [];
 
     possibleMoves = player2.showPossibleMoves(fence, player1.position);
+
+    update();
   }
 
   void play(int index) {
