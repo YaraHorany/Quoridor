@@ -44,7 +44,9 @@ class Board extends StatelessWidget {
               gameController.play(i);
             },
             child: Container(
-              color: Colors.white,
+              color: gameController.possibleMoves.contains(i)
+                  ? Colors.lightBlueAccent
+                  : Colors.white,
               child: (gameController.player1.position == i ||
                       gameController.player2.position == i)
                   ? Container(
