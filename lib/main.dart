@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:quoridor/screens/game_screen/game_screen.dart';
-
 import 'controllers/game_controller.dart';
 
 void main() {

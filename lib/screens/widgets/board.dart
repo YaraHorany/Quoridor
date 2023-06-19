@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
+import 'package:quoridor/screens/widgets/square.dart';
 import '../../models/fence_model.dart';
 import 'package:quoridor/controllers/game_controller.dart';
 import 'package:quoridor/constants/game_constants.dart';
@@ -39,33 +40,7 @@ class Board extends StatelessWidget {
         boardCells.add(StaggeredGridTile.count(
           crossAxisCellCount: 2,
           mainAxisCellCount: 2,
-          child: GestureDetector(
-            onTap: () {
-              gameController.play(i);
-            },
-            child: Container(
-              color: gameController.possibleMoves.contains(i)
-                  ? Colors.lightBlueAccent
-                  : Colors.white,
-              child: (gameController.player1.position == i ||
-                      gameController.player2.position == i)
-                  ? Container(
-                      margin: const EdgeInsets.all(3),
-                      decoration: BoxDecoration(
-                        color: gameController.player1.position == i
-                            ? gameController.player1.color
-                            : gameController.player2.color,
-                        shape: BoxShape.circle,
-                      ),
-                    )
-                  : Center(
-                      child: Text(
-                        i.toString(),
-                        style: const TextStyle(color: Colors.blue),
-                      ),
-                    ),
-            ),
-          ),
+          child: Square(gameController: gameController, index: i),
         ));
       } else {
         int index =
