@@ -17,9 +17,8 @@ class GameController extends GetxController {
   }
 
   void buildBoard() {
-    player1 = Player(position: 8, color: Colors.green, fences: 10, turn: false);
-    player2 =
-        Player(position: 280, color: Colors.orange, fences: 10, turn: true);
+    player1 = Player(position: 8, color: Colors.green, turn: false);
+    player2 = Player(position: 280, color: Colors.orange, turn: true);
 
     for (int i = 0; i < GameConstants.totalInBoard; i++) {
       if ((i ~/ GameConstants.totalInRow) % 2 == 0) {

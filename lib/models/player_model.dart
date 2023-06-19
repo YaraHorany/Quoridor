@@ -1,16 +1,16 @@
 import 'dart:ui';
+import 'package:get/get.dart';
 import 'package:quoridor/constants/game_constants.dart';
 import 'fence_model.dart';
 
 class Player {
   int position;
-  int fences;
   final Color color;
   bool turn;
+  RxInt fences = 10.obs;
 
   Player({
     required this.position,
-    required this.fences,
     required this.color,
     required this.turn,
   });
