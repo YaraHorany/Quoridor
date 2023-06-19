@@ -4,9 +4,7 @@ import '../../controllers/game_controller.dart';
 import '../widgets/board.dart';
 
 class GameScreen extends StatelessWidget {
-  final GameController gameController = Get.put(GameController());
-
-  GameScreen({Key? key}) : super(key: key);
+  const GameScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,13 +22,15 @@ class GameScreen extends StatelessWidget {
                 Column(
                   children: [
                     const Text('player 1:'),
-                    Obx(() => Text(gameController.player1.fences.toString())),
+                    Obx(() => Text(
+                        Get.find<GameController>().player1.fences.toString())),
                   ],
                 ),
                 Column(
                   children: [
                     const Text('player 2:'),
-                    Obx(() => Text(gameController.player2.fences.toString())),
+                    Obx(() => Text(
+                        Get.find<GameController>().player2.fences.toString())),
                   ],
                 ),
               ],

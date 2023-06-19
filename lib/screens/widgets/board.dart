@@ -6,7 +6,7 @@ import 'package:quoridor/controllers/game_controller.dart';
 import 'package:quoridor/constants/game_constants.dart';
 
 class Board extends StatelessWidget {
-  final GameController gameController = Get.put(GameController());
+  final GameController gameController = Get.find<GameController>();
 
   Board({Key? key}) : super(key: key);
 
