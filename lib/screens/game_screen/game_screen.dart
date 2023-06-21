@@ -3,22 +3,16 @@ import 'package:get/get.dart';
 import '../../controllers/game_controller.dart';
 import '../widgets/board.dart';
 
-class GameScreen extends StatefulWidget {
-  GameScreen({Key? key}) : super(key: key);
+class GameScreen extends StatelessWidget {
+  const GameScreen({Key? key}) : super(key: key);
 
-  @override
-  State<GameScreen> createState() => _GameScreenState();
-}
-
-class _GameScreenState extends State<GameScreen> {
-  Color color = Colors.red;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
         children: [
           Expanded(
-            flex: 4,
+            flex: 3,
             child: Board(),
           ),
           Expanded(
@@ -43,11 +37,52 @@ class _GameScreenState extends State<GameScreen> {
             ),
           ),
           Expanded(
-            child: TextButton(
-              onPressed: () {
-                Get.find<GameController>().resetGame();
-              },
-              child: const Text('Restart'),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                Draggable(
+                  feedback: Container(
+                    color: Colors.grey,
+                    width: 70,
+                    height: 15,
+                  ),
+                  onDragStarted: () {
+                    Get.find<GameController>().dragType =
+                        DragType.horizontalDrag;
+                    Get.find<GameController>().update();
+                  },
+                  data: Colors.grey,
+                  child: Container(
+                    color: Colors.grey,
+                    width: 70,
+                    height: 15,
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Draggable(
+                  feedback: Container(
+                    color: Colors.grey,
+                    width: 15,
+                    height: 70,
+                  ),
+                  onDragStarted: () {
+                    Get.find<GameController>().dragType = DragType.verticalDrag;
+                    Get.find<GameController>().update();
+                  },
+                  data: Colors.grey,
+                  child: Container(
+                    color: Colors.grey,
+                    width: 15,
+                    height: 70,
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Get.find<GameController>().resetGame();
+                  },
+                  child: const Text('Restart'),
+                ),
+              ],
             ),
           ),
         ],

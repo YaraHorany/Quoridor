@@ -4,11 +4,17 @@ import '../models/fence_model.dart';
 import '../models/player_model.dart';
 import 'package:quoridor/constants/game_constants.dart';
 
+enum DragType {
+  horizontalDrag,
+  verticalDrag,
+}
+
 class GameController extends GetxController {
   late Player player1, player2;
   List<FenceModel> fence = [];
   List<int> path = [];
   List<int> possibleMoves = [];
+  DragType? dragType;
 
   @override
   void onInit() {
@@ -80,4 +86,14 @@ class GameController extends GetxController {
     }
     update();
   }
+
+  void updateFences() {
+    if (player1.turn) {
+      player1.fences--;
+    } else {
+      player2.fences--;
+    }
+  }
+
+  int fenceIndex(int i) => fence.indexWhere((element) => element.position == i);
 }
