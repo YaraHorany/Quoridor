@@ -70,12 +70,10 @@ class GameController extends GetxController {
     update();
   }
 
-  void play(int index) {
+  void move(int index) {
     if (possibleMoves.contains(index)) {
       changePosition(index);
-      possibleMoves.clear();
       switchTurns();
-      calculatePossibleMoves();
       update();
     }
   }
@@ -83,6 +81,8 @@ class GameController extends GetxController {
   void switchTurns() {
     player1.changeTurn();
     player2.changeTurn();
+    possibleMoves.clear();
+    calculatePossibleMoves();
   }
 
   void calculatePossibleMoves() {
@@ -139,11 +139,15 @@ class GameController extends GetxController {
         isNotLastRow(boardIndex) &&
         isValid(true, boardIndex)) {
       updateFence(boardIndex, true);
+      switchTurns();
+      update();
     } else if (dragType == DragType.horizontalDrag &&
         fence[index].type == FenceType.horizontalFence &&
         isNotLastColumn(boardIndex) &&
         isValid(false, boardIndex)) {
       updateFence(boardIndex, false);
+      switchTurns();
+      update();
     }
   }
 
