@@ -1,6 +1,7 @@
 import 'dart:ui';
 import 'package:get/get.dart';
 import 'package:quoridor/constants/game_constants.dart';
+import '../helpers.dart';
 import 'fence_model.dart';
 
 class Player {
@@ -105,7 +106,4 @@ class Player {
     }
     return -1;
   }
-
-  bool inBoardRange(index) =>
-      index >= 0 && index < 289 && (index ~/ GameConstants.totalInRow) % 2 == 0;
 }

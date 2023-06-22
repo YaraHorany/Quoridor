@@ -1,62 +1,36 @@
 import 'package:flutter/material.dart';
 import '../../controllers/game_controller.dart';
-import '../../models/fence_model.dart';
 
 class Fence extends StatelessWidget {
   final GameController gameController;
-  final int i;
+  final int boardIndex;
 
   const Fence({
     Key? key,
     required this.gameController,
-    required this.i,
+    required this.boardIndex,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    int index = gameController.fenceIndex(i);
+    int fenceIndex = gameController.calcFenceIndex(boardIndex);
     return DragTarget(
       onMove: (data) {
-        if (gameController.fence[index].type == FenceType.horizontalFence &&
-            gameController.dragType == DragType.horizontalDrag &&
-            i % 34 != 33) {
-          gameController.fence[index].placed = true;
-          gameController.fence[gameController.fenceIndex(i + 1)].placed = true;
-          gameController.fence[gameController.fenceIndex(i + 2)].placed = true;
-          gameController.update();
-        } else if (gameController.fence[index].type ==
-                FenceType.verticalFence &&
-            gameController.dragType == DragType.verticalDrag &&
-            i ~/ 17 != 16) {
-          gameController.fence[index].placed = true;
-          gameController.fence[gameController.fenceIndex(i + 17)].placed = true;
-          gameController.fence[gameController.fenceIndex(i + 34)].placed = true;
-          gameController.update();
-        }
+        gameController.drawTemporaryFence(boardIndex);
       },
       onLeave: (data) {
-        if (gameController.fence[index].type == FenceType.horizontalFence &&
-            gameController.dragType == DragType.horizontalDrag &&
-            i % 34 != 33) {
-          gameController.fence[index].placed = false;
-          gameController.fence[gameController.fenceIndex(i + 1)].placed = false;
-          gameController.fence[gameController.fenceIndex(i + 2)].placed = false;
-          gameController.update();
-        } else if (gameController.fence[index].type ==
-                FenceType.verticalFence &&
-            gameController.dragType == DragType.verticalDrag &&
-            i ~/ 17 != 16) {
-          gameController.fence[index].placed = false;
-          gameController.fence[gameController.fenceIndex(i + 17)].placed =
-              false;
-          gameController.fence[gameController.fenceIndex(i + 34)].placed =
-              false;
-          gameController.update();
-        }
+        gameController.removeTemporaryFence(boardIndex);
+      },
+      onAccept: (data) {
+        gameController.drawFence(boardIndex);
       },
       builder: (context, candidateData, rejectedData) {
         return Container(
-          color: gameController.fence[index].placed ? Colors.grey : Colors.blue,
+          color: gameController.fence[fenceIndex].placed
+              ? Colors.grey
+              : gameController.fence[fenceIndex].temporaryFence
+                  ? Colors.green
+                  : Colors.blue,
         );
       },
     );

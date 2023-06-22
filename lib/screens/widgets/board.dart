@@ -58,7 +58,7 @@ class Board extends StatelessWidget {
                 gameController.fence[index].type == FenceType.verticalFence
                     ? 2
                     : 1,
-            child: Fence(gameController: gameController, i: i),
+            child: Fence(gameController: gameController, boardIndex: i),
           ),
         );
       }
