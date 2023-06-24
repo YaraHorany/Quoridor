@@ -76,11 +76,17 @@ class GameScreen extends StatelessWidget {
                     height: 70,
                   ),
                 ),
-                TextButton(
-                  onPressed: () {
-                    Get.find<GameController>().resetGame();
-                  },
-                  child: const Text('Restart'),
+                Column(
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Get.find<GameController>().resetGame();
+                      },
+                      child: const Text('Restart'),
+                    ),
+                    Obx(() => Text(
+                        Get.find<GameController>().winner.value.toString())),
+                  ],
                 ),
               ],
             ),

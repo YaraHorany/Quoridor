@@ -9,3 +9,6 @@ bool isNotLastRow(int index) =>
 
 bool inBoardRange(index) =>
     index >= 0 && index < 289 && (index ~/ GameConstants.totalInRow) % 2 == 0;
+
+bool reachedFirstRow(int index) => (index >= 0 && index <= 16);
+bool reachedLastRow(int index) => (index >= 272 && index <= 288);

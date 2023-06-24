@@ -16,6 +16,7 @@ class GameController extends GetxController {
   List<int> path = [];
   List<int> possibleMoves = [];
   DragType? dragType;
+  RxString winner = "".obs;
 
   @override
   void onInit() {
@@ -28,11 +29,12 @@ class GameController extends GetxController {
   }
 
   void _buildBoard() {
-    player1 = Player(position: 8, color: Colors.green, turn: false);
-    player2 = Player(position: 280, color: Colors.orange, turn: true);
+    player1 = Player(position: 280, color: Colors.green, turn: true);
+    player2 = Player(position: 8, color: Colors.orange, turn: false);
 
     path.clear();
     fence.clear();
+    winner.value = "";
 
     for (int i = 0; i < GameConstants.totalInBoard; i++) {
       if ((i ~/ GameConstants.totalInRow) % 2 == 0) {
@@ -65,7 +67,7 @@ class GameController extends GetxController {
 
     possibleMoves = [];
 
-    possibleMoves = player2.showPossibleMoves(fence, player1.position);
+    possibleMoves = player1.showPossibleMoves(fence, player2.position);
 
     update();
   }
@@ -73,6 +75,7 @@ class GameController extends GetxController {
   void move(int index) {
     if (possibleMoves.contains(index)) {
       changePosition(index);
+      declareWinner();
       switchTurns();
       update();
     }
@@ -200,6 +203,22 @@ class GameController extends GetxController {
       player1.fences--;
     } else {
       player2.fences--;
+    }
+  }
+
+  bool outOfFences() {
+    if (player1.turn) {
+      return player1.outOfFences();
+    } else {
+      return player2.outOfFences();
+    }
+  }
+
+  void declareWinner() {
+    if (reachedFirstRow(player1.position)) {
+      winner.value = 'player 1 won';
+    } else if (reachedLastRow(player2.position)) {
+      winner.value = 'player 2 won';
     }
   }
 }
