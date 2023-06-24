@@ -20,7 +20,7 @@ class Player {
     turn = !turn;
   }
 
-  bool outOfFences() => fences == 0 as RxInt;
+  bool outOfFences() => fences.value == 0;
 
   List<int> showPossibleMoves(List<FenceModel> fence, int opponentPosition) => [
         canMoveUp(fence, opponentPosition, 1),

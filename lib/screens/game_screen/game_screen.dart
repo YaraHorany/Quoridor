@@ -86,6 +86,8 @@ class GameScreen extends StatelessWidget {
                     ),
                     Obx(() => Text(
                         Get.find<GameController>().winner.value.toString())),
+                    Obx(() =>
+                        Text(Get.find<GameController>().msg.value.toString())),
                   ],
                 ),
               ],

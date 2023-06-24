@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../helpers.dart';
@@ -17,6 +19,8 @@ class GameController extends GetxController {
   List<int> possibleMoves = [];
   DragType? dragType;
   RxString winner = "".obs;
+  Timer? timer;
+  RxString msg = "".obs;
 
   @override
   void onInit() {
@@ -108,49 +112,57 @@ class GameController extends GetxController {
       fence.indexWhere((element) => element.position == i);
 
   void drawTemporaryFence(int boardIndex) {
-    int index = calcFenceIndex(boardIndex);
-    if (dragType == DragType.verticalDrag &&
-        fence[index].type == FenceType.verticalFence &&
-        isNotLastRow(boardIndex) &&
-        isValid(true, boardIndex)) {
-      updateTemporaryFence(boardIndex, true, true);
-    } else if (dragType == DragType.horizontalDrag &&
-        fence[index].type == FenceType.horizontalFence &&
-        isNotLastColumn(boardIndex) &&
-        isValid(false, boardIndex)) {
-      updateTemporaryFence(boardIndex, false, true);
+    if (!outOfFences()) {
+      int index = calcFenceIndex(boardIndex);
+      if (dragType == DragType.verticalDrag &&
+          fence[index].type == FenceType.verticalFence &&
+          isNotLastRow(boardIndex) &&
+          isValid(true, boardIndex)) {
+        updateTemporaryFence(boardIndex, true, true);
+      } else if (dragType == DragType.horizontalDrag &&
+          fence[index].type == FenceType.horizontalFence &&
+          isNotLastColumn(boardIndex) &&
+          isValid(false, boardIndex)) {
+        updateTemporaryFence(boardIndex, false, true);
+      }
     }
   }
 
   void removeTemporaryFence(int boardIndex) {
-    int index = calcFenceIndex(boardIndex);
-    if (dragType == DragType.verticalDrag &&
-        fence[index].type == FenceType.verticalFence &&
-        isNotLastRow(boardIndex)) {
-      updateTemporaryFence(boardIndex, true, false);
-    } else if (dragType == DragType.horizontalDrag &&
-        fence[index].type == FenceType.horizontalFence &&
-        isNotLastColumn(boardIndex)) {
-      updateTemporaryFence(boardIndex, false, false);
+    if (!outOfFences()) {
+      int index = calcFenceIndex(boardIndex);
+      if (dragType == DragType.verticalDrag &&
+          fence[index].type == FenceType.verticalFence &&
+          isNotLastRow(boardIndex)) {
+        updateTemporaryFence(boardIndex, true, false);
+      } else if (dragType == DragType.horizontalDrag &&
+          fence[index].type == FenceType.horizontalFence &&
+          isNotLastColumn(boardIndex)) {
+        updateTemporaryFence(boardIndex, false, false);
+      }
     }
   }
 
   void drawFence(int boardIndex) {
-    int index = calcFenceIndex(boardIndex);
-    if (dragType == DragType.verticalDrag &&
-        fence[index].type == FenceType.verticalFence &&
-        isNotLastRow(boardIndex) &&
-        isValid(true, boardIndex)) {
-      updateFence(boardIndex, true);
-      switchTurns();
-      update();
-    } else if (dragType == DragType.horizontalDrag &&
-        fence[index].type == FenceType.horizontalFence &&
-        isNotLastColumn(boardIndex) &&
-        isValid(false, boardIndex)) {
-      updateFence(boardIndex, false);
-      switchTurns();
-      update();
+    if (!outOfFences()) {
+      int index = calcFenceIndex(boardIndex);
+      if (dragType == DragType.verticalDrag &&
+          fence[index].type == FenceType.verticalFence &&
+          isNotLastRow(boardIndex) &&
+          isValid(true, boardIndex)) {
+        updateFence(boardIndex, true);
+        switchTurns();
+        update();
+      } else if (dragType == DragType.horizontalDrag &&
+          fence[index].type == FenceType.horizontalFence &&
+          isNotLastColumn(boardIndex) &&
+          isValid(false, boardIndex)) {
+        updateFence(boardIndex, false);
+        switchTurns();
+        update();
+      }
+    } else {
+      outOfFencesMsg();
     }
   }
 
@@ -220,5 +232,17 @@ class GameController extends GetxController {
     } else if (reachedLastRow(player2.position)) {
       winner.value = 'player 2 won';
     }
+  }
+
+  void outOfFencesMsg() {
+    int count = 0;
+    timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      msg.value = 'There are no more\n walls for you to place';
+      count++;
+      if (count == 4) {
+        msg.value = "";
+        timer!.cancel();
+      }
+    });
   }
 }
