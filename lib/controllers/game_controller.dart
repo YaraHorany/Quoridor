@@ -37,6 +37,9 @@ class GameController extends GetxController {
     player1 = Player(position: 280, color: Colors.green, turn: true);
     player2 = Player(position: 8, color: Colors.orange, turn: false);
 
+    print('player1 fences: ${player1.fences}');
+    print('player2 fences: ${player2.fences}');
+
     path.clear();
     fence.clear();
     tempFence.clear();
@@ -153,14 +156,12 @@ class GameController extends GetxController {
           isNotLastRow(boardIndex) &&
           isValid(true, boardIndex)) {
         updateFence(boardIndex, true);
-        // switchTurns();
         update();
       } else if (dragType == DragType.horizontalDrag &&
           fence[index].type == FenceType.horizontalFence &&
           isNotLastColumn(boardIndex) &&
           isValid(false, boardIndex)) {
         updateFence(boardIndex, false);
-        // switchTurns();
         update();
       }
     } else {
@@ -237,41 +238,22 @@ class GameController extends GetxController {
 
     tempPlayer1 = Player.copy(obj: player1);
     tempPlayer2 = Player.copy(obj: player2);
-    return canReachOtherSide(tempPlayer1!, []);
-  }
 
-  canReachOtherSide(Player tempPlayer, List<int> usedPositions) {
-    int? prevPosition;
-    bool? val;
-    List<int> tempPossibleMoves = [];
-    if (reachedFirstRow(tempPlayer1!.position)) {
-      return true;
-    }
-    tempPossibleMoves =
-        tempPlayer1!.showPossibleMoves(tempFence, tempPlayer2!.position);
-    for (int i = 0; i < 4; i++) {
-      if (tempPossibleMoves[i] != -1 &&
-          !usedPositions.contains(tempPossibleMoves[i])) {
-        prevPosition = tempPlayer1!.position;
-        tempPlayer1!.position = tempPossibleMoves[i];
-        val = canReachOtherSide(tempPlayer1!, usedPositions + [prevPosition]);
-        if (val == true) {
-          return true;
-        }
-        tempPlayer1!.position = prevPosition;
-      }
-    }
-    if (tempPlayer1!.position == player1.position) {
-      return false;
-    }
+    return tempPlayer1!.canReachOtherSide(
+            1, tempPlayer1!.position, tempPlayer2!.position, tempFence, []) &&
+        tempPlayer2!.canReachOtherSide(
+            2, tempPlayer2!.position, tempPlayer1!.position, tempFence, []);
   }
 
   void updateFencesNum() {
     if (player1.turn) {
       player1.fences--;
+      print('player1.fences ${player1.fences}');
     } else {
       player2.fences--;
+      print('player2.fences ${player2.fences}');
     }
+    update();
   }
 
   bool outOfFences() {

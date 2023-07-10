@@ -114,4 +114,37 @@ class Player {
     }
     return -1;
   }
+
+  canReachOtherSide(int playerNumber, int initialPosition, int opponentPosition,
+      List<FenceModel> tempFence, List<int> usedPositions) {
+    int? prevPosition;
+    bool? val;
+    List<int> tempPossibleMoves = [];
+    if (playerNumber == 1) {
+      if (reachedFirstRow(position)) {
+        return true;
+      }
+    } else if (playerNumber == 2) {
+      if (reachedLastRow(position)) {
+        return true;
+      }
+    }
+    tempPossibleMoves = showPossibleMoves(tempFence, opponentPosition);
+    for (int i = 0; i < 4; i++) {
+      if (tempPossibleMoves[i] != -1 &&
+          !usedPositions.contains(tempPossibleMoves[i])) {
+        prevPosition = position;
+        position = tempPossibleMoves[i];
+        val = canReachOtherSide(playerNumber, initialPosition, opponentPosition,
+            tempFence, usedPositions + [prevPosition]);
+        if (val == true) {
+          return true;
+        }
+        position = prevPosition;
+      }
+    }
+    if (position == initialPosition) {
+      return false;
+    }
+  }
 }
