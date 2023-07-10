@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../helpers.dart';
@@ -14,7 +13,9 @@ enum DragType {
 
 class GameController extends GetxController {
   late Player player1, player2;
+  Player? tempPlayer1, tempPlayer2;
   List<FenceModel> fence = [];
+  List<FenceModel> tempFence = [];
   List<int> path = [];
   List<int> possibleMoves = [];
   DragType? dragType;
@@ -38,6 +39,7 @@ class GameController extends GetxController {
 
     path.clear();
     fence.clear();
+    tempFence.clear();
     winner.value = "";
 
     for (int i = 0; i < GameConstants.totalInBoard; i++) {
@@ -88,11 +90,11 @@ class GameController extends GetxController {
   void switchTurns() {
     player1.changeTurn();
     player2.changeTurn();
-    possibleMoves.clear();
     calculatePossibleMoves();
   }
 
   void calculatePossibleMoves() {
+    possibleMoves.clear();
     if (player1.turn) {
       possibleMoves = player1.showPossibleMoves(fence, player2.position);
     } else {
@@ -151,14 +153,14 @@ class GameController extends GetxController {
           isNotLastRow(boardIndex) &&
           isValid(true, boardIndex)) {
         updateFence(boardIndex, true);
-        switchTurns();
+        // switchTurns();
         update();
       } else if (dragType == DragType.horizontalDrag &&
           fence[index].type == FenceType.horizontalFence &&
           isNotLastColumn(boardIndex) &&
           isValid(false, boardIndex)) {
         updateFence(boardIndex, false);
-        switchTurns();
+        // switchTurns();
         update();
       }
     } else {
@@ -196,18 +198,72 @@ class GameController extends GetxController {
   }
 
   void updateFence(int boardIndex, bool isVertical) {
-    fence[calcFenceIndex(boardIndex)].placed = true;
+    if (isValidFence(boardIndex, isVertical)) {
+      fence[calcFenceIndex(boardIndex)].placed = true;
+      if (isVertical) {
+        fence[calcFenceIndex(boardIndex + GameConstants.totalInRow)].placed =
+            true;
+        fence[calcFenceIndex(boardIndex + (GameConstants.totalInRow * 2))]
+            .placed = true;
+      } else {
+        fence[calcFenceIndex(boardIndex + 1)].placed = true;
+        fence[calcFenceIndex(boardIndex + 2)].placed = true;
+      }
+      update();
+      updateFencesNum();
+      switchTurns();
+    } else {
+      updateTemporaryFence(boardIndex, isVertical, false);
+      unWinnableStepMessage();
+    }
+  }
+
+  bool isValidFence(int boardIndex, bool isVertical) {
+    tempFence.clear();
+    for (int i = 0; i < fence.length; i++) {
+      tempFence.add(FenceModel.copy(obj: fence[i]));
+    }
+
+    tempFence[calcFenceIndex(boardIndex)].placed = true;
     if (isVertical) {
-      fence[calcFenceIndex(boardIndex + GameConstants.totalInRow)].placed =
+      tempFence[calcFenceIndex(boardIndex + GameConstants.totalInRow)].placed =
           true;
-      fence[calcFenceIndex(boardIndex + (GameConstants.totalInRow * 2))]
+      tempFence[calcFenceIndex(boardIndex + (GameConstants.totalInRow * 2))]
           .placed = true;
     } else {
-      fence[calcFenceIndex(boardIndex + 1)].placed = true;
-      fence[calcFenceIndex(boardIndex + 2)].placed = true;
+      tempFence[calcFenceIndex(boardIndex + 1)].placed = true;
+      tempFence[calcFenceIndex(boardIndex + 2)].placed = true;
     }
-    update();
-    updateFencesNum();
+
+    tempPlayer1 = Player.copy(obj: player1);
+    tempPlayer2 = Player.copy(obj: player2);
+    return canReachOtherSide(tempPlayer1!, []);
+  }
+
+  canReachOtherSide(Player tempPlayer, List<int> usedPositions) {
+    int? prevPosition;
+    bool? val;
+    List<int> tempPossibleMoves = [];
+    if (reachedFirstRow(tempPlayer1!.position)) {
+      return true;
+    }
+    tempPossibleMoves =
+        tempPlayer1!.showPossibleMoves(tempFence, tempPlayer2!.position);
+    for (int i = 0; i < 4; i++) {
+      if (tempPossibleMoves[i] != -1 &&
+          !usedPositions.contains(tempPossibleMoves[i])) {
+        prevPosition = tempPlayer1!.position;
+        tempPlayer1!.position = tempPossibleMoves[i];
+        val = canReachOtherSide(tempPlayer1!, usedPositions + [prevPosition]);
+        if (val == true) {
+          return true;
+        }
+        tempPlayer1!.position = prevPosition;
+      }
+    }
+    if (tempPlayer1!.position == player1.position) {
+      return false;
+    }
   }
 
   void updateFencesNum() {
@@ -226,14 +282,6 @@ class GameController extends GetxController {
     }
   }
 
-  void declareWinner() {
-    if (reachedFirstRow(player1.position)) {
-      winner.value = 'player 1 won';
-    } else if (reachedLastRow(player2.position)) {
-      winner.value = 'player 2 won';
-    }
-  }
-
   void outOfFencesMsg() {
     int count = 0;
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -244,5 +292,25 @@ class GameController extends GetxController {
         timer!.cancel();
       }
     });
+  }
+
+  void unWinnableStepMessage() {
+    int count = 0;
+    timer = Timer.periodic(const Duration(seconds: 1), (_) {
+      msg.value = 'Placing a wall here\n will make an unwinnable position';
+      count++;
+      if (count == 4) {
+        msg.value = "";
+        timer!.cancel();
+      }
+    });
+  }
+
+  void declareWinner() {
+    if (reachedFirstRow(player1.position)) {
+      winner.value = 'player 1 won';
+    } else if (reachedLastRow(player2.position)) {
+      winner.value = 'player 2 won';
+    }
   }
 }

@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: '/',
-          page: () => GameScreen(),
+          page: () => const GameScreen(),
           binding: BindingsBuilder(() => {
                 Get.lazyPut<GameController>(() => GameController()),
               }),

@@ -16,6 +16,12 @@ class Player {
     required this.turn,
   });
 
+  factory Player.copy({required Player obj}) => Player(
+        position: obj.position,
+        color: obj.color,
+        turn: obj.turn,
+      );
+
   void changeTurn() {
     turn = !turn;
   }

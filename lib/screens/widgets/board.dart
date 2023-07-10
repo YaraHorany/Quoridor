@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:get/get.dart';
 import 'package:quoridor/screens/widgets/square.dart';
+import '../../controllers/fence_controller.dart';
 import '../../models/fence_model.dart';
 import 'package:quoridor/controllers/game_controller.dart';
 import 'package:quoridor/constants/game_constants.dart';

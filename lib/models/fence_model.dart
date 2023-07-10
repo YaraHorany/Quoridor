@@ -16,4 +16,11 @@ class FenceModel {
     required this.temporaryFence,
     required this.type,
   });
+
+  factory FenceModel.copy({required FenceModel obj}) => FenceModel(
+        position: obj.position,
+        placed: obj.placed,
+        temporaryFence: obj.temporaryFence,
+        type: obj.type,
+      );
 }
