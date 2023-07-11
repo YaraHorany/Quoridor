@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:quoridor/about_us.dart';
+import 'package:quoridor/how_to_play.dart';
 import 'package:quoridor/screens/game_screen/game_screen.dart';
+import 'package:quoridor/screens/intro_screen.dart';
 import 'controllers/game_controller.dart';
 
 void main() {
@@ -19,10 +22,12 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(
           name: '/',
-          page: () => const GameScreen(),
-          binding: BindingsBuilder(() => {
-                Get.lazyPut<GameController>(() => GameController()),
-              }),
+          page: () => const IntroScreen(),
+          binding: BindingsBuilder(
+            () => {
+              Get.lazyPut<GameController>(() => GameController()),
+            },
+          ),
         ),
       ],
     );

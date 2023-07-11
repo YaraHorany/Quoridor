@@ -220,6 +220,11 @@ class GameController extends GetxController {
   }
 
   bool isValidFence(int boardIndex, bool isVertical) {
+    late bool returnedPlayer1;
+    late bool returnedPlayer2;
+    late int position1;
+    late int position2;
+
     tempFence.clear();
     for (int i = 0; i < fence.length; i++) {
       tempFence.add(FenceModel.copy(obj: fence[i]));
@@ -238,11 +243,23 @@ class GameController extends GetxController {
 
     tempPlayer1 = Player.copy(obj: player1);
     tempPlayer2 = Player.copy(obj: player2);
+    position1 = tempPlayer1!.position;
+    position2 = tempPlayer2!.position;
 
-    return tempPlayer1!.canReachOtherSide(
-            1, tempPlayer1!.position, tempPlayer2!.position, tempFence, []) &&
-        tempPlayer2!.canReachOtherSide(
-            2, tempPlayer2!.position, tempPlayer1!.position, tempFence, []);
+    returnedPlayer1 = tempPlayer1!.canReachOtherSide(
+        1, tempPlayer1!.position, tempPlayer2!.position, tempFence, []);
+    returnedPlayer2 = tempPlayer2!.canReachOtherSide(
+        2, tempPlayer2!.position, tempPlayer1!.position, tempFence, []);
+    print('returnedPlayer2: $returnedPlayer2');
+    print('returnedPlayer1: $returnedPlayer1');
+
+    //
+    // return tempPlayer1!.canReachOtherSide(
+    //         1, tempPlayer1!.position, tempPlayer2!.position, tempFence, []) &&
+    //     tempPlayer2!.canReachOtherSide(
+    //         2, tempPlayer2!.position, tempPlayer1!.position, tempFence, []);
+
+    return returnedPlayer1 && returnedPlayer2;
   }
 
   void updateFencesNum() {
@@ -279,9 +296,9 @@ class GameController extends GetxController {
   void unWinnableStepMessage() {
     int count = 0;
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      msg.value = 'Placing a wall here\n will make an unwinnable position';
+      msg.value = 'Placing a wall here will make\n    an unwinnable position';
       count++;
-      if (count == 4) {
+      if (count == 3) {
         msg.value = "";
         timer!.cancel();
       }

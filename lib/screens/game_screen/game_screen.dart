@@ -12,33 +12,54 @@ class GameScreen extends StatelessWidget {
       body: Column(
         children: [
           Expanded(
+            child: Padding(
+              padding: const EdgeInsets.only(
+                  left: 30, right: 30, top: 30, bottom: 5),
+              child: Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Column(
+                        children: [
+                          const Text('Player 1'),
+                          Obx(() => Text(Get.find<GameController>()
+                              .player1
+                              .fences
+                              .toString())),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          const Text('Player 2'),
+                          Obx(() => Text(Get.find<GameController>()
+                              .player2
+                              .fences
+                              .toString())),
+                        ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 15),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Obx(() => Text(
+                          Get.find<GameController>().msg.value.toString())),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Expanded(
             flex: 3,
             child: Board(),
           ),
           Expanded(
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                Column(
-                  children: [
-                    const Text('player 1:'),
-                    Obx(() => Text(
-                        Get.find<GameController>().player1.fences.toString())),
-                  ],
-                ),
-                Column(
-                  children: [
-                    const Text('player 2:'),
-                    Obx(() => Text(
-                        Get.find<GameController>().player2.fences.toString())),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Draggable(
                   feedback: Container(
@@ -76,20 +97,20 @@ class GameScreen extends StatelessWidget {
                     height: 70,
                   ),
                 ),
-                Column(
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        Get.find<GameController>().resetGame();
-                      },
-                      child: const Text('Restart'),
-                    ),
-                    Obx(() => Text(
-                        Get.find<GameController>().winner.value.toString())),
-                    Obx(() =>
-                        Text(Get.find<GameController>().msg.value.toString())),
-                  ],
-                ),
+                // Column(
+                //   children: [
+                //     TextButton(
+                //       onPressed: () {
+                //         Get.find<GameController>().resetGame();
+                //       },
+                //       child: const Text('Restart'),
+                //     ),
+                //     Obx(() => Text(
+                //         Get.find<GameController>().winner.value.toString())),
+                //     Obx(() =>
+                //         Text(Get.find<GameController>().msg.value.toString())),
+                //   ],
+                // ),
               ],
             ),
           ),
