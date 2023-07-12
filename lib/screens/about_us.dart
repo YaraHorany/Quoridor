@@ -45,7 +45,7 @@ class AboutPage extends StatelessWidget {
                   // ),
                   Center(
                     child: Text(
-                      "Othello",
+                      "Quoridor",
                       style: TextStyle(
                         fontSize: MediaQuery.of(context).size.width * 0.11,
                         fontWeight: FontWeight.bold,
@@ -73,21 +73,19 @@ class AboutPage extends StatelessWidget {
             height: 1.0,
             color: Colors.black,
           ),
-          Card(
+          const Card(
               color: Colors.transparent,
               elevation: 0.0,
-              margin: const EdgeInsets.all(10.0),
-              child: Container(
-                child: const Padding(
-                    padding: EdgeInsets.all(10.0),
-                    child: Text(
-                      "                           Othello is all about occupying the position of opponent. The more you occupy is the more chances for your VICTORY.",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontStyle: FontStyle.italic,
-                      ),
-                    )),
-              )),
+              margin: EdgeInsets.all(10.0),
+              child: Padding(
+                  padding: EdgeInsets.all(10.0),
+                  child: Text(
+                    "Othello is all about occupying the position of opponent. The more you occupy is the more chances for your VICTORY.",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ))),
           Container(
             margin: const EdgeInsets.only(left: 10.0, right: 10.0),
             width: MediaQuery.of(context).size.width,
@@ -95,7 +93,7 @@ class AboutPage extends StatelessWidget {
             color: Colors.black,
           ),
           Container(
-            padding: EdgeInsets.only(left: 6.0, right: 6.0, top: 5.0),
+            padding: const EdgeInsets.only(left: 6.0, right: 6.0, top: 5.0),
             child: Container(
               child: Card(
                 color: Colors.transparent,
@@ -106,7 +104,7 @@ class AboutPage extends StatelessWidget {
                   children: <Widget>[
                     Center(
                       child: Text(
-                        "   Contact Us ",
+                        "Contact Us",
                         style: TextStyle(
                           fontSize: MediaQuery.of(context).size.width * 0.06,
                           fontWeight: FontWeight.bold,
@@ -152,7 +150,7 @@ class AboutPage extends StatelessWidget {
                         const Padding(padding: EdgeInsets.only(left: 5.0)),
                         const Text("Email us at :"),
                         Text(
-                          "wegroupmail1@gmail.com",
+                          "yara.horany1@gmail.com",
                           style: TextStyle(
                             fontSize: MediaQuery.of(context).size.width * 0.04,
                             fontWeight: FontWeight.bold,

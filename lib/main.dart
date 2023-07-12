@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:quoridor/about_us.dart';
-import 'package:quoridor/how_to_play.dart';
-import 'package:quoridor/screens/game_screen/game_screen.dart';
+import 'package:quoridor/screens/about_us.dart';
+import 'package:quoridor/screens/how_to_play.dart';
+import 'package:quoridor/screens/game_screen.dart';
 import 'package:quoridor/screens/intro_screen.dart';
 import 'controllers/game_controller.dart';
 
