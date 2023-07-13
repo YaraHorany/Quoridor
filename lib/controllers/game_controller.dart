@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../helpers.dart';
 import '../models/fence_model.dart';
 import '../models/player_model.dart';
-import 'package:quoridor/constants/game_constants.dart';
+import 'package:quoridor/utils/game_constants.dart';
 
 enum DragType {
   horizontalDrag,

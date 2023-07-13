@@ -22,6 +22,10 @@ class RulesCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 10.0,
+      shape: const RoundedRectangleBorder(
+        side: BorderSide(color: Colors.black),
+        borderRadius: BorderRadius.all(Radius.circular(12)),
+      ),
       margin: const EdgeInsets.all(10.0),
       child: Padding(
         padding: const EdgeInsets.all(10.0),

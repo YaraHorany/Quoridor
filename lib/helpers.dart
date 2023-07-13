@@ -1,4 +1,4 @@
-import 'constants/game_constants.dart';
+import 'package:quoridor/utils/game_constants.dart';
 
 bool isNotLastColumn(int index) =>
     index % (GameConstants.totalInRow * 2) !=

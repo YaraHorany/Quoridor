@@ -1,6 +1,6 @@
 import 'dart:ui';
 import 'package:get/get.dart';
-import 'package:quoridor/constants/game_constants.dart';
+import 'package:quoridor/utils/game_constants.dart';
 import '../helpers.dart';
 import 'fence_model.dart';
 

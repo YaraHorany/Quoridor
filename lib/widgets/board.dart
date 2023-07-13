@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:quoridor/widgets/square.dart';
 import '../../models/fence_model.dart';
 import 'package:quoridor/controllers/game_controller.dart';
-import 'package:quoridor/constants/game_constants.dart';
+import 'package:quoridor/utils/game_constants.dart';
 import 'fence.dart';
 
 class Board extends StatelessWidget {

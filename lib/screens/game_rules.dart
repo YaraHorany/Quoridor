@@ -1,32 +1,32 @@
 import 'package:flutter/material.dart';
 import 'package:quoridor/widgets/rules_card.dart';
+import 'package:get/get.dart';
 
-class HowToPlay extends StatelessWidget {
-  const HowToPlay({super.key});
+class GameRules extends StatelessWidget {
+  const GameRules({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
-        backgroundColor: Colors.lightGreen,
+        backgroundColor: Colors.lightBlueAccent,
         leading: IconButton(
           icon: const Icon(Icons.keyboard_arrow_left),
-          onPressed: () => Navigator.pop(context),
-          iconSize: MediaQuery.of(context).size.width * 0.12,
+          onPressed: () => Get.back(),
+          iconSize: MediaQuery.of(context).size.width * 0.1,
         ),
         title: Text(
-          "How To Play",
+          "Quoridor Game Rules",
           style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontStyle: FontStyle.italic,
-            color: Colors.tealAccent,
-            fontSize: MediaQuery.of(context).size.width * 0.08,
+            fontFamily: 'Samantha',
+            color: Colors.white,
+            fontSize: MediaQuery.of(context).size.width * 0.1,
           ),
         ),
         centerTitle: true,
       ),
-      backgroundColor: Colors.lightGreen,
+      backgroundColor: Colors.lightBlueAccent,
       body: ListView(
         children: <Widget>[
           const RulesCard(

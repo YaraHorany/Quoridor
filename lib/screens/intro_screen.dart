@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quoridor/screens/about_us.dart';
 import 'package:quoridor/screens/game_screen.dart';
-import 'package:quoridor/screens/how_to_play.dart';
+import 'package:quoridor/screens/game_rules.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:get/get.dart';
 
@@ -32,7 +32,7 @@ class IntroScreen extends StatelessWidget {
             ),
             tooltip: "About",
             onPressed: () {
-              Get.to(const HowToPlay());
+              Get.to(const GameRules());
             },
           ),
           IconButton(

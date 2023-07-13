@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:get/get.dart';
 import 'package:quoridor/models/fence_model.dart';
-import 'package:quoridor/constants/game_constants.dart';
+import 'package:quoridor/utils/game_constants.dart';
 import 'package:quoridor/models/player_model.dart';
 import 'package:quoridor/controllers/game_controller.dart';
 import '../helpers.dart';
