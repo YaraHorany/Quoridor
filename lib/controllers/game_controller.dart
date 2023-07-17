@@ -19,7 +19,6 @@ class GameController extends GetxController {
   List<int> path = [];
   List<int> possibleMoves = [];
   DragType? dragType;
-  RxString winner = "".obs;
   Timer? timer;
   RxString msg = "".obs;
 
@@ -43,7 +42,6 @@ class GameController extends GetxController {
     path.clear();
     fence.clear();
     tempFence.clear();
-    winner.value = "";
 
     for (int i = 0; i < GameConstants.totalInBoard; i++) {
       if ((i ~/ GameConstants.totalInRow) % 2 == 0) {
@@ -306,10 +304,21 @@ class GameController extends GetxController {
   }
 
   void declareWinner() {
-    if (reachedFirstRow(player1.position)) {
-      winner.value = 'player 1 won';
-    } else if (reachedLastRow(player2.position)) {
-      winner.value = 'player 2 won';
+    if (reachedFirstRow(player1.position) || reachedLastRow(player2.position)) {
+      Get.defaultDialog(
+        title:
+            reachedFirstRow(player1.position) ? "PLAYER 1 WON" : "PLAYER 2 WON",
+        content: const Text(""),
+        actions: [
+          TextButton(
+            child: const Text('Restart'),
+            onPressed: () {
+              Get.back();
+              resetGame();
+            },
+          ),
+        ],
+      ).then((value) => resetGame());
     }
   }
 }

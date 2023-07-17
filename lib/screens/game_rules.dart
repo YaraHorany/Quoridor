@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:quoridor/widgets/rules_card.dart';
 import 'package:get/get.dart';
+import 'package:quoridor/widgets/title.dart';
 
 class GameRules extends StatelessWidget {
   const GameRules({super.key});
@@ -16,14 +17,7 @@ class GameRules extends StatelessWidget {
           onPressed: () => Get.back(),
           iconSize: MediaQuery.of(context).size.width * 0.1,
         ),
-        title: Text(
-          "Quoridor Game Rules",
-          style: TextStyle(
-            fontFamily: 'Samantha',
-            color: Colors.white,
-            fontSize: MediaQuery.of(context).size.width * 0.1,
-          ),
-        ),
+        title: const TitleText(title: "Quoridor Game Rules", size: 0.1),
         centerTitle: true,
       ),
       backgroundColor: Colors.lightBlueAccent,
