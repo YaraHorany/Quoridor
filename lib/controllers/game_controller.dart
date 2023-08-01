@@ -25,20 +25,24 @@ class GameController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    player1 = Player(position: 280, color: Colors.green, turn: true);
+    player2 = Player(position: 8, color: Colors.orange, turn: false);
     _buildBoard();
   }
 
   void resetGame() {
+    player1.position = 280;
+    player1.fences.value = 10;
+    player1.turn = true;
+
+    player2.position = 8;
+    player2.fences.value = 10;
+    player2.turn = false;
+
     _buildBoard();
   }
 
   void _buildBoard() {
-    player1 = Player(position: 280, color: Colors.green, turn: true);
-    player2 = Player(position: 8, color: Colors.orange, turn: false);
-
-    print('player1 fences: ${player1.fences}');
-    print('player2 fences: ${player2.fences}');
-
     path.clear();
     fence.clear();
     tempFence.clear();
@@ -73,7 +77,6 @@ class GameController extends GetxController {
     }
 
     possibleMoves = [];
-
     possibleMoves = player1.showPossibleMoves(fence, player2.position);
 
     update();
@@ -163,7 +166,7 @@ class GameController extends GetxController {
         update();
       }
     } else {
-      outOfFencesMsg();
+      popUpMessage('   There are no more\n walls for you to place');
     }
   }
 
@@ -213,7 +216,7 @@ class GameController extends GetxController {
       switchTurns();
     } else {
       updateTemporaryFence(boardIndex, isVertical, false);
-      unWinnableStepMessage();
+      popUpMessage('Placing a wall here will make\n    an unwinnable position');
     }
   }
 
@@ -263,12 +266,9 @@ class GameController extends GetxController {
   void updateFencesNum() {
     if (player1.turn) {
       player1.fences--;
-      print('player1.fences ${player1.fences}');
     } else {
       player2.fences--;
-      print('player2.fences ${player2.fences}');
     }
-    update();
   }
 
   bool outOfFences() {
@@ -279,22 +279,10 @@ class GameController extends GetxController {
     }
   }
 
-  void outOfFencesMsg() {
+  void popUpMessage(String message) {
     int count = 0;
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      msg.value = 'There are no more\n walls for you to place';
-      count++;
-      if (count == 4) {
-        msg.value = "";
-        timer!.cancel();
-      }
-    });
-  }
-
-  void unWinnableStepMessage() {
-    int count = 0;
-    timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      msg.value = 'Placing a wall here will make\n    an unwinnable position';
+      msg.value = message;
       count++;
       if (count == 3) {
         msg.value = "";

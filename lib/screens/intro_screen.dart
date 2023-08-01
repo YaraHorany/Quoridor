@@ -47,7 +47,7 @@ class IntroScreen extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () {
-              Get.to(const GameScreen());
+              Get.to(GameScreen());
             },
             child: Column(
               children: <Widget>[

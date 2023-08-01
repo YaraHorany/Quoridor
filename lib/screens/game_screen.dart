@@ -4,7 +4,9 @@ import '../controllers/game_controller.dart';
 import 'package:quoridor/widgets/board.dart';
 
 class GameScreen extends StatelessWidget {
-  const GameScreen({Key? key}) : super(key: key);
+  final GameController gameController = Get.find<GameController>();
+
+  GameScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,19 +26,18 @@ class GameScreen extends StatelessWidget {
                       Column(
                         children: [
                           const Text('Player 1'),
-                          Obx(() => Text(Get.find<GameController>()
-                              .player1
-                              .fences
-                              .toString())),
+                          Obx(() {
+                            print('this should be changed');
+                            return Text(
+                                gameController.player1.fences.toString());
+                          }),
                         ],
                       ),
                       Column(
                         children: [
                           const Text('Player 2'),
-                          Obx(() => Text(Get.find<GameController>()
-                              .player2
-                              .fences
-                              .toString())),
+                          Obx(() =>
+                              Text(gameController.player2.fences.toString())),
                         ],
                       ),
                     ],
@@ -45,8 +46,7 @@ class GameScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Obx(() => Text(
-                          Get.find<GameController>().msg.value.toString())),
+                      Obx(() => Text(gameController.msg.value.toString())),
                     ],
                   ),
                 ],
@@ -68,9 +68,8 @@ class GameScreen extends StatelessWidget {
                     height: 15,
                   ),
                   onDragStarted: () {
-                    Get.find<GameController>().dragType =
-                        DragType.horizontalDrag;
-                    Get.find<GameController>().update();
+                    gameController.dragType = DragType.horizontalDrag;
+                    gameController.update();
                   },
                   data: Colors.grey,
                   child: Container(
@@ -87,8 +86,8 @@ class GameScreen extends StatelessWidget {
                     height: 70,
                   ),
                   onDragStarted: () {
-                    Get.find<GameController>().dragType = DragType.verticalDrag;
-                    Get.find<GameController>().update();
+                    gameController.dragType = DragType.verticalDrag;
+                    gameController.update();
                   },
                   data: Colors.grey,
                   child: Container(
@@ -97,20 +96,6 @@ class GameScreen extends StatelessWidget {
                     height: 70,
                   ),
                 ),
-                // Column(
-                //   children: [
-                //     TextButton(
-                //       onPressed: () {
-                //         Get.find<GameController>().resetGame();
-                //       },
-                //       child: const Text('Restart'),
-                //     ),
-                //     Obx(() => Text(
-                //         Get.find<GameController>().winner.value.toString())),
-                //     Obx(() =>
-                //         Text(Get.find<GameController>().msg.value.toString())),
-                //   ],
-                // ),
               ],
             ),
           ),
