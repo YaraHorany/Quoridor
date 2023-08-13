@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:quoridor/helper/dependencies.dart';
 import 'package:quoridor/screens/about_us.dart';
 import 'package:quoridor/screens/game_rules.dart';
 import 'package:quoridor/screens/game_screen.dart';
@@ -7,6 +8,7 @@ import 'package:quoridor/screens/intro_screen.dart';
 import 'controllers/game_controller.dart';
 
 void main() {
+  GameControllerBinding().dependencies();
   runApp(const MyApp());
 }
 
@@ -25,7 +27,7 @@ class MyApp extends StatelessWidget {
           page: () => const IntroScreen(),
           binding: BindingsBuilder(
             () => {
-              Get.lazyPut<GameController>(() => GameController()),
+              Get.lazyPut<GameControllerBinding>(() => GameControllerBinding()),
             },
           ),
         ),

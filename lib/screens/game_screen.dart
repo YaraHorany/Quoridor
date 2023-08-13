@@ -26,11 +26,8 @@ class GameScreen extends StatelessWidget {
                       Column(
                         children: [
                           const Text('Player 1'),
-                          Obx(() {
-                            print('this should be changed');
-                            return Text(
-                                gameController.player1.fences.toString());
-                          }),
+                          Obx(() =>
+                              Text(gameController.player1.fences.toString())),
                         ],
                       ),
                       Column(

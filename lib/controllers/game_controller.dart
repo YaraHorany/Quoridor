@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../helpers.dart';
@@ -78,6 +79,7 @@ class GameController extends GetxController {
 
     possibleMoves = [];
     possibleMoves = player1.showPossibleMoves(fence, player2.position);
+    // getBestNextMove();
 
     update();
   }
@@ -120,16 +122,24 @@ class GameController extends GetxController {
   void drawTemporaryFence(int boardIndex) {
     if (!outOfFences()) {
       int index = calcFenceIndex(boardIndex);
-      if (dragType == DragType.verticalDrag &&
-          fence[index].type == FenceType.verticalFence &&
-          isNotLastRow(boardIndex) &&
-          isValid(true, boardIndex)) {
-        updateTemporaryFence(boardIndex, true, true);
-      } else if (dragType == DragType.horizontalDrag &&
-          fence[index].type == FenceType.horizontalFence &&
-          isNotLastColumn(boardIndex) &&
-          isValid(false, boardIndex)) {
-        updateTemporaryFence(boardIndex, false, true);
+      if (dragType == DragType.verticalDrag) {
+        if (fence[index].type == FenceType.verticalFence &&
+            isNotLastRow(boardIndex) &&
+            isValid(true, false, boardIndex)) {
+          updateTemporaryFence(boardIndex, true, false, true);
+        } else if (fence[index].type == FenceType.squareFence &&
+            isValid(true, true, boardIndex)) {
+          updateTemporaryFence(boardIndex, true, true, true);
+        }
+      } else if (dragType == DragType.horizontalDrag) {
+        if (fence[index].type == FenceType.horizontalFence &&
+            isNotLastColumn(boardIndex) &&
+            isValid(false, false, boardIndex)) {
+          updateTemporaryFence(boardIndex, false, false, true);
+        } else if (fence[index].type == FenceType.squareFence &&
+            isValid(false, true, boardIndex)) {
+          updateTemporaryFence(boardIndex, false, true, true);
+        }
       }
     }
   }
@@ -137,14 +147,20 @@ class GameController extends GetxController {
   void removeTemporaryFence(int boardIndex) {
     if (!outOfFences()) {
       int index = calcFenceIndex(boardIndex);
-      if (dragType == DragType.verticalDrag &&
-          fence[index].type == FenceType.verticalFence &&
-          isNotLastRow(boardIndex)) {
-        updateTemporaryFence(boardIndex, true, false);
-      } else if (dragType == DragType.horizontalDrag &&
-          fence[index].type == FenceType.horizontalFence &&
-          isNotLastColumn(boardIndex)) {
-        updateTemporaryFence(boardIndex, false, false);
+      if (dragType == DragType.verticalDrag) {
+        if (fence[index].type == FenceType.verticalFence &&
+            isNotLastRow(boardIndex)) {
+          updateTemporaryFence(boardIndex, true, false, false);
+        } else if (fence[index].type == FenceType.squareFence) {
+          updateTemporaryFence(boardIndex, true, true, false);
+        }
+      } else if (dragType == DragType.horizontalDrag) {
+        if (fence[index].type == FenceType.horizontalFence &&
+            isNotLastColumn(boardIndex)) {
+          updateTemporaryFence(boardIndex, false, false, false);
+        } else if (fence[index].type == FenceType.squareFence) {
+          updateTemporaryFence(boardIndex, false, true, false);
+        }
       }
     }
   }
@@ -152,17 +168,25 @@ class GameController extends GetxController {
   void drawFence(int boardIndex) {
     if (!outOfFences()) {
       int index = calcFenceIndex(boardIndex);
-      if (dragType == DragType.verticalDrag &&
-          fence[index].type == FenceType.verticalFence &&
-          isNotLastRow(boardIndex) &&
-          isValid(true, boardIndex)) {
-        updateFence(boardIndex, true);
+      if (dragType == DragType.verticalDrag) {
+        if (fence[index].type == FenceType.verticalFence &&
+            isNotLastRow(boardIndex) &&
+            isValid(true, false, boardIndex)) {
+          updateFence(boardIndex, true, false);
+        } else if (fence[index].type == FenceType.squareFence &&
+            isValid(true, true, boardIndex)) {
+          updateFence(boardIndex, true, true);
+        }
         update();
-      } else if (dragType == DragType.horizontalDrag &&
-          fence[index].type == FenceType.horizontalFence &&
-          isNotLastColumn(boardIndex) &&
-          isValid(false, boardIndex)) {
-        updateFence(boardIndex, false);
+      } else if (dragType == DragType.horizontalDrag) {
+        if (fence[index].type == FenceType.horizontalFence &&
+            isNotLastColumn(boardIndex) &&
+            isValid(false, false, boardIndex)) {
+          updateFence(boardIndex, false, false);
+        } else if (fence[index].type == FenceType.squareFence &&
+            isValid(false, true, boardIndex)) {
+          updateFence(boardIndex, false, true);
+        }
         update();
       }
     } else {
@@ -170,57 +194,93 @@ class GameController extends GetxController {
     }
   }
 
-  bool isValid(bool isVertical, int boardIndex) {
+  bool isValid(bool isVertical, bool isSquareFence, int boardIndex) {
     if (isVertical) {
-      return (fence[calcFenceIndex(boardIndex)].placed == false &&
+      if (fence[calcFenceIndex(boardIndex)].placed == false &&
           fence[calcFenceIndex(boardIndex + GameConstants.totalInRow)].placed ==
-              false &&
-          fence[calcFenceIndex(boardIndex + (GameConstants.totalInRow * 2))]
+              false) {
+        if (isSquareFence) {
+          return fence[calcFenceIndex(boardIndex - GameConstants.totalInRow)]
                   .placed ==
-              false);
+              false;
+        } else {
+          return fence[calcFenceIndex(
+                      boardIndex + (GameConstants.totalInRow * 2))]
+                  .placed ==
+              false;
+        }
+      } else {
+        return false;
+      }
     } else {
-      return (fence[calcFenceIndex(boardIndex)].placed == false &&
-          fence[calcFenceIndex(boardIndex + 1)].placed == false &&
-          fence[calcFenceIndex(boardIndex + 2)].placed == false);
+      if (fence[calcFenceIndex(boardIndex)].placed == false &&
+          fence[calcFenceIndex(boardIndex + 1)].placed == false) {
+        if (isSquareFence) {
+          return fence[calcFenceIndex(boardIndex - 1)].placed == false;
+        } else {
+          return fence[calcFenceIndex(boardIndex + 2)].placed == false;
+        }
+      } else {
+        return false;
+      }
     }
   }
 
-  void updateTemporaryFence(int boardIndex, bool isVertical, bool val) {
+  void updateTemporaryFence(
+      int boardIndex, bool isVertical, bool isSquareFence, bool val) {
     fence[calcFenceIndex(boardIndex)].temporaryFence = val;
     if (isVertical) {
       fence[calcFenceIndex(boardIndex + GameConstants.totalInRow)]
           .temporaryFence = val;
-      fence[calcFenceIndex(boardIndex + (GameConstants.totalInRow * 2))]
-          .temporaryFence = val;
+      if (isSquareFence) {
+        fence[calcFenceIndex(boardIndex - GameConstants.totalInRow)]
+            .temporaryFence = val;
+      } else {
+        fence[calcFenceIndex(boardIndex + (GameConstants.totalInRow * 2))]
+            .temporaryFence = val;
+      }
     } else {
       fence[calcFenceIndex(boardIndex + 1)].temporaryFence = val;
-      fence[calcFenceIndex(boardIndex + 2)].temporaryFence = val;
+      if (isSquareFence) {
+        fence[calcFenceIndex(boardIndex - 1)].temporaryFence = val;
+      } else {
+        fence[calcFenceIndex(boardIndex + 2)].temporaryFence = val;
+      }
     }
     update();
   }
 
-  void updateFence(int boardIndex, bool isVertical) {
-    if (isValidFence(boardIndex, isVertical)) {
+  void updateFence(int boardIndex, bool isVertical, bool isSquareFence) {
+    if (isValidFence(boardIndex, isVertical, isSquareFence)) {
       fence[calcFenceIndex(boardIndex)].placed = true;
       if (isVertical) {
         fence[calcFenceIndex(boardIndex + GameConstants.totalInRow)].placed =
             true;
-        fence[calcFenceIndex(boardIndex + (GameConstants.totalInRow * 2))]
-            .placed = true;
+        if (isSquareFence) {
+          fence[calcFenceIndex(boardIndex - GameConstants.totalInRow)].placed =
+              true;
+        } else {
+          fence[calcFenceIndex(boardIndex + (GameConstants.totalInRow * 2))]
+              .placed = true;
+        }
       } else {
         fence[calcFenceIndex(boardIndex + 1)].placed = true;
-        fence[calcFenceIndex(boardIndex + 2)].placed = true;
+        if (isSquareFence) {
+          fence[calcFenceIndex(boardIndex - 1)].placed = true;
+        } else {
+          fence[calcFenceIndex(boardIndex + 2)].placed = true;
+        }
       }
       update();
       updateFencesNum();
       switchTurns();
     } else {
-      updateTemporaryFence(boardIndex, isVertical, false);
+      updateTemporaryFence(boardIndex, isVertical, isSquareFence, false);
       popUpMessage('Placing a wall here will make\n    an unwinnable position');
     }
   }
 
-  bool isValidFence(int boardIndex, bool isVertical) {
+  bool isValidFence(int boardIndex, bool isVertical, bool isSquareFence) {
     late bool returnedPlayer1;
     late bool returnedPlayer2;
     late int position1;
@@ -235,11 +295,20 @@ class GameController extends GetxController {
     if (isVertical) {
       tempFence[calcFenceIndex(boardIndex + GameConstants.totalInRow)].placed =
           true;
-      tempFence[calcFenceIndex(boardIndex + (GameConstants.totalInRow * 2))]
-          .placed = true;
+      if (isSquareFence) {
+        tempFence[calcFenceIndex(boardIndex - GameConstants.totalInRow)]
+            .placed = true;
+      } else {
+        tempFence[calcFenceIndex(boardIndex + (GameConstants.totalInRow * 2))]
+            .placed = true;
+      }
     } else {
       tempFence[calcFenceIndex(boardIndex + 1)].placed = true;
-      tempFence[calcFenceIndex(boardIndex + 2)].placed = true;
+      if (isSquareFence) {
+        tempFence[calcFenceIndex(boardIndex - 1)].placed = true;
+      } else {
+        tempFence[calcFenceIndex(boardIndex + 2)].placed = true;
+      }
     }
 
     tempPlayer1 = Player.copy(obj: player1);
@@ -251,23 +320,15 @@ class GameController extends GetxController {
         1, tempPlayer1!.position, tempPlayer2!.position, tempFence, []);
     returnedPlayer2 = tempPlayer2!.canReachOtherSide(
         2, tempPlayer2!.position, tempPlayer1!.position, tempFence, []);
-    print('returnedPlayer2: $returnedPlayer2');
-    print('returnedPlayer1: $returnedPlayer1');
-
-    //
-    // return tempPlayer1!.canReachOtherSide(
-    //         1, tempPlayer1!.position, tempPlayer2!.position, tempFence, []) &&
-    //     tempPlayer2!.canReachOtherSide(
-    //         2, tempPlayer2!.position, tempPlayer1!.position, tempFence, []);
 
     return returnedPlayer1 && returnedPlayer2;
   }
 
   void updateFencesNum() {
     if (player1.turn) {
-      player1.fences--;
+      player1.fences.value--;
     } else {
-      player2.fences--;
+      player2.fences.value--;
     }
   }
 
@@ -308,5 +369,80 @@ class GameController extends GetxController {
         ],
       ).then((value) => resetGame());
     }
+  }
+
+  void getBestNextMove() {
+    print('getBestNextMove');
+    List<int> emptyFences = [];
+    int? val;
+    if (player1.turn) {
+      tempPlayer1 = Player.copy(obj: player1);
+      tempPlayer2 = Player.copy(obj: player2);
+      if (player1.fences.value != 0) {
+        val = Random().nextInt(2);
+        if (val == 0) {
+          // move the player
+        } else {
+          print('*************');
+          // if value == 1
+          // Put a fence
+          emptyFences = getEmptyFencesIndexes();
+          val = emptyFences[Random().nextInt(emptyFences.length)];
+          print('val: $val');
+          if (fence[calcFenceIndex(val)].type == FenceType.verticalFence) {
+            updateFence(val, true, false);
+          } else if (fence[calcFenceIndex(val)].type ==
+              FenceType.horizontalFence) {
+            updateFence(val, false, false);
+          }
+        }
+      } else {
+        // move the player
+      }
+    }
+  }
+
+  List<int> getEmptyFencesIndexes() {
+    print('getEmptyFencesIndexes');
+    List<int> emptyFences = [];
+    for (int i = 0; i < GameConstants.totalInBoard; i++) {
+      if ((i ~/ GameConstants.totalInRow) % 2 == 0) {
+        if (i % 2 != 0 && isNotLastRow(i)) {
+          if (fence[calcFenceIndex(i)].placed == false) {
+            emptyFences.add(i);
+          }
+        }
+      } else {
+        if (i % 2 != 0 && isNotLastColumn(i)) {
+          if (fence[calcFenceIndex(i)].placed == false) {
+            emptyFences.add(i);
+          }
+        }
+      }
+    }
+    print(emptyFences);
+    // for (int i = 0; i < fence.length; i++) {
+    //   if (fence[i].type == FenceType.verticalFence &&
+    //       isNotLastRow(fence[i].position)) {
+    //     if (fence[i].placed == false &&
+    //         fence[calcFenceIndex(fence[i].position + GameConstants.totalInRow)]
+    //                 .placed ==
+    //             false &&
+    //         fence[calcFenceIndex(
+    //                     fence[i].position + (GameConstants.totalInRow * 2))]
+    //                 .placed ==
+    //             false) {
+    //       emptyFences.add(fence[i].position);
+    //     }
+    //   } else if (fence[i].type == FenceType.horizontalFence &&
+    //       isNotLastColumn(fence[i].position)) {
+    //     if (fence[i].placed == false &&
+    //         fence[calcFenceIndex(fence[i].position + 1)].placed == false &&
+    //         fence[calcFenceIndex(fence[i].position + 2)].placed == false) {
+    //       emptyFences.add(fence[i].position);
+    //     }
+    //   }
+    // }
+    return emptyFences;
   }
 }

@@ -28,17 +28,16 @@ class Player {
 
   bool outOfFences() => fences.value == 0;
 
-  List<int> showPossibleMoves(List<FenceModel> fence, int opponentPosition) => [
-        canMoveUp(fence, opponentPosition, 1),
-        canMoveDown(fence, opponentPosition, 1),
-        canMoveRight(fence, opponentPosition, 1),
-        canMoveLeft(fence, opponentPosition, 1)
-      ];
+  List<int> showPossibleMoves(List<FenceModel> fence, int opponentPosition) =>
+      moveUp(fence, opponentPosition, 1) +
+      moveDown(fence, opponentPosition, 1) +
+      moveRight(fence, opponentPosition, 1) +
+      moveLeft(fence, opponentPosition, 1);
 
   // Recursion function which check if it's possible to move up.
-  // Returns the index of the square (one step or two steps up). -1 if the player can't move up.
-  int canMoveUp(List<FenceModel> fence, int opponentPosition, int steps) {
-    if (steps == 3) return -1;
+  // Returns the index of the square (one step or two steps up).
+  List<int> moveUp(List<FenceModel> fence, int opponentPosition, int steps) {
+    if (steps == 3) return [];
     if (inBoardRange(position - (GameConstants.totalInRow * steps * 2))) {
       if (fence[fence.indexWhere((element) =>
                   element.position ==
@@ -47,19 +46,23 @@ class Player {
           false) {
         if (opponentPosition ==
             position - (GameConstants.totalInRow * steps * 2)) {
-          return canMoveUp(fence, opponentPosition, steps + 1);
+          return moveUp(fence, opponentPosition, steps + 1);
         } else {
-          return position - (GameConstants.totalInRow * steps * 2);
+          return [position - (GameConstants.totalInRow * steps * 2)];
+        }
+      } else {
+        if (steps == 2) {
+          return moveUpRight(fence) + moveUpLeft(fence);
         }
       }
     }
-    return -1;
+    return [];
   }
 
   // Recursion function which check if it's possible to move down.
-  // Returns the index of the square (one step or two steps down). -1 if the player can't move down.
-  int canMoveDown(List<FenceModel> fence, int opponentPosition, int steps) {
-    if (steps == 3) return -1;
+  // Returns the index of the square (one step or two steps down).
+  List<int> moveDown(List<FenceModel> fence, int opponentPosition, int steps) {
+    if (steps == 3) return [];
     if (inBoardRange(position + (GameConstants.totalInRow * steps * 2))) {
       if (fence[fence.indexWhere((element) =>
                   element.position ==
@@ -68,51 +71,163 @@ class Player {
           false) {
         if (opponentPosition ==
             position + (GameConstants.totalInRow * steps * 2)) {
-          return canMoveDown(fence, opponentPosition, steps + 1);
+          return moveDown(fence, opponentPosition, steps + 1);
         } else {
-          return position + (GameConstants.totalInRow * steps * 2);
+          return [position + (GameConstants.totalInRow * steps * 2)];
+        }
+      } else {
+        if (steps == 2) {
+          return moveDownRight(fence) + moveDownLeft(fence);
         }
       }
     }
-    return -1;
+    return [];
   }
 
   // Recursion function which check if it's possible to move right.
-  // Returns the index of the square (one step or two steps to the right). -1 if the player can't move right.
-  int canMoveRight(List<FenceModel> fence, int opponentPosition, int steps) {
-    if (steps == 3) return -1;
+  // Returns the index of the square (one step or two steps to the right).
+  List<int> moveRight(List<FenceModel> fence, int opponentPosition, int steps) {
+    if (steps == 3) return [];
     if (inBoardRange(position + (steps * 2))) {
       if (fence[fence.indexWhere(
                   (element) => element.position == position + (steps * 2) - 1)]
               .placed ==
           false) {
         if (opponentPosition == position + (steps * 2)) {
-          return canMoveRight(fence, opponentPosition, steps + 1);
+          return moveRight(fence, opponentPosition, steps + 1);
         } else {
-          return position + (steps * 2);
+          return [position + (steps * 2)];
+        }
+      } else {
+        if (steps == 2) {
+          return moveRightUp(fence) + moveRightDown(fence);
         }
       }
     }
-    return -1;
+    return [];
   }
 
   // Recursion function which check if it's possible to move left.
-  // Returns the index of the square (one step or two steps to the left). -1 if the player can't move left.
-  int canMoveLeft(List<FenceModel> fence, int opponentPosition, int steps) {
-    if (steps == 3) return -1;
+  // Returns the index of the square (one step or two steps to the left).
+  List<int> moveLeft(List<FenceModel> fence, int opponentPosition, int steps) {
+    if (steps == 3) return [];
     if (inBoardRange(position - (steps * 2))) {
       if (fence[fence.indexWhere((element) =>
                   element.position == position - ((steps * 2) - 1))]
               .placed ==
           false) {
         if (opponentPosition == position - (steps * 2)) {
-          return canMoveLeft(fence, opponentPosition, steps + 1);
+          return moveLeft(fence, opponentPosition, steps + 1);
         } else {
-          return position - (steps * 2);
+          return [position - (steps * 2)];
+        }
+      } else {
+        if (steps == 2) {
+          return moveLeftUp(fence) + moveLeftDown(fence);
         }
       }
     }
-    return -1;
+    return [];
+  }
+
+  List<int> moveUpRight(List<FenceModel> fence) {
+    if (inBoardRange(position - (GameConstants.totalInRow * 2) + 2)) {
+      if (fence[fence.indexWhere((element) =>
+                  element.position ==
+                  position - (GameConstants.totalInRow * 2) + 1)]
+              .placed ==
+          false) {
+        return [position - (GameConstants.totalInRow * 2) + 2];
+      }
+    }
+    return [];
+  }
+
+  List<int> moveUpLeft(List<FenceModel> fence) {
+    if (inBoardRange(position - (GameConstants.totalInRow * 2) - 2)) {
+      if (fence[fence.indexWhere((element) =>
+                  element.position ==
+                  position - (GameConstants.totalInRow * 2) - 1)]
+              .placed ==
+          false) {
+        return [position - (GameConstants.totalInRow * 2) - 2];
+      }
+    }
+    return [];
+  }
+
+  List<int> moveDownRight(List<FenceModel> fence) {
+    if (inBoardRange(position + (GameConstants.totalInRow * 2) + 2)) {
+      if (fence[fence.indexWhere((element) =>
+                  element.position ==
+                  position + (GameConstants.totalInRow * 2) + 1)]
+              .placed ==
+          false) {
+        return [position + (GameConstants.totalInRow * 2) + 2];
+      }
+    }
+    return [];
+  }
+
+  List<int> moveDownLeft(List<FenceModel> fence) {
+    if (inBoardRange(position + (GameConstants.totalInRow * 2) - 2)) {
+      if (fence[fence.indexWhere((element) =>
+                  element.position ==
+                  position + (GameConstants.totalInRow * 2) - 1)]
+              .placed ==
+          false) {
+        return [position + (GameConstants.totalInRow * 2) - 2];
+      }
+    }
+    return [];
+  }
+
+  List<int> moveRightUp(List<FenceModel> fence) {
+    if (inBoardRange(position + 2 - (GameConstants.totalInRow * 2))) {
+      if (fence[fence.indexWhere((element) =>
+                  element.position == position + 2 - GameConstants.totalInRow)]
+              .placed ==
+          false) {
+        return [position + 2 - (GameConstants.totalInRow * 2)];
+      }
+    }
+    return [];
+  }
+
+  List<int> moveRightDown(List<FenceModel> fence) {
+    if (inBoardRange(position + 2 + (GameConstants.totalInRow * 2))) {
+      if (fence[fence.indexWhere((element) =>
+                  element.position == position + 2 + GameConstants.totalInRow)]
+              .placed ==
+          false) {
+        return [position + 2 + (GameConstants.totalInRow * 2)];
+      }
+    }
+    return [];
+  }
+
+  List<int> moveLeftUp(List<FenceModel> fence) {
+    if (inBoardRange(position - 2 - (GameConstants.totalInRow * 2))) {
+      if (fence[fence.indexWhere((element) =>
+                  element.position == position - 2 - GameConstants.totalInRow)]
+              .placed ==
+          false) {
+        return [position - 2 - (GameConstants.totalInRow * 2)];
+      }
+    }
+    return [];
+  }
+
+  List<int> moveLeftDown(List<FenceModel> fence) {
+    if (inBoardRange(position - 2 + (GameConstants.totalInRow * 2))) {
+      if (fence[fence.indexWhere((element) =>
+                  element.position == position - 2 + GameConstants.totalInRow)]
+              .placed ==
+          false) {
+        return [position - 2 + (GameConstants.totalInRow * 2)];
+      }
+    }
+    return [];
   }
 
   canReachOtherSide(int playerNumber, int initialPosition, int opponentPosition,
@@ -130,9 +245,8 @@ class Player {
       }
     }
     tempPossibleMoves = showPossibleMoves(tempFence, opponentPosition);
-    for (int i = 0; i < 4; i++) {
-      if (tempPossibleMoves[i] != -1 &&
-          !usedPositions.contains(tempPossibleMoves[i])) {
+    for (int i = 0; i < tempPossibleMoves.length; i++) {
+      if (!usedPositions.contains(tempPossibleMoves[i])) {
         prevPosition = position;
         position = tempPossibleMoves[i];
         val = canReachOtherSide(playerNumber, initialPosition, opponentPosition,
