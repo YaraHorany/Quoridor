@@ -16,7 +16,6 @@ class GameController extends GetxController {
   late Player player1, player2;
   Player? tempPlayer1, tempPlayer2;
   List<FenceModel> fence = [];
-  List<FenceModel> tempFence = [];
   List<int> path = [];
   List<int> possibleMoves = [];
   DragType? dragType;
@@ -46,7 +45,6 @@ class GameController extends GetxController {
   void _buildBoard() {
     path.clear();
     fence.clear();
-    tempFence.clear();
 
     for (int i = 0; i < GameConstants.totalInBoard; i++) {
       if ((i ~/ GameConstants.totalInRow) % 2 == 0) {
@@ -280,13 +278,9 @@ class GameController extends GetxController {
     }
   }
 
+  // Checking that both players are not completely blocked from reaching the opposing baseline
   bool isValidFence(int boardIndex, bool isVertical, bool isSquareFence) {
-    late bool returnedPlayer1;
-    late bool returnedPlayer2;
-    late int position1;
-    late int position2;
-
-    tempFence.clear();
+    List<FenceModel> tempFence = [];
     for (int i = 0; i < fence.length; i++) {
       tempFence.add(FenceModel.copy(obj: fence[i]));
     }
@@ -313,15 +307,11 @@ class GameController extends GetxController {
 
     tempPlayer1 = Player.copy(obj: player1);
     tempPlayer2 = Player.copy(obj: player2);
-    position1 = tempPlayer1!.position;
-    position2 = tempPlayer2!.position;
 
-    returnedPlayer1 = tempPlayer1!.canReachOtherSide(
-        1, tempPlayer1!.position, tempPlayer2!.position, tempFence, []);
-    returnedPlayer2 = tempPlayer2!.canReachOtherSide(
-        2, tempPlayer2!.position, tempPlayer1!.position, tempFence, []);
-
-    return returnedPlayer1 && returnedPlayer2;
+    return tempPlayer1!.bfsSearch(
+            tempPlayer1!.position, tempPlayer2!.position, tempFence) &&
+        tempPlayer2!
+            .bfsSearch(tempPlayer2!.position, tempPlayer1!.position, tempFence);
   }
 
   void updateFencesNum() {

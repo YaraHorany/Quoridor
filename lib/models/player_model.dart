@@ -1,8 +1,10 @@
 import 'dart:ui';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:quoridor/utils/game_constants.dart';
 import '../helpers.dart';
 import 'fence_model.dart';
+import "dart:collection";
 
 class Player {
   int position;
@@ -230,35 +232,44 @@ class Player {
     return [];
   }
 
-  canReachOtherSide(int playerNumber, int initialPosition, int opponentPosition,
-      List<FenceModel> tempFence, List<int> usedPositions) {
-    int? prevPosition;
-    bool? val;
+  // a BFS (Breadth First Search) is applied which finds the shortest path to the goal
+  // for each player and returns false if the distance is undefined.
+  bool bfsSearch(
+    int initialPosition,
+    int opponentPosition,
+    List<FenceModel> tempFence,
+  ) {
+    final queue = Queue<int>();
+    List<int> visited = [];
     List<int> tempPossibleMoves = [];
-    if (playerNumber == 1) {
-      if (reachedFirstRow(position)) {
-        return true;
-      }
-    } else if (playerNumber == 2) {
-      if (reachedLastRow(position)) {
-        return true;
-      }
-    }
-    tempPossibleMoves = showPossibleMoves(tempFence, opponentPosition);
-    for (int i = 0; i < tempPossibleMoves.length; i++) {
-      if (!usedPositions.contains(tempPossibleMoves[i])) {
-        prevPosition = position;
-        position = tempPossibleMoves[i];
-        val = canReachOtherSide(playerNumber, initialPosition, opponentPosition,
-            tempFence, usedPositions + [prevPosition]);
-        if (val == true) {
-          return true;
+    queue.add(position);
+
+    while (didNotReachOtherSide()) {
+      if (queue.isEmpty) return false;
+      position = queue.removeFirst();
+      visited.add(position);
+      tempPossibleMoves = showPossibleMoves(tempFence, opponentPosition);
+
+      for (int i = 0; i < tempPossibleMoves.length; i++) {
+        if (!visited.contains(tempPossibleMoves[i]) &&
+            !queue.contains(tempPossibleMoves[i])) {
+          queue.addLast(tempPossibleMoves[i]);
         }
-        position = prevPosition;
       }
     }
-    if (position == initialPosition) {
-      return false;
+    return true;
+  }
+
+  bool didNotReachOtherSide() {
+    if (color == Colors.green) {
+      if (!reachedFirstRow(position)) {
+        return true;
+      }
+    } else {
+      if (!reachedLastRow(position)) {
+        return true;
+      }
     }
+    return false;
   }
 }
