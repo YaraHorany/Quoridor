@@ -38,7 +38,7 @@ class Board extends StatelessWidget {
     List<StaggeredGridTile> boardCells = [];
 
     for (int i = 0; i < GameConstants.totalInBoard; i++) {
-      if (gameController.path.contains(i)) {
+      if (gameController.squares.contains(i)) {
         boardCells.add(StaggeredGridTile.count(
           crossAxisCellCount: 2,
           mainAxisCellCount: 2,

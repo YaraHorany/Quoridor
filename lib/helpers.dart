@@ -1,8 +1,7 @@
 import 'package:quoridor/utils/game_constants.dart';
 
 bool isNotLastColumn(int index) =>
-    index % (GameConstants.totalInRow * 2) !=
-    (GameConstants.totalInRow * 2) - 1;
+    index % GameConstants.totalInRow != GameConstants.totalInRow - 1;
 
 bool isNotLastRow(int index) =>
     index ~/ GameConstants.totalInRow != GameConstants.totalInRow - 1;

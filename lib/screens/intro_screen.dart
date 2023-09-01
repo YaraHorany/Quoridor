@@ -7,8 +7,11 @@ import 'package:quoridor/widgets/title.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:get/get.dart';
 
+import '../controllers/game_controller.dart';
+
 class IntroScreen extends StatelessWidget {
-  const IntroScreen({Key? key}) : super(key: key);
+  IntroScreen({Key? key}) : super(key: key);
+  final GameController gameController = Get.find<GameController>();
 
   @override
   Widget build(BuildContext context) {
@@ -47,6 +50,7 @@ class IntroScreen extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () {
+              gameController.singlePlayerGame(false);
               Get.to(GameScreen());
             },
             child: Column(
@@ -64,7 +68,8 @@ class IntroScreen extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              print('Single player mode');
+              gameController.singlePlayerGame(true);
+              Get.to(GameScreen());
             },
             child: Column(
               children: const [

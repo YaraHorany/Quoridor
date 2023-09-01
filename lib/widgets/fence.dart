@@ -16,10 +16,10 @@ class Fence extends StatelessWidget {
     int fenceIndex = gameController.calcFenceIndex(boardIndex);
     return DragTarget(
       onMove: (data) {
-        gameController.drawTemporaryFence(boardIndex);
+        gameController.drawTemporaryFence(boardIndex, true);
       },
       onLeave: (data) {
-        gameController.removeTemporaryFence(boardIndex);
+        gameController.drawTemporaryFence(boardIndex, false);
       },
       onAccept: (data) {
         gameController.drawFence(boardIndex);
