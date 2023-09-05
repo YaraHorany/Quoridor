@@ -45,6 +45,7 @@ class GameController extends GetxController {
   }
 
   void _buildBoard() {
+    List<List<int>> doubleList = [];
     squares.clear();
     fence.clear();
 
@@ -79,6 +80,17 @@ class GameController extends GetxController {
 
     possibleMoves = [];
     possibleMoves = player1.showPossibleMoves(fence, player2.position);
+
+    // fence[calcFenceIndex(91)].placed = true;
+    // fence[calcFenceIndex(92)].placed = true;
+    // fence[calcFenceIndex(93)].placed = true;
+    //
+    // doubleList = player1.findMinPaths(
+    //     player1.bfs(fence, player2.position), player2.position);
+    // print('min paths:');
+    // print(doubleList);
+    // List<int> tempList = doubleList[Random().nextInt(doubleList.length)];
+    // print(tempList);
 
     update();
   }
@@ -306,9 +318,7 @@ class GameController extends GetxController {
       tempPlayer1 = Player.copy(obj: player1);
       tempPlayer2 = Player.copy(obj: player2);
     }
-    return tempPlayer1.bfsSearch(tempFence) != -1 &&
-        tempPlayer2.bfsSearch(tempFence) != -1;
-    // return tempPlayer1.bfsSearch(tempFence) && tempPlayer2.bfsSearch(tempFence);
+    return tempPlayer1.bfsSearch(tempFence) && tempPlayer2.bfsSearch(tempFence);
   }
 
   void updateFencesNum() {
@@ -356,6 +366,7 @@ class GameController extends GetxController {
   }
 
   void declareWinner() {
+    // print('check winner');
     if (simulationOn) {
       if (reachedFirstRow(simulationP1!.position)) {
         winner = 1;
@@ -383,6 +394,20 @@ class GameController extends GetxController {
   }
 
   void getBestNextMove() {
+    // print("***********************************");
+    // print("-----------------------------------");
+    // print("###################################");
+    // print("-----------------------------------");
+    // print("***********************************");
+    // print("####################################");
+    // print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+    // print("(((((((((((((((((((((((((())))))))))");
+    // print("***********************************");
+    // print("-----------------------------------");
+    // print("(((((((((((((((((())))))))))))))))))");
+    // print("-----------------------------------");
+    Player? tempPlayer1, tempPlayer2;
+    List<List<int>> doubleList = [];
     Map<int, int> evaluations = {};
     late int randomPosition;
     simulationOn = true;
@@ -391,11 +416,11 @@ class GameController extends GetxController {
     late int firstMove;
     double highestScore = -1.0 / 0.0; // minus infinity
     late int bestMove;
-    int? prevPosition;
-    double minVisitedSquares = 1.0 / 0.0;
-    int val = 0;
 
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 1000; i++) {
+      // print("***********************************");
+      // print('SIMULATION NUMBER ${i + 1}');
+      // print("***********************************");
       firstMove = -1;
       winner = -1;
       List<int> emptyFences = [];
@@ -413,31 +438,60 @@ class GameController extends GetxController {
 
       calculatePossibleMoves();
       while (true) {
+        // if (simulationP1!.turn) {
+        //   print('p1 turn');
+        // } else {
+        //   print('p2 turn');
+        // }
         if (outOfFences() || Random().nextInt(2) == 0) {
-          minVisitedSquares = 1.0 / 0.0;
-          print('possibleMoves: $possibleMoves');
-          for (int k = 0; k < possibleMoves.length; k++) {
-            if (simulationP1!.turn) {
-              // print('p1 turn');
-              simulationP1!.position = possibleMoves[k];
-              val = simulationP1!.bfsSearch(simulationFence);
-              // print('val: $val');
-              if (val < minVisitedSquares) {
-                minVisitedSquares = val.toDouble();
-                randomPosition = possibleMoves[k];
-              }
-            } else {
-              // print('p2 turn');
-              simulationP2!.position = possibleMoves[k];
-              val = simulationP2!.bfsSearch(simulationFence);
-              // print('val: $val');
-              if (val < minVisitedSquares) {
-                minVisitedSquares = val.toDouble();
-                randomPosition = possibleMoves[k];
-              }
-            }
+          tempPlayer1 = Player.copy(obj: simulationP1!);
+          tempPlayer2 = Player.copy(obj: simulationP2!);
+
+          if (simulationP1!.turn) {
+            doubleList = tempPlayer1!.findMinPaths(
+                tempPlayer1!.bfs(simulationFence, tempPlayer2!.position),
+                tempPlayer2!.position);
+          } else {
+            doubleList = tempPlayer2!.findMinPaths(
+                tempPlayer2!.bfs(simulationFence, tempPlayer1!.position),
+                tempPlayer1!.position);
           }
+          if (doubleList.isEmpty) {
+            randomPosition =
+                possibleMoves[Random().nextInt(possibleMoves.length)];
+            move(randomPosition);
+            // print('player1 pos: ${simulationP1!.position}');
+            // print('player2 pos: ${simulationP2!.position}');
+            // for (int z = 0; z < simulationFence.length; z++) {
+            //   if (simulationFence[z].placed == true) {
+            //     print('simulationFence[z]: ${simulationFence[z].position}');
+            //   }
+            // }
+            // if (simulationP1!.turn) {
+            //   print('PLAYER 1:');
+            //   List<int> justForPrinting =
+            //       tempPlayer1!.bfs(simulationFence, tempPlayer2!.position);
+            //   for (int t = 0; t < justForPrinting.length; t++) {
+            //     print('index: $t');
+            //     print(justForPrinting[t]);
+            //   }
+            // } else {
+            //   print('PLAYER 2:');
+            //   List<int> justForPrinting =
+            //       tempPlayer2!.bfs(simulationFence, tempPlayer1!.position);
+            //   for (int t = 0; t < justForPrinting.length; t++) {
+            //     print('index: $t');
+            //     print(justForPrinting[t]);
+            //   }
+            // }
+          } else {
+            List<int> tempList =
+                doubleList[Random().nextInt(doubleList.length)];
+            randomPosition = tempList[1];
+          }
+          // print("randomPosition: $randomPosition");
           move(randomPosition);
+
           // randomPosition =
           //     possibleMoves[Random().nextInt(possibleMoves.length)];
           // move(randomPosition);
@@ -459,6 +513,7 @@ class GameController extends GetxController {
                   updateFence(randomPosition, simulationFence, false, false);
             }
             emptyFences.remove(randomPosition);
+            // print('placed a fence in: $randomPosition');
           }
         }
 
