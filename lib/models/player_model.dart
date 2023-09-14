@@ -246,8 +246,8 @@ class Player {
     return [];
   }
 
-  // // a BFS (Breadth First Search) is applied which finds the shortest path to the goal
-  // // for each player and returns false if the distance is undefined.
+  // a BFS (Breadth First Search) is applied which finds the shortest path to the goal
+  // for each player and returns false if the distance is undefined.
   bool bfsSearch(
     List<FenceModel> tempFence,
   ) {
@@ -256,7 +256,7 @@ class Player {
     List<int> tempPossibleMoves = [];
     queue.add(position);
 
-    while (didNotReachOtherSide()) {
+    while (_didNotReachOtherSide()) {
       if (queue.isEmpty) return false;
       position = queue.removeFirst();
       visited.add(position);
@@ -269,6 +269,7 @@ class Player {
         }
       }
     }
+
     return true;
   }
 
@@ -299,35 +300,32 @@ class Player {
   }
 
   List<List<int>> findMinPaths(List<int> prev, int opponentPosition) {
+    if (color == Colors.green) {
+      return _findMinPathsForPlayer(
+          prev, opponentPosition, 0, GameConstants.totalInRow);
+    }
+    return _findMinPathsForPlayer(
+        prev,
+        opponentPosition,
+        GameConstants.totalInRow * (GameConstants.totalInRow - 1),
+        GameConstants.totalInBoard);
+  }
+
+  List<List<int>> _findMinPathsForPlayer(
+      List<int> prev, int opponentPosition, int startIndex, int endIndex) {
     List<int> path = [];
     List<List<int>> minPath = [];
     double minLength = 1.0 / 0.0; // infinity
-    if (color == Colors.green) {
-      for (int i = 0; i < GameConstants.totalInRow; i += 2) {
-        if (i != opponentPosition && prev[i] != -1) {
-          path = reconstructPath(prev, i, opponentPosition);
-          if (path.length < minLength && path.isNotEmpty) {
-            minPath.clear();
-            minLength = path.length.toDouble();
-            minPath.add(path);
-          } else if (path.length == minLength) {
-            minPath.add(path);
-          }
-        }
-      }
-    } else {
-      for (int i = GameConstants.totalInRow * (GameConstants.totalInRow - 1);
-          i < GameConstants.totalInBoard;
-          i += 2) {
-        if (i != opponentPosition && prev[i] != -1) {
-          path = reconstructPath(prev, i, opponentPosition);
-          if (path.length < minLength && path.isNotEmpty) {
-            minPath.clear();
-            minLength = path.length.toDouble();
-            minPath.add(path);
-          } else if (path.length == minLength) {
-            minPath.add(path);
-          }
+
+    for (int i = startIndex; i < endIndex; i += 2) {
+      if (i != opponentPosition && prev[i] != -1) {
+        path = _reconstructPath(prev, i, opponentPosition);
+        if (path.length < minLength && path.isNotEmpty) {
+          minPath.clear();
+          minLength = path.length.toDouble();
+          minPath.add(path);
+        } else if (path.length == minLength) {
+          minPath.add(path);
         }
       }
     }
@@ -335,7 +333,7 @@ class Player {
     return minPath;
   }
 
-  List<int> reconstructPath(List<int> prev, int target, int opponentPosition) {
+  List<int> _reconstructPath(List<int> prev, int target, int opponentPosition) {
     List<int> path = [];
     for (int j = target; j != -1; j = prev[j]) {
       if (j != opponentPosition) {
@@ -345,7 +343,7 @@ class Player {
     return List.from(path.reversed);
   }
 
-  bool didNotReachOtherSide() {
+  bool _didNotReachOtherSide() {
     if (color == Colors.green) {
       if (!reachedFirstRow(position)) {
         return true;

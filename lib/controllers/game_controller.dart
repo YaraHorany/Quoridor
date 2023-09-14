@@ -393,21 +393,10 @@ class GameController extends GetxController {
     }
   }
 
+  // Implementation of Quoridor AI based on MonteCarlo tree search
   void getBestNextMove() {
-    // print("***********************************");
-    // print("-----------------------------------");
-    // print("###################################");
-    // print("-----------------------------------");
-    // print("***********************************");
-    // print("####################################");
-    // print("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-    // print("(((((((((((((((((((((((((())))))))))");
-    // print("***********************************");
-    // print("-----------------------------------");
-    // print("(((((((((((((((((())))))))))))))))))");
-    // print("-----------------------------------");
     Player? tempPlayer1, tempPlayer2;
-    List<List<int>> doubleList = [];
+    List<List<int>> possiblePaths = [];
     Map<int, int> evaluations = {};
     late int randomPosition;
     simulationOn = true;
@@ -438,25 +427,21 @@ class GameController extends GetxController {
 
       calculatePossibleMoves();
       while (true) {
-        // if (simulationP1!.turn) {
-        //   print('p1 turn');
-        // } else {
-        //   print('p2 turn');
-        // }
-        if (outOfFences() || Random().nextInt(2) == 0) {
+        if (Random().nextInt(2) == 0 || outOfFences()) {
           tempPlayer1 = Player.copy(obj: simulationP1!);
           tempPlayer2 = Player.copy(obj: simulationP2!);
 
           if (simulationP1!.turn) {
-            doubleList = tempPlayer1!.findMinPaths(
-                tempPlayer1!.bfs(simulationFence, tempPlayer2!.position),
-                tempPlayer2!.position);
+            possiblePaths = tempPlayer1.findMinPaths(
+                tempPlayer1.bfs(simulationFence, tempPlayer2.position),
+                tempPlayer2.position);
           } else {
-            doubleList = tempPlayer2!.findMinPaths(
-                tempPlayer2!.bfs(simulationFence, tempPlayer1!.position),
-                tempPlayer1!.position);
+            possiblePaths = tempPlayer2.findMinPaths(
+                tempPlayer2.bfs(simulationFence, tempPlayer1.position),
+                tempPlayer1.position);
           }
-          if (doubleList.isEmpty) {
+          if (possiblePaths.isEmpty) {
+            // Pick randomly one of the possible moves.
             randomPosition =
                 possibleMoves[Random().nextInt(possibleMoves.length)];
             move(randomPosition);
@@ -485,12 +470,13 @@ class GameController extends GetxController {
             //   }
             // }
           } else {
-            List<int> tempList =
-                doubleList[Random().nextInt(doubleList.length)];
-            randomPosition = tempList[1];
+            // Pick randomly one of the shortest paths to the target side
+            randomPosition =
+                possiblePaths[Random().nextInt(possiblePaths.length)][1];
           }
-          // print("randomPosition: $randomPosition");
+
           move(randomPosition);
+          // print("randomPosition: $randomPosition");
 
           // randomPosition =
           //     possibleMoves[Random().nextInt(possibleMoves.length)];
@@ -498,7 +484,6 @@ class GameController extends GetxController {
         } else {
           // Randomly choose to move or to place a fence
           // if value == 1 place a fence
-          // print('PLACE A FENCE');
           returned = -1;
           emptyFences = getEmptyFencesIndexes(simulationFence);
           while (returned == -1) {
