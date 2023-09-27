@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../helpers.dart';
 import '../models/fence_model.dart';
+import '../models/tree_node.dart';
 import '../models/player_model.dart';
 import 'package:quoridor/utils/game_constants.dart';
 
@@ -22,13 +23,19 @@ class GameController extends GetxController {
   RxString msg = "".obs;
   late bool singlePlayer;
   bool simulationOn = false;
-  int winner = -1;
 
   @override
   void onInit() {
     super.onInit();
     player1 = Player(position: 280, color: Colors.green, turn: true);
     player2 = Player(position: 8, color: Colors.orange, turn: false);
+
+    // player1 = Player(position: 76, color: Colors.green, turn: true);
+    // player2 = Player(position: 246, color: Colors.orange, turn: false);
+    // TEMPORARY - DELETE IT LATER
+    // player1.fences.value = 0;
+    // player2.fences.value = 0;
+
     _buildBoard();
   }
 
@@ -45,7 +52,6 @@ class GameController extends GetxController {
   }
 
   void _buildBoard() {
-    List<List<int>> doubleList = [];
     squares.clear();
     fence.clear();
 
@@ -78,19 +84,7 @@ class GameController extends GetxController {
       }
     }
 
-    possibleMoves = [];
     possibleMoves = player1.showPossibleMoves(fence, player2.position);
-
-    // fence[calcFenceIndex(91)].placed = true;
-    // fence[calcFenceIndex(92)].placed = true;
-    // fence[calcFenceIndex(93)].placed = true;
-    //
-    // doubleList = player1.findMinPaths(
-    //     player1.bfs(fence, player2.position), player2.position);
-    // print('min paths:');
-    // print(doubleList);
-    // List<int> tempList = doubleList[Random().nextInt(doubleList.length)];
-    // print(tempList);
 
     update();
   }
@@ -102,15 +96,15 @@ class GameController extends GetxController {
   void move(int index) {
     if (possibleMoves.contains(index)) {
       changePosition(index);
-      declareWinner();
+      if (_winnerFound()) return;
       switchTurns();
-      update();
-      if (singlePlayer && player2.turn && !simulationOn) {
-        getBestNextMove();
+      if (singlePlayer && player2.turn) {
+        aiMove();
       }
     }
   }
 
+  // Switch turns and calculate possible moves for next player.
   void switchTurns() {
     if (simulationOn) {
       simulationP1!.changeTurn();
@@ -123,7 +117,6 @@ class GameController extends GetxController {
   }
 
   void calculatePossibleMoves() {
-    possibleMoves.clear();
     if (simulationOn) {
       if (simulationP1!.turn) {
         possibleMoves = simulationP1!
@@ -154,43 +147,36 @@ class GameController extends GetxController {
       } else {
         player2.position = index;
       }
+      update();
     }
   }
 
-  int calcFenceIndex(int i) {
-    if (simulationOn) {
-      return simulationFence.indexWhere((element) => element.position == i);
-    }
-    return fence.indexWhere((element) => element.position == i);
-  }
+  int calcFenceIndex(int i) =>
+      fence.indexWhere((element) => element.position == i);
 
   void drawFence(int boardIndex) {
     if (!outOfFences()) {
       int index = calcFenceIndex(boardIndex);
       if (dragType == DragType.verticalDrag) {
-        if (fence[index].type == FenceType.verticalFence ||
-            fence[index].type == FenceType.squareFence) {
+        if (fence[index].type != FenceType.horizontalFence) {
           if (fence[index].type == FenceType.squareFence) {
             boardIndex -= GameConstants.totalInRow;
             index = calcFenceIndex(boardIndex);
           }
-          if (isNotLastRow(boardIndex) && isValid(true, boardIndex)) {
-            updateFence(boardIndex, fence, true, false);
+          if (isNotLastRow(boardIndex) && isAvailable(true, boardIndex)) {
+            checkAndUpdateFence(boardIndex, fence, true);
           }
         }
-        update();
-      } else if (dragType == DragType.horizontalDrag) {
-        if (fence[index].type == FenceType.horizontalFence ||
-            fence[index].type == FenceType.squareFence) {
+      } else {
+        if (fence[index].type != FenceType.verticalFence) {
           if (fence[index].type == FenceType.squareFence) {
             boardIndex -= 1;
             index = calcFenceIndex(boardIndex);
           }
-          if (isNotLastColumn(boardIndex) && isValid(false, boardIndex)) {
-            updateFence(boardIndex, fence, false, false);
+          if (isNotLastColumn(boardIndex) && isAvailable(false, boardIndex)) {
+            checkAndUpdateFence(boardIndex, fence, false);
           }
         }
-        update();
       }
     } else {
       popUpMessage('   There are no more\n walls for you to place');
@@ -201,24 +187,22 @@ class GameController extends GetxController {
     if (!outOfFences()) {
       int index = calcFenceIndex(boardIndex);
       if (dragType == DragType.verticalDrag) {
-        if (fence[index].type == FenceType.verticalFence ||
-            fence[index].type == FenceType.squareFence) {
+        if (fence[index].type != FenceType.horizontalFence) {
           if (fence[index].type == FenceType.squareFence) {
             boardIndex -= GameConstants.totalInRow;
             index = calcFenceIndex(boardIndex);
           }
-          if (isNotLastRow(boardIndex) && isValid(true, boardIndex)) {
+          if (isNotLastRow(boardIndex) && isAvailable(true, boardIndex)) {
             updateTemporaryFence(boardIndex, true, val);
           }
         }
-      } else if (dragType == DragType.horizontalDrag) {
-        if (fence[index].type == FenceType.horizontalFence ||
-            fence[index].type == FenceType.squareFence) {
+      } else {
+        if (fence[index].type != FenceType.verticalFence) {
           if (fence[index].type == FenceType.squareFence) {
             boardIndex -= 1;
             index = calcFenceIndex(boardIndex);
           }
-          if (isNotLastColumn(boardIndex) && isValid(false, boardIndex)) {
+          if (isNotLastColumn(boardIndex) && isAvailable(false, boardIndex)) {
             updateTemporaryFence(boardIndex, false, val);
           }
         }
@@ -226,7 +210,8 @@ class GameController extends GetxController {
     }
   }
 
-  bool isValid(bool isVertical, int boardIndex) {
+  // Check if it's possible to place a fence
+  bool isAvailable(bool isVertical, int boardIndex) {
     if (isVertical) {
       return fence[calcFenceIndex(boardIndex)].placed == false &&
           fence[calcFenceIndex(boardIndex + GameConstants.totalInRow)].placed ==
@@ -241,32 +226,44 @@ class GameController extends GetxController {
     }
   }
 
-  int updateFence(int boardIndex, List<FenceModel> fence, bool isVertical,
-      bool isSquareDrag) {
+  void checkAndUpdateFence(
+      int boardIndex, List<FenceModel> fence, bool isVertical) {
     if (canReachOtherSide(boardIndex, isVertical)) {
-      fence[calcFenceIndex(boardIndex)].placed = true;
-      if (isVertical) {
-        fence[calcFenceIndex(boardIndex + GameConstants.totalInRow)].placed =
-            true;
-
-        fence[calcFenceIndex(boardIndex + (GameConstants.totalInRow * 2))]
-            .placed = true;
-      } else {
-        fence[calcFenceIndex(boardIndex + 1)].placed = true;
-        fence[calcFenceIndex(boardIndex + 2)].placed = true;
-      }
-      update();
-      updateFencesNum();
+      placeFence(fence, boardIndex, isVertical, false, true);
       switchTurns();
-      if (singlePlayer && player2.turn && !simulationOn) {
-        getBestNextMove();
+      if (singlePlayer && player2.turn) {
+        aiMove();
       }
-      return 1;
     } else {
-      if (simulationOn) return -1;
       updateTemporaryFence(boardIndex, isVertical, false);
       popUpMessage('Placing a wall here will make\n    an unwinnable position');
-      return 1;
+    }
+  }
+
+  // Place a fence vertically or horizontally and update fences number.
+  void placeFence(List<FenceModel> fence, int boardIndex, bool isVertical,
+      bool isTemp, bool val) {
+    isVertical
+        ? _placeVerticalFence(fence, boardIndex, val)
+        : _placeHorizontalFence(fence, boardIndex, val);
+    update();
+    if (!isTemp && val) {
+      _decreaseFencesNum();
+    }
+  }
+
+  // Place a vertical fence.
+  void _placeVerticalFence(List<FenceModel> fence, int boardIndex, bool val) {
+    for (int i = 0; i < GameConstants.fenceLength; i++) {
+      fence[calcFenceIndex(boardIndex + GameConstants.totalInRow * i)].placed =
+          val;
+    }
+  }
+
+  // Place a horizontal fence.
+  void _placeHorizontalFence(List<FenceModel> fence, int boardIndex, bool val) {
+    for (int i = 0; i < GameConstants.fenceLength; i++) {
+      fence[calcFenceIndex(boardIndex + i)].placed = val;
     }
   }
 
@@ -289,39 +286,33 @@ class GameController extends GetxController {
   // Checking that both players are NOT completely blocked from reaching the opposing baseline
   bool canReachOtherSide(int boardIndex, bool isVertical) {
     late Player tempPlayer1, tempPlayer2;
-    List<FenceModel> tempFence = [];
-    if (simulationOn) {
-      for (int i = 0; i < simulationFence.length; i++) {
-        tempFence.add(FenceModel.copy(obj: simulationFence[i]));
-      }
-    } else {
-      for (int i = 0; i < fence.length; i++) {
-        tempFence.add(FenceModel.copy(obj: fence[i]));
-      }
-    }
-
-    tempFence[calcFenceIndex(boardIndex)].placed = true;
-    if (isVertical) {
-      tempFence[calcFenceIndex(boardIndex + GameConstants.totalInRow)].placed =
-          true;
-      tempFence[calcFenceIndex(boardIndex + (GameConstants.totalInRow * 2))]
-          .placed = true;
-    } else {
-      tempFence[calcFenceIndex(boardIndex + 1)].placed = true;
-      tempFence[calcFenceIndex(boardIndex + 2)].placed = true;
-    }
+    late bool result;
 
     if (simulationOn) {
       tempPlayer1 = Player.copy(obj: simulationP1!);
       tempPlayer2 = Player.copy(obj: simulationP2!);
+
+      // place a temporary fence.
+      placeFence(simulationFence, boardIndex, isVertical, true, true);
+      result = tempPlayer1.bfsSearch(simulationFence) &&
+          tempPlayer2.bfsSearch(simulationFence);
+      // remove temporary fence.
+      placeFence(simulationFence, boardIndex, isVertical, true, false);
     } else {
       tempPlayer1 = Player.copy(obj: player1);
       tempPlayer2 = Player.copy(obj: player2);
+
+      // place a temporary fence.
+      placeFence(fence, boardIndex, isVertical, true, true);
+      result = tempPlayer1.bfsSearch(fence) && tempPlayer2.bfsSearch(fence);
+      // remove temporary fence.
+      placeFence(fence, boardIndex, isVertical, true, false);
     }
-    return tempPlayer1.bfsSearch(tempFence) && tempPlayer2.bfsSearch(tempFence);
+
+    return result;
   }
 
-  void updateFencesNum() {
+  void _decreaseFencesNum() {
     if (simulationOn) {
       if (simulationP1!.turn) {
         simulationP1!.fences.value--;
@@ -365,16 +356,7 @@ class GameController extends GetxController {
     });
   }
 
-  void declareWinner() {
-    // print('check winner');
-    if (simulationOn) {
-      if (reachedFirstRow(simulationP1!.position)) {
-        winner = 1;
-      } else if (reachedLastRow(simulationP2!.position)) {
-        winner = 2;
-      }
-      return;
-    }
+  bool _winnerFound() {
     if (reachedFirstRow(player1.position) || reachedLastRow(player2.position)) {
       Get.defaultDialog(
         title:
@@ -390,155 +372,12 @@ class GameController extends GetxController {
           ),
         ],
       ).then((value) => resetGame());
+      return true;
     }
+    return false;
   }
 
-  // Implementation of Quoridor AI based on MonteCarlo tree search
-  void getBestNextMove() {
-    Player? tempPlayer1, tempPlayer2;
-    List<List<int>> possiblePaths = [];
-    Map<int, int> evaluations = {};
-    late int randomPosition;
-    simulationOn = true;
-    int returned = -1;
-    late int score;
-    late int firstMove;
-    double highestScore = -1.0 / 0.0; // minus infinity
-    late int bestMove;
-
-    for (int i = 0; i < 1000; i++) {
-      // print("***********************************");
-      // print('SIMULATION NUMBER ${i + 1}');
-      // print("***********************************");
-      firstMove = -1;
-      winner = -1;
-      List<int> emptyFences = [];
-      score = 10000;
-
-      simulationFence.clear();
-      for (int j = 0; j < fence.length; j++) {
-        simulationFence.add(FenceModel.copy(obj: fence[j]));
-      }
-
-      simulationP1 = Player.copy(obj: player1);
-      simulationP1!.fences.value = player1.fences.value;
-      simulationP2 = Player.copy(obj: player2);
-      simulationP2!.fences.value = player2.fences.value;
-
-      calculatePossibleMoves();
-      while (true) {
-        if (Random().nextInt(2) == 0 || outOfFences()) {
-          tempPlayer1 = Player.copy(obj: simulationP1!);
-          tempPlayer2 = Player.copy(obj: simulationP2!);
-
-          if (simulationP1!.turn) {
-            possiblePaths = tempPlayer1.findMinPaths(
-                tempPlayer1.bfs(simulationFence, tempPlayer2.position),
-                tempPlayer2.position);
-          } else {
-            possiblePaths = tempPlayer2.findMinPaths(
-                tempPlayer2.bfs(simulationFence, tempPlayer1.position),
-                tempPlayer1.position);
-          }
-          if (possiblePaths.isEmpty) {
-            // Pick randomly one of the possible moves.
-            randomPosition =
-                possibleMoves[Random().nextInt(possibleMoves.length)];
-            move(randomPosition);
-            // print('player1 pos: ${simulationP1!.position}');
-            // print('player2 pos: ${simulationP2!.position}');
-            // for (int z = 0; z < simulationFence.length; z++) {
-            //   if (simulationFence[z].placed == true) {
-            //     print('simulationFence[z]: ${simulationFence[z].position}');
-            //   }
-            // }
-            // if (simulationP1!.turn) {
-            //   print('PLAYER 1:');
-            //   List<int> justForPrinting =
-            //       tempPlayer1!.bfs(simulationFence, tempPlayer2!.position);
-            //   for (int t = 0; t < justForPrinting.length; t++) {
-            //     print('index: $t');
-            //     print(justForPrinting[t]);
-            //   }
-            // } else {
-            //   print('PLAYER 2:');
-            //   List<int> justForPrinting =
-            //       tempPlayer2!.bfs(simulationFence, tempPlayer1!.position);
-            //   for (int t = 0; t < justForPrinting.length; t++) {
-            //     print('index: $t');
-            //     print(justForPrinting[t]);
-            //   }
-            // }
-          } else {
-            // Pick randomly one of the shortest paths to the target side
-            randomPosition =
-                possiblePaths[Random().nextInt(possiblePaths.length)][1];
-          }
-
-          move(randomPosition);
-          // print("randomPosition: $randomPosition");
-
-          // randomPosition =
-          //     possibleMoves[Random().nextInt(possibleMoves.length)];
-          // move(randomPosition);
-        } else {
-          // Randomly choose to move or to place a fence
-          // if value == 1 place a fence
-          returned = -1;
-          emptyFences = getEmptyFencesIndexes(simulationFence);
-          while (returned == -1) {
-            randomPosition = emptyFences[Random().nextInt(emptyFences.length)];
-            if (simulationFence[calcFenceIndex(randomPosition)].type ==
-                FenceType.verticalFence) {
-              returned =
-                  updateFence(randomPosition, simulationFence, true, false);
-            } else if (simulationFence[calcFenceIndex(randomPosition)].type ==
-                FenceType.horizontalFence) {
-              returned =
-                  updateFence(randomPosition, simulationFence, false, false);
-            }
-            emptyFences.remove(randomPosition);
-            // print('placed a fence in: $randomPosition');
-          }
-        }
-
-        if (firstMove == -1) {
-          firstMove = randomPosition;
-        }
-        if (winner != -1) break;
-        score -= 1;
-      }
-
-      if (winner == 1) {
-        score *= -1;
-      }
-
-      if (evaluations.containsKey(firstMove)) {
-        evaluations.update(firstMove, (value) => value += score);
-      } else {
-        evaluations[firstMove] = score;
-      }
-    }
-    for (var key in evaluations.keys) {
-      if (evaluations[key]! > highestScore) {
-        highestScore = (evaluations[key]!).toDouble();
-        bestMove = key;
-      }
-    }
-    simulationOn = false;
-
-    if (squares.contains(bestMove)) {
-      changePosition(bestMove);
-      switchTurns();
-    } else if ((bestMove ~/ GameConstants.totalInRow) % 2 == 0) {
-      updateFence(bestMove, fence, true, false);
-    } else {
-      updateFence(bestMove, fence, false, false);
-    }
-    declareWinner();
-  }
-
-  List<int> getEmptyFencesIndexes(List<FenceModel> fence) {
+  List<int> getEmptyValidFences(List<FenceModel> fence) {
     List<int> emptyFences = [];
     for (int i = 0; i < GameConstants.totalInBoard; i++) {
       if ((i ~/ GameConstants.totalInRow) % 2 == 0) {
@@ -550,7 +389,9 @@ class GameController extends GetxController {
               fence[calcFenceIndex(i + (GameConstants.totalInRow * 2))]
                       .placed ==
                   false) {
-            emptyFences.add(i);
+            if (canReachOtherSide(i, true)) {
+              emptyFences.add(i);
+            }
           }
         }
       } else {
@@ -559,11 +400,275 @@ class GameController extends GetxController {
           if (fence[calcFenceIndex(i)].placed == false &&
               fence[calcFenceIndex(i + 1)].placed == false &&
               fence[calcFenceIndex(i + 2)].placed == false) {
-            emptyFences.add(i);
+            if (canReachOtherSide(i, false)) {
+              emptyFences.add(i);
+            }
           }
         }
       }
     }
     return emptyFences;
+  }
+
+  void aiMove() {
+    int? randomPosition;
+    randomPosition = search().position;
+    // print('randomPosition: $randomPosition');
+
+    if (squares.contains(randomPosition)) {
+      changePosition(randomPosition);
+    } else {
+      placeFence(
+        fence,
+        randomPosition,
+        fence[calcFenceIndex(randomPosition)].type == FenceType.verticalFence
+            ? true
+            : false,
+        false,
+        true,
+      );
+    }
+    switchTurns();
+    _winnerFound();
+  }
+
+  // Search for the best move in the current position
+  TreeNode search() {
+    TreeNode? node;
+    late int score;
+    simulationOn = true;
+
+    // create root node
+    TreeNode root = TreeNode(
+      position: player2.position,
+      parent: null,
+      isTerminal:
+          reachedFirstRow(player1.position) || reachedLastRow(player2.position),
+    );
+
+    // print('Root position: ${root.position}');
+
+    // walk through 1000 iterations
+    for (int iteration = 0; iteration < 1000; iteration++) {
+      // print('Iteration number $iteration');
+
+      // create simulation game (simulation players and fence).
+      simulationFence.clear();
+      for (int j = 0; j < fence.length; j++) {
+        simulationFence.add(FenceModel.copy(obj: fence[j]));
+      }
+
+      simulationP1 = Player.copy(obj: player1);
+      simulationP1!.fences.value = player1.fences.value;
+      simulationP2 = Player.copy(obj: player2);
+      simulationP2!.fences.value = player2.fences.value;
+
+      // print('simulation player1.position: ${simulationP1!.position}');
+      // print('simulation player2.position: ${simulationP2!.position}');
+
+      // select a node (selection phase)
+      node = select(root);
+
+      // score current node (simulation phase)
+      score = rollout(node!.position);
+
+      // backPropagate results
+      backPropagate(node!, score);
+    }
+
+    simulationOn = false;
+
+    // pick up the best move in the current position
+    return getBestMove(root, 0);
+  }
+
+  // Select most promising node
+  TreeNode? select(TreeNode node) {
+    // make sure that we're dealing with non-terminal nodes
+    while (!node.isTerminal) {
+      // case where the node is fully expanded
+      if (node.isFullyExpanded) {
+        // print('${node.position} is fully expanded');
+        node = getBestMove(node, 2);
+        // print('best move: ${node.position}');
+
+        if (squares.contains(node.position)) {
+          changePosition(node.position);
+          // print('change position');
+          // print('simulationP1.pos: ${simulationP1!.position}');
+          // print('simulationP2.pos: ${simulationP2!.position}');
+        } else {
+          // print('place a fence');
+          placeFence(
+            simulationFence,
+            node.position,
+            simulationFence[calcFenceIndex(node.position)].type ==
+                    FenceType.verticalFence
+                ? true
+                : false,
+            false,
+            true,
+          );
+        }
+
+        switchTurns();
+      }
+      // case where the node is NOT fully expanded
+      else {
+        return expand(node);
+      }
+    }
+    // print('Node is terminal');
+    return node;
+  }
+
+  TreeNode? expand(TreeNode node) {
+    // print('EXPANDING');
+    List<int> emptyValidFences =
+        outOfFences() ? [] : getEmptyValidFences(simulationFence);
+    calculatePossibleMoves();
+    for (final move in (possibleMoves + emptyValidFences)) {
+      // Make sure that current state (move) is not present in child nodes
+      if (!node.children.containsKey(move)) {
+        // Create a new node
+        TreeNode newNode = TreeNode(
+          position: move,
+          parent: node,
+          isTerminal:
+              reachedFirstRow(simulationP1!.position) || reachedLastRow(move),
+        );
+        // print('newNode.pos: ${newNode.position}');
+        // print('newNode.isTerminal: ${newNode.isTerminal}');
+        // print('newNode.isFullyExpanded: ${newNode.isFullyExpanded}');
+        // Add child node to parent's node children list (dict)
+        node.children[move] = newNode;
+        // Case when node is fully expanded
+        if ((possibleMoves + emptyValidFences).length == node.children.length) {
+          node.isFullyExpanded = true;
+        }
+        // return newly created node
+        return newNode;
+      }
+    }
+    // should not get here.
+    return null;
+  }
+
+  // Simulate the game via making random moves until reaching end of the game.
+  int rollout(int position) {
+    late int randomPosition;
+    List<int> emptyFences = [];
+
+    if (!reachedFirstRow(simulationP1!.position) &&
+        !reachedLastRow(simulationP2!.position)) {
+      if (squares.contains(position)) {
+        changePosition(position);
+        // print('simulation player1.position: ${simulationP1!.position}');
+        // print('simulation player2.position: ${simulationP2!.position}');
+      } else {
+        // print('move');
+        placeFence(
+          simulationFence,
+          position,
+          simulationFence[calcFenceIndex(position)].type ==
+                  FenceType.verticalFence
+              ? true
+              : false,
+          false,
+          true,
+        );
+      }
+      // Switch turns and calculate possible moves.
+      switchTurns();
+
+      while (!reachedFirstRow(simulationP1!.position) &&
+          !reachedLastRow(simulationP2!.position)) {
+        if (outOfFences() || Random().nextInt(2) == 0) {
+          // Randomly pick one of the possible moves.
+          randomPosition =
+              possibleMoves[Random().nextInt(possibleMoves.length)];
+          changePosition(randomPosition);
+        } else {
+          // Randomly place a fence
+          emptyFences = getEmptyValidFences(simulationFence);
+          randomPosition = emptyFences[Random().nextInt(emptyFences.length)];
+          placeFence(
+            simulationFence,
+            randomPosition,
+            simulationFence[calcFenceIndex(randomPosition)].type ==
+                    FenceType.verticalFence
+                ? true
+                : false,
+            false,
+            true,
+          );
+        }
+        // Switch turns and calculate possible moves.
+        switchTurns();
+      }
+
+      // print('out of rollout');
+    }
+
+    return reachedLastRow(simulationP2!.position) ? 1 : -1;
+  }
+
+  // backPropagate the number of visits and score up to the root node
+  void backPropagate(TreeNode node, int score) {
+    while (true) {
+      // update node's visits
+      node.visits += 1;
+
+      // update node's score
+      node.score += score;
+
+      // print('node.position: ${node.position}');
+      // print('node.visits: ${node.visits}');
+      // print('node.score: ${node.score}');
+      if (node.parent == null) {
+        break;
+      }
+      // set node to parent
+      node = node.parent!;
+    }
+  }
+
+  // Select the best node basing on UCB1 formula
+  TreeNode getBestMove(TreeNode node, int explorationConstant) {
+    // Define best score & best moves
+    double bestScore = -1.0 / 0.0; // minus infinity
+    List<TreeNode> bestMoves = [];
+    double? moveScore;
+
+    // Loop over child nodes
+    for (final childNode in node.children.values) {
+      // get move score using UCT formula
+      moveScore = childNode.score / childNode.visits +
+          explorationConstant * sqrt(log(node.visits / childNode.visits));
+
+      // if (explorationConstant == 0) {
+      //   print('childeNode.position: ${childNode.position}');
+      //   print('movescore: $moveScore');
+      // }
+      //
+      // print('childNode.position ${childNode.position} moveScore: $moveScore');
+
+      // better move has been found
+      if (moveScore > bestScore) {
+        bestScore = moveScore;
+        bestMoves = [childNode];
+      }
+
+      // found as good move as already available
+      else if (moveScore == bestScore) {
+        bestMoves.add(childNode);
+      }
+    }
+    // print("bestMoves");
+    // for (int x = 0; x < bestMoves.length; x++) {
+    //   print(bestMoves[x].position);
+    // }
+    // return one of the best moves randomly
+    return bestMoves[Random().nextInt(bestMoves.length)];
   }
 }

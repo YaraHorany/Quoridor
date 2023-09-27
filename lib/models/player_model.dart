@@ -256,7 +256,7 @@ class Player {
     List<int> tempPossibleMoves = [];
     queue.add(position);
 
-    while (_didNotReachOtherSide()) {
+    while (didNotReachOtherSide()) {
       if (queue.isEmpty) return false;
       position = queue.removeFirst();
       visited.add(position);
@@ -343,7 +343,7 @@ class Player {
     return List.from(path.reversed);
   }
 
-  bool _didNotReachOtherSide() {
+  bool didNotReachOtherSide() {
     if (color == Colors.green) {
       if (!reachedFirstRow(position)) {
         return true;
