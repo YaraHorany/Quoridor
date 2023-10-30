@@ -24,6 +24,9 @@ class GameController extends GetxController {
   late bool singlePlayer;
   bool simulationOn = false;
 
+  bool aiFirstMove = true;
+  int globalVal = 0;
+
   @override
   void onInit() {
     super.onInit();
@@ -106,6 +109,7 @@ class GameController extends GetxController {
 
   // Switch turns and calculate possible moves for next player.
   void switchTurns() {
+    // print('SWITCHING TURNS');
     if (simulationOn) {
       simulationP1!.changeTurn();
       simulationP2!.changeTurn();
@@ -344,6 +348,14 @@ class GameController extends GetxController {
     }
   }
 
+  bool opponentOutOfFences() {
+    if (simulationP1!.turn) {
+      return simulationP2!.outOfFences();
+    } else {
+      return simulationP1!.outOfFences();
+    }
+  }
+
   void popUpMessage(String message) {
     int count = 0;
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -359,9 +371,23 @@ class GameController extends GetxController {
   bool _winnerFound() {
     if (reachedFirstRow(player1.position) || reachedLastRow(player2.position)) {
       Get.defaultDialog(
-        title:
-            reachedFirstRow(player1.position) ? "PLAYER 1 WON" : "PLAYER 2 WON",
-        content: const Text(""),
+        title: "",
+        content: Row(
+          children: [
+            const Text('                 PLAYER'),
+            Container(
+              margin: const EdgeInsets.all(5),
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: reachedFirstRow(player1.position)
+                    ? player1.color
+                    : player2.color,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const Text('WON'),
+          ],
+        ),
         actions: [
           TextButton(
             child: const Text('Restart'),
@@ -413,7 +439,6 @@ class GameController extends GetxController {
   void aiMove() {
     int? randomPosition;
     randomPosition = search().position;
-    // print('randomPosition: $randomPosition');
 
     if (squares.contains(randomPosition)) {
       changePosition(randomPosition);
@@ -434,9 +459,24 @@ class GameController extends GetxController {
 
   // Search for the best move in the current position
   TreeNode search() {
+    globalVal = 0;
     TreeNode? node;
     late int score;
-    simulationOn = true;
+
+    // Heuristic:
+    // for first move of each pawn go forward if possible
+    if (aiFirstMove) {
+      aiFirstMove = false;
+      if (possibleMoves
+          .contains(player2.position + (2 * GameConstants.totalInRow))) {
+        return TreeNode(
+          position: player2.position + (2 * GameConstants.totalInRow),
+          parent: null,
+          isTerminal: reachedFirstRow(player1.position) ||
+              reachedLastRow(player2.position + (2 * GameConstants.totalInRow)),
+        );
+      }
+    }
 
     // create root node
     TreeNode root = TreeNode(
@@ -444,12 +484,13 @@ class GameController extends GetxController {
       parent: null,
       isTerminal:
           reachedFirstRow(player1.position) || reachedLastRow(player2.position),
+      emptyValidFences: outOfFences() ? [] : getEmptyValidFences(fence),
     );
 
     // print('Root position: ${root.position}');
-
+    simulationOn = true;
     // walk through 1000 iterations
-    for (int iteration = 0; iteration < 1000; iteration++) {
+    for (int iteration = 0; iteration < 20; iteration++) {
       // print('Iteration number $iteration');
 
       // create simulation game (simulation players and fence).
@@ -484,16 +525,19 @@ class GameController extends GetxController {
 
   // Select most promising node
   TreeNode? select(TreeNode node) {
+    List<int>? prevEmptyValidFences;
     // make sure that we're dealing with non-terminal nodes
     while (!node.isTerminal) {
       // case where the node is fully expanded
       if (node.isFullyExpanded) {
         // print('${node.position} is fully expanded');
+        prevEmptyValidFences = node.emptyValidFences;
         node = getBestMove(node, 2);
         // print('best move: ${node.position}');
 
         if (squares.contains(node.position)) {
           changePosition(node.position);
+          node.emptyValidFences ??= prevEmptyValidFences;
           // print('change position');
           // print('simulationP1.pos: ${simulationP1!.position}');
           // print('simulationP2.pos: ${simulationP2!.position}');
@@ -509,6 +553,7 @@ class GameController extends GetxController {
             false,
             true,
           );
+          node.emptyValidFences ??= getEmptyValidFences(simulationFence);
         }
 
         switchTurns();
@@ -524,10 +569,8 @@ class GameController extends GetxController {
 
   TreeNode? expand(TreeNode node) {
     // print('EXPANDING');
-    List<int> emptyValidFences =
-        outOfFences() ? [] : getEmptyValidFences(simulationFence);
     calculatePossibleMoves();
-    for (final move in (possibleMoves + emptyValidFences)) {
+    for (final move in (possibleMoves + node.emptyValidFences!)) {
       // Make sure that current state (move) is not present in child nodes
       if (!node.children.containsKey(move)) {
         // Create a new node
@@ -543,7 +586,8 @@ class GameController extends GetxController {
         // Add child node to parent's node children list (dict)
         node.children[move] = newNode;
         // Case when node is fully expanded
-        if ((possibleMoves + emptyValidFences).length == node.children.length) {
+        if ((possibleMoves + node.emptyValidFences!).length ==
+            node.children.length) {
           node.isFullyExpanded = true;
         }
         // return newly created node
@@ -556,6 +600,8 @@ class GameController extends GetxController {
 
   // Simulate the game via making random moves until reaching end of the game.
   int rollout(int position) {
+    Player? tempPlayer1, tempPlayer2;
+    List<List<int>> possiblePaths = [];
     late int randomPosition;
     List<int> emptyFences = [];
 
@@ -566,7 +612,6 @@ class GameController extends GetxController {
         // print('simulation player1.position: ${simulationP1!.position}');
         // print('simulation player2.position: ${simulationP2!.position}');
       } else {
-        // print('move');
         placeFence(
           simulationFence,
           position,
@@ -583,26 +628,103 @@ class GameController extends GetxController {
 
       while (!reachedFirstRow(simulationP1!.position) &&
           !reachedLastRow(simulationP2!.position)) {
-        if (outOfFences() || Random().nextInt(2) == 0) {
-          // Randomly pick one of the possible moves.
-          randomPosition =
-              possibleMoves[Random().nextInt(possibleMoves.length)];
-          changePosition(randomPosition);
+        // If opponent has no walls left
+        if (opponentOutOfFences()) {
+          if (outOfFences() || Random().nextInt(2) == 0) {
+            // move pawn to one of the shortest paths
+            tempPlayer1 = Player.copy(obj: simulationP1!);
+            tempPlayer2 = Player.copy(obj: simulationP2!);
+            // heuristic
+            if (simulationP1!.turn) {
+              possiblePaths = tempPlayer1.findMinPaths(
+                  tempPlayer1.bfs(simulationFence, tempPlayer2.position),
+                  tempPlayer2.position);
+              // print(possiblePaths);
+            } else {
+              possiblePaths = tempPlayer2.findMinPaths(
+                  tempPlayer2.bfs(simulationFence, tempPlayer1.position),
+                  tempPlayer1.position);
+              // print(possiblePaths);
+            }
+            if (possiblePaths.isEmpty) {
+              randomPosition =
+                  possibleMoves[Random().nextInt(possibleMoves.length)];
+            } else {
+              // print(possiblePaths[Random().nextInt(possiblePaths.length)]);
+              randomPosition =
+                  possiblePaths[Random().nextInt(possiblePaths.length)][1];
+            }
+
+            changePosition(randomPosition);
+          } else {
+            // place walls only to interrupt the opponent's path not to support my pawn.
+            emptyFences = getEmptyValidFences(simulationFence);
+            print('******** EMPTY FENCES **********');
+            print(emptyFences);
+            randomPosition = emptyFences[Random().nextInt(emptyFences.length)];
+            placeFence(
+              simulationFence,
+              randomPosition,
+              simulationFence[calcFenceIndex(randomPosition)].type ==
+                      FenceType.verticalFence
+                  ? true
+                  : false,
+              false,
+              true,
+            );
+          }
         } else {
-          // Randomly place a fence
-          emptyFences = getEmptyValidFences(simulationFence);
-          randomPosition = emptyFences[Random().nextInt(emptyFences.length)];
-          placeFence(
-            simulationFence,
-            randomPosition,
-            simulationFence[calcFenceIndex(randomPosition)].type ==
-                    FenceType.verticalFence
-                ? true
-                : false,
-            false,
-            true,
-          );
+          if (Random().nextDouble() < 0.7) {
+            // move pawn to one of the shortest paths
+            tempPlayer1 = Player.copy(obj: simulationP1!);
+            tempPlayer2 = Player.copy(obj: simulationP2!);
+            // heuristic
+            if (simulationP1!.turn) {
+              possiblePaths = tempPlayer1.findMinPaths(
+                  tempPlayer1.bfs(simulationFence, tempPlayer2.position),
+                  tempPlayer2.position);
+            } else {
+              possiblePaths = tempPlayer2.findMinPaths(
+                  tempPlayer2.bfs(simulationFence, tempPlayer1.position),
+                  tempPlayer1.position);
+            }
+            // print(possiblePaths);
+            if (possiblePaths.isEmpty) {
+              randomPosition =
+                  possibleMoves[Random().nextInt(possibleMoves.length)];
+            } else {
+              // print('i was here2');
+              // print(possiblePaths[Random().nextInt(possiblePaths.length)]);
+              randomPosition =
+                  possiblePaths[Random().nextInt(possiblePaths.length)][1];
+            }
+
+            changePosition(randomPosition);
+          } else {
+            if (outOfFences() || Random().nextInt(2) == 0) {
+              // Randomly place a fence
+              emptyFences = getEmptyValidFences(simulationFence);
+              randomPosition =
+                  emptyFences[Random().nextInt(emptyFences.length)];
+              placeFence(
+                simulationFence,
+                randomPosition,
+                simulationFence[calcFenceIndex(randomPosition)].type ==
+                        FenceType.verticalFence
+                    ? true
+                    : false,
+                false,
+                true,
+              );
+            } else {
+              // Randomly pick one of the possible moves.
+              randomPosition =
+                  possibleMoves[Random().nextInt(possibleMoves.length)];
+              changePosition(randomPosition);
+            }
+          }
         }
+
         // Switch turns and calculate possible moves.
         switchTurns();
       }

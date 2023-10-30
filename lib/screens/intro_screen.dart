@@ -6,7 +6,6 @@ import 'package:quoridor/widgets/content.dart';
 import 'package:quoridor/widgets/title.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:get/get.dart';
-
 import '../controllers/game_controller.dart';
 
 class IntroScreen extends StatelessWidget {
@@ -22,11 +21,21 @@ class IntroScreen extends StatelessWidget {
         elevation: 0.0,
         centerTitle: true,
         title: const TitleText(title: "Quoridor", size: 0.1),
+        leading: IconButton(
+            icon: const Icon(
+              Icons.share,
+              color: Colors.white,
+            ),
+            tooltip: "Share",
+            onPressed: () {
+              print("Sharing Game");
+              Share.share('com.example.quoridor');
+            }),
         actions: <Widget>[
           IconButton(
             icon: const Icon(
-              Icons.info,
-              color: Colors.black,
+              Icons.info_outline,
+              color: Colors.white,
             ),
             tooltip: "About",
             onPressed: () {
@@ -35,55 +44,56 @@ class IntroScreen extends StatelessWidget {
           ),
           IconButton(
               icon: const Icon(
-                Icons.share,
-                color: Colors.black,
+                Icons.rule,
+                color: Colors.white,
               ),
-              tooltip: "Share",
+              tooltip: "Rules",
               onPressed: () {
-                print("Sharing Game");
-                Share.share('com.example.quoridor');
+                Get.to(const GameRules());
               }),
         ],
       ),
-      body: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          GestureDetector(
-            onTap: () {
-              gameController.singlePlayerGame(false);
-              Get.to(GameScreen());
-            },
-            child: Column(
-              children: <Widget>[
-                Image.asset(
-                  'images/multiplayer.png',
-                  color: Colors.white,
-                  width: MediaQuery.of(context).size.width * 0.25,
-                  height: MediaQuery.of(context).size.height * 0.12,
-                ),
-                const ContentText(
-                    content: "Multiplayer", size: 0.05, italicFont: false),
-              ],
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            GestureDetector(
+              onTap: () {
+                gameController.singlePlayerGame(false);
+                Get.to(GameScreen());
+              },
+              child: Column(
+                children: <Widget>[
+                  Image.asset(
+                    'images/multiplayer.png',
+                    color: Colors.white,
+                    width: MediaQuery.of(context).size.width * 0.5,
+                    height: MediaQuery.of(context).size.height * 0.3,
+                  ),
+                  const ContentText(
+                      content: "MultiPlayer", size: 0.08, italicFont: false),
+                ],
+              ),
             ),
-          ),
-          GestureDetector(
-            onTap: () {
-              gameController.singlePlayerGame(true);
-              Get.to(GameScreen());
-            },
-            child: Column(
-              children: const [
-                Icon(
-                  Icons.remove_from_queue,
-                  size: 90,
-                  color: Colors.white,
-                ),
-                ContentText(
-                    content: "SinglePlayer", size: 0.05, italicFont: false),
-              ],
+            GestureDetector(
+              onTap: () {
+                gameController.singlePlayerGame(true);
+                Get.to(GameScreen());
+              },
+              child: Column(
+                children: const [
+                  Icon(
+                    Icons.remove_from_queue,
+                    size: 180,
+                    color: Colors.white,
+                  ),
+                  ContentText(
+                      content: "SinglePlayer", size: 0.08, italicFont: false),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

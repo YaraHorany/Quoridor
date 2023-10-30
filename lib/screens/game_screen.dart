@@ -25,14 +25,38 @@ class GameScreen extends StatelessWidget {
                     children: [
                       Column(
                         children: [
-                          const Text('Player 1'),
+                          Row(
+                            children: [
+                              const Text('Player'),
+                              Container(
+                                margin: const EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: gameController.player1.color,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                            ],
+                          ),
                           Obx(() =>
                               Text(gameController.player1.fences.toString())),
                         ],
                       ),
                       Column(
                         children: [
-                          const Text('Player 2'),
+                          Row(
+                            children: [
+                              const Text('Player'),
+                              Container(
+                                margin: const EdgeInsets.all(5),
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: gameController.player2.color,
+                                  shape: BoxShape.circle,
+                                ),
+                              ),
+                            ],
+                          ),
                           Obx(() =>
                               Text(gameController.player2.fences.toString())),
                         ],

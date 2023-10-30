@@ -296,6 +296,7 @@ class Player {
     //   print('index: $k');
     //   print(prev[k]);
     // }
+    // print(prev);
     return prev;
   }
 
@@ -329,7 +330,8 @@ class Player {
         }
       }
     }
-
+    // print('min PATHS:');
+    // print(minPath);
     return minPath;
   }
 
