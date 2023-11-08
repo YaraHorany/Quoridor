@@ -4,7 +4,6 @@ import 'package:quoridor/screens/game_screen.dart';
 import 'package:quoridor/screens/game_rules.dart';
 import 'package:quoridor/widgets/content.dart';
 import 'package:quoridor/widgets/title.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:get/get.dart';
 import '../controllers/game_controller.dart';
 
@@ -22,26 +21,16 @@ class IntroScreen extends StatelessWidget {
         centerTitle: true,
         title: const TitleText(title: "Quoridor", size: 0.1),
         leading: IconButton(
-            icon: const Icon(
-              Icons.share,
-              color: Colors.white,
-            ),
-            tooltip: "Share",
-            onPressed: () {
-              print("Sharing Game");
-              Share.share('com.example.quoridor');
-            }),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(
-              Icons.info_outline,
-              color: Colors.white,
-            ),
-            tooltip: "About",
-            onPressed: () {
-              Get.to(const AboutPage());
-            },
+          icon: const Icon(
+            Icons.info_outline,
+            color: Colors.white,
           ),
+          tooltip: "About",
+          onPressed: () {
+            Get.to(const AboutPage());
+          },
+        ),
+        actions: <Widget>[
           IconButton(
               icon: const Icon(
                 Icons.rule,

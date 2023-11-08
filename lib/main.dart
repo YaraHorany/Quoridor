@@ -6,9 +6,15 @@ import 'package:quoridor/screens/game_rules.dart';
 import 'package:quoridor/screens/game_screen.dart';
 import 'package:quoridor/screens/intro_screen.dart';
 import 'controllers/game_controller.dart';
+import 'package:flutter/services.dart';
 
 void main() {
   GameControllerBinding().dependencies();
+  WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   runApp(const MyApp());
 }
 

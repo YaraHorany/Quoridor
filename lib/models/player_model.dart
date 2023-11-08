@@ -300,6 +300,30 @@ class Player {
     return prev;
   }
 
+  List<List<int>> findMaxPath(List<int> prev, int opponentPosition) {
+    List<int> path = [];
+    List<List<int>> minPath = [];
+    double minLength = 1.0 / 0.0; // infinity
+    double maxLength = -1 * (1.0 / 0.0); // minus infinity
+    List<List<int>> maxPath = [];
+
+    for (int i = 272; i < 289; i += 2) {
+      if (i != opponentPosition && prev[i] != -1) {
+        path = _reconstructPath(prev, i, opponentPosition);
+        if (path.length > maxLength && path.isNotEmpty) {
+          maxPath.clear();
+          maxLength = path.length.toDouble();
+          maxPath.add(path);
+        } else if (path.length == maxLength) {
+          maxPath.add(path);
+        }
+      }
+    }
+    // print('min PATHS:');
+    // print(minPath);
+    return maxPath;
+  }
+
   List<List<int>> findMinPaths(List<int> prev, int opponentPosition) {
     if (color == Colors.green) {
       return _findMinPathsForPlayer(
