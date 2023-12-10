@@ -274,6 +274,7 @@ class Player {
   }
 
   List<int> bfs(List<FenceModel> tempFence, int opponentPosition) {
+    print('bfs position before: $position');
     final queue = Queue<int>();
     List<int> visited = [];
     visited.add(position);
@@ -292,6 +293,9 @@ class Player {
         }
       }
     }
+    print('bfs position after: $position');
+    // print(opponentPosition);
+    print(prev);
     // for (int k = 0; k < prev.length; k++) {
     //   print('index: $k');
     //   print(prev[k]);
@@ -325,6 +329,7 @@ class Player {
   }
 
   List<List<int>> findMinPaths(List<int> prev, int opponentPosition) {
+    print('findMinPaths position: $position');
     if (color == Colors.green) {
       return _findMinPathsForPlayer(
           prev, opponentPosition, 0, GameConstants.totalInRow);
