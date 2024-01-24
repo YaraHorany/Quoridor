@@ -45,19 +45,14 @@ class Board extends StatelessWidget {
           child: Square(gameController: gameController, index: i),
         ));
       } else {
-        int index =
-            gameController.fence.indexWhere((element) => element.position == i);
-
         boardCells.add(
           StaggeredGridTile.count(
             crossAxisCellCount:
-                gameController.fence[index].type == FenceType.horizontalFence
+                gameController.fence[i].type == FenceType.horizontalFence
                     ? 2
                     : 1,
             mainAxisCellCount:
-                gameController.fence[index].type == FenceType.verticalFence
-                    ? 2
-                    : 1,
+                gameController.fence[i].type == FenceType.verticalFence ? 2 : 1,
             child: Fence(gameController: gameController, boardIndex: i),
           ),
         );

@@ -13,7 +13,7 @@ class Fence extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    int fenceIndex = gameController.calcFenceIndex(boardIndex);
+    // int fenceIndex = gameController.calcFenceIndex(boardIndex);
     return DragTarget(
       onMove: (data) {
         gameController.drawTemporaryFence(boardIndex, true);
@@ -26,9 +26,9 @@ class Fence extends StatelessWidget {
       },
       builder: (context, candidateData, rejectedData) {
         return Container(
-          color: gameController.fence[fenceIndex].placed
+          color: gameController.fence[boardIndex].placed!
               ? Colors.grey
-              : gameController.fence[fenceIndex].temporaryFence
+              : gameController.fence[boardIndex].temporaryFence!
                   ? Colors.green
                   : Colors.blue,
         );

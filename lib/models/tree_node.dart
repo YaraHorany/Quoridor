@@ -8,15 +8,16 @@ class TreeNode {
   late bool isFullyExpanded = isTerminal;
   int visits = 0;
   int score = 0;
-  List<int>? emptyValidFences;
+  List<int>? probableMoves;
 
   TreeNode({
     this.parent,
     required this.position,
     required this.isTerminal,
-    this.emptyValidFences,
+    this.probableMoves,
   });
 
+  // Select the best node basing on UCB1 formula
   TreeNode getBestMove(int explorationConstant) {
     // Define best score & best moves
     double bestScore = -1.0 / 0.0; // minus infinity

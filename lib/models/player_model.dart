@@ -38,18 +38,12 @@ class Player {
 
   List<int> moveUp(List<FenceModel> fence, int opponentPosition) {
     if (position >= GameConstants.totalInRow) {
-      if (fence[fence.indexWhere((element) =>
-                  element.position == position - GameConstants.totalInRow)]
-              .placed ==
-          false) {
+      if (fence[position - GameConstants.totalInRow].placed == false) {
         if (opponentPosition == position - (GameConstants.totalInRow * 2)) {
           if (position < GameConstants.totalInRow * 3) {
             return moveUpRight(fence) + moveUpLeft(fence);
           } else {
-            if (fence[fence.indexWhere((element) =>
-                        element.position ==
-                        position - (GameConstants.totalInRow * 3))]
-                    .placed ==
+            if (fence[position - (GameConstants.totalInRow * 3)].placed ==
                 false) {
               return [position - (GameConstants.totalInRow * 4)];
             } else {
@@ -66,19 +60,13 @@ class Player {
 
   List<int> moveDown(List<FenceModel> fence, int opponentPosition) {
     if (isNotLastRow(position)) {
-      if (fence[fence.indexWhere((element) =>
-                  element.position == position + GameConstants.totalInRow)]
-              .placed ==
-          false) {
+      if (fence[position + GameConstants.totalInRow].placed == false) {
         if (opponentPosition == position + (GameConstants.totalInRow * 2)) {
           if (position >=
               GameConstants.totalInRow * (GameConstants.totalInRow - 3)) {
             return moveDownRight(fence) + moveDownLeft(fence);
           } else {
-            if (fence[fence.indexWhere((element) =>
-                        element.position ==
-                        position + (GameConstants.totalInRow * 3))]
-                    .placed ==
+            if (fence[position + (GameConstants.totalInRow * 3)].placed ==
                 false) {
               return [position + (GameConstants.totalInRow * 4)];
             } else {
@@ -95,18 +83,13 @@ class Player {
 
   List<int> moveRight(List<FenceModel> fence, int opponentPosition) {
     if (isNotLastColumn(position)) {
-      if (fence[fence.indexWhere((element) => element.position == position + 1)]
-              .placed ==
-          false) {
+      if (fence[position + 1].placed == false) {
         if (opponentPosition == position + 2) {
           if (position % GameConstants.totalInRow >=
               GameConstants.totalInRow - 3) {
             return moveRightUp(fence) + moveRightDown(fence);
           } else {
-            if (fence[fence.indexWhere(
-                        (element) => element.position == position + 3)]
-                    .placed ==
-                false) {
+            if (fence[position + 3].placed == false) {
               return [position + 4];
             } else {
               return moveRightUp(fence) + moveRightDown(fence);
@@ -122,17 +105,12 @@ class Player {
 
   List<int> moveLeft(List<FenceModel> fence, int opponentPosition) {
     if (position % GameConstants.totalInRow != 0) {
-      if (fence[fence.indexWhere((element) => element.position == position - 1)]
-              .placed ==
-          false) {
+      if (fence[position - 1].placed == false) {
         if (opponentPosition == position - 2) {
           if (position % GameConstants.totalInRow <= 2) {
             return moveLeftUp(fence) + moveLeftDown(fence);
           } else {
-            if (fence[fence.indexWhere(
-                        (element) => element.position == position - 3)]
-                    .placed ==
-                false) {
+            if (fence[position - 3].placed == false) {
               return [position - 4];
             } else {
               return moveLeftUp(fence) + moveLeftDown(fence);
@@ -149,9 +127,7 @@ class Player {
   List<int> moveUpRight(List<FenceModel> fence) {
     int pos = position - (GameConstants.totalInRow * 2) + 2;
     if (inBoardRange(pos)) {
-      if (fence[fence.indexWhere((element) => element.position == pos - 1)]
-              .placed ==
-          false) {
+      if (fence[pos - 1].placed == false) {
         return [pos];
       }
     }
@@ -161,9 +137,7 @@ class Player {
   List<int> moveUpLeft(List<FenceModel> fence) {
     int pos = position - (GameConstants.totalInRow * 2) - 2;
     if (inBoardRange(pos)) {
-      if (fence[fence.indexWhere((element) => element.position == pos + 1)]
-              .placed ==
-          false) {
+      if (fence[pos + 1].placed == false) {
         return [pos];
       }
     }
@@ -173,9 +147,7 @@ class Player {
   List<int> moveDownRight(List<FenceModel> fence) {
     int pos = position + (GameConstants.totalInRow * 2) + 2;
     if (inBoardRange(pos)) {
-      if (fence[fence.indexWhere((element) => element.position == pos - 1)]
-              .placed ==
-          false) {
+      if (fence[pos - 1].placed == false) {
         return [pos];
       }
     }
@@ -185,9 +157,7 @@ class Player {
   List<int> moveDownLeft(List<FenceModel> fence) {
     int pos = position + (GameConstants.totalInRow * 2) - 2;
     if (inBoardRange(pos)) {
-      if (fence[fence.indexWhere((element) => element.position == pos + 1)]
-              .placed ==
-          false) {
+      if (fence[pos + 1].placed == false) {
         return [pos];
       }
     }
@@ -197,10 +167,7 @@ class Player {
   List<int> moveRightUp(List<FenceModel> fence) {
     int pos = position + 2 - (GameConstants.totalInRow * 2);
     if (inBoardRange(pos)) {
-      if (fence[fence.indexWhere((element) =>
-                  element.position == pos + GameConstants.totalInRow)]
-              .placed ==
-          false) {
+      if (fence[pos + GameConstants.totalInRow].placed == false) {
         return [pos];
       }
     }
@@ -210,10 +177,7 @@ class Player {
   List<int> moveRightDown(List<FenceModel> fence) {
     int pos = position + 2 + (GameConstants.totalInRow * 2);
     if (inBoardRange(pos)) {
-      if (fence[fence.indexWhere((element) =>
-                  element.position == pos - GameConstants.totalInRow)]
-              .placed ==
-          false) {
+      if (fence[pos - GameConstants.totalInRow].placed == false) {
         return [pos];
       }
     }
@@ -223,10 +187,7 @@ class Player {
   List<int> moveLeftUp(List<FenceModel> fence) {
     int pos = position - 2 - (GameConstants.totalInRow * 2);
     if (inBoardRange(pos)) {
-      if (fence[fence.indexWhere((element) =>
-                  element.position == pos + GameConstants.totalInRow)]
-              .placed ==
-          false) {
+      if (fence[pos + GameConstants.totalInRow].placed == false) {
         return [pos];
       }
     }
@@ -236,10 +197,7 @@ class Player {
   List<int> moveLeftDown(List<FenceModel> fence) {
     int pos = position - 2 + (GameConstants.totalInRow * 2);
     if (inBoardRange(pos)) {
-      if (fence[fence.indexWhere((element) =>
-                  element.position == pos - GameConstants.totalInRow)]
-              .placed ==
-          false) {
+      if (fence[pos - GameConstants.totalInRow].placed == false) {
         return [pos];
       }
     }
@@ -274,7 +232,7 @@ class Player {
   }
 
   List<int> bfs(List<FenceModel> tempFence, int opponentPosition) {
-    print('bfs position before: $position');
+    // print('bfs position before: $position');
     final queue = Queue<int>();
     List<int> visited = [];
     visited.add(position);
@@ -293,12 +251,11 @@ class Player {
         }
       }
     }
-    print('bfs position after: $position');
+    // print('bfs position after: $position');
     // print(opponentPosition);
-    print(prev);
+    // print(prev);
     // for (int k = 0; k < prev.length; k++) {
-    //   print('index: $k');
-    //   print(prev[k]);
+    //   print('$k : ${prev[k]}');
     // }
     // print(prev);
     return prev;
@@ -329,7 +286,7 @@ class Player {
   }
 
   List<List<int>> findMinPaths(List<int> prev, int opponentPosition) {
-    print('findMinPaths position: $position');
+    // print('findMinPaths position: $position');
     if (color == Colors.green) {
       return _findMinPathsForPlayer(
           prev, opponentPosition, 0, GameConstants.totalInRow);
@@ -360,6 +317,7 @@ class Player {
       }
     }
     // print('min PATHS:');
+
     // print(minPath);
     return minPath;
   }
