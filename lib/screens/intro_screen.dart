@@ -27,7 +27,7 @@ class IntroScreen extends StatelessWidget {
           ),
           tooltip: "About",
           onPressed: () {
-            Get.to(const AboutPage());
+            Get.to(() => const AboutPage());
           },
         ),
         actions: <Widget>[
@@ -38,7 +38,7 @@ class IntroScreen extends StatelessWidget {
               ),
               tooltip: "Rules",
               onPressed: () {
-                Get.to(const GameRules());
+                Get.to(() => const GameRules());
               }),
         ],
       ),
@@ -48,8 +48,8 @@ class IntroScreen extends StatelessWidget {
           children: [
             GestureDetector(
               onTap: () {
-                gameController.singlePlayerGame(false);
-                Get.to(GameScreen());
+                gameController.playAgainstAI(false);
+                Get.to(() => GameScreen());
               },
               child: Column(
                 children: <Widget>[
@@ -66,8 +66,43 @@ class IntroScreen extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                gameController.singlePlayerGame(true);
-                Get.to(GameScreen());
+                Get.defaultDialog(
+                  title: "Choose AI level",
+                  titlePadding: const EdgeInsets.all(0),
+                  content: Column(
+                    children: [
+                      const Text("Higher level AI takes more time."),
+                      ElevatedButton(
+                          onPressed: () {
+                            gameController.playAgainstAI(true,
+                                simulationNum: 200);
+                            Get.to(() => GameScreen());
+                          },
+                          child: const Text("Novice")),
+                      ElevatedButton(
+                          onPressed: () {
+                            gameController.playAgainstAI(true,
+                                simulationNum: 500);
+                            Get.to(() => GameScreen());
+                          },
+                          child: const Text("Average")),
+                      ElevatedButton(
+                          onPressed: () {
+                            gameController.playAgainstAI(true,
+                                simulationNum: 1000);
+                            Get.to(() => GameScreen());
+                          },
+                          child: const Text("Good")),
+                      ElevatedButton(
+                          onPressed: () {
+                            gameController.playAgainstAI(true,
+                                simulationNum: 1500);
+                            Get.to(() => GameScreen());
+                          },
+                          child: const Text("Strong")),
+                    ],
+                  ),
+                );
               },
               child: Column(
                 children: const [

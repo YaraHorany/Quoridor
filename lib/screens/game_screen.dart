@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/game_controller.dart';
 import 'package:quoridor/widgets/board.dart';
+import 'intro_screen.dart';
 
 class GameScreen extends StatelessWidget {
   final GameController gameController = Get.find<GameController>();
@@ -79,42 +80,74 @@ class GameScreen extends StatelessWidget {
             child: Board(),
           ),
           Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            child: Column(
               children: [
-                Draggable(
-                  feedback: Container(
-                    color: Colors.grey,
-                    width: 70,
-                    height: 15,
-                  ),
-                  onDragStarted: () {
-                    gameController.dragType = DragType.horizontalDrag;
-                    gameController.update();
-                  },
-                  data: Colors.grey,
-                  child: Container(
-                    color: Colors.grey,
-                    width: 70,
-                    height: 15,
-                  ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Draggable(
+                      feedback: Container(
+                        color: Colors.grey,
+                        width: 70,
+                        height: 15,
+                      ),
+                      onDragStarted: () {
+                        gameController.dragType = DragType.horizontalDrag;
+                        gameController.update();
+                      },
+                      data: Colors.grey,
+                      child: Container(
+                        color: Colors.grey,
+                        width: 70,
+                        height: 15,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Draggable(
+                      feedback: Container(
+                        color: Colors.grey,
+                        width: 15,
+                        height: 70,
+                      ),
+                      onDragStarted: () {
+                        gameController.dragType = DragType.verticalDrag;
+                        gameController.update();
+                      },
+                      data: Colors.grey,
+                      child: Container(
+                        color: Colors.grey,
+                        width: 15,
+                        height: 70,
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 10),
-                Draggable(
-                  feedback: Container(
-                    color: Colors.grey,
-                    width: 15,
-                    height: 70,
-                  ),
-                  onDragStarted: () {
-                    gameController.dragType = DragType.verticalDrag;
-                    gameController.update();
-                  },
-                  data: Colors.grey,
-                  child: Container(
-                    color: Colors.grey,
-                    width: 15,
-                    height: 70,
+                Center(
+                  child: OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.blue,
+                      side: const BorderSide(
+                        color: Colors.blue,
+                      ),
+                    ),
+                    onPressed: () {
+                      Get.defaultDialog(
+                        title: "",
+                        titlePadding: const EdgeInsets.all(0),
+                        middleText:
+                            "Are you sure to start a new game? (Current game will be lost!)",
+                        textConfirm: "Start",
+                        onConfirm: () {
+                          gameController.resetGame();
+                          Get.to(() => IntroScreen());
+                        },
+                        textCancel: "Cancel",
+                        onCancel: () {
+                          Get.to(() => GameScreen());
+                        },
+                      );
+                    },
+                    child: const Text("New Game"),
                   ),
                 ),
               ],

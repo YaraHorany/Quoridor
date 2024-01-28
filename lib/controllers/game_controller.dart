@@ -20,14 +20,15 @@ class GameController extends GetxController {
   List<int> squares = [], possibleMoves = [], emptyFences = [];
   DragType? dragType;
   RxString msg = "".obs;
-  late bool singlePlayer;
+  late bool singlePlayerGame;
+  int? simulationNumber;
   bool simulationOn = false;
-
   bool aiFirstMove = true;
   int turn = 0, simulationTurn = 0;
 
   @override
   void onInit() {
+    print('onInit');
     super.onInit();
 
     player1 = Player(position: 280, color: Colors.green, turn: true);
@@ -45,6 +46,7 @@ class GameController extends GetxController {
   }
 
   void resetGame() {
+    print('resetGame');
     player1.position = 280;
     player1.fences.value = 10;
     player1.turn = true;
@@ -61,6 +63,7 @@ class GameController extends GetxController {
   }
 
   void _buildBoard() {
+    print('buildBoard');
     squares.clear();
     fence.clear();
 
@@ -102,8 +105,11 @@ class GameController extends GetxController {
     update();
   }
 
-  void singlePlayerGame(bool mood) {
-    singlePlayer = mood;
+  void playAgainstAI(bool mood, {int? simulationNum}) {
+    singlePlayerGame = mood;
+    if (singlePlayerGame) {
+      simulationNumber = simulationNum;
+    }
   }
 
   void move(int index) {
@@ -111,7 +117,7 @@ class GameController extends GetxController {
       changePosition(index);
       if (_winnerFound()) return;
       switchTurns();
-      if (singlePlayer && player2.turn) {
+      if (singlePlayerGame && player2.turn) {
         aiMove();
       }
     }
@@ -239,7 +245,7 @@ class GameController extends GetxController {
       // placeFence(fence, boardIndex, isVertical, false, true);
       placeFence(fence, boardIndex, isVertical, true, false);
       switchTurns();
-      if (singlePlayer && player2.turn) {
+      if (singlePlayerGame && player2.turn) {
         aiMove();
       }
     } else {
@@ -664,7 +670,6 @@ class GameController extends GetxController {
     minPath = possiblePaths[0].length;
 
     emptyFences = getEmptyValidFences(simulationFence);
-    // print('EMPTY VALID FENCES: $emptyFences');
 
     for (int i = 0; i < emptyFences.length; i++) {
       // Add a temporary fence.
@@ -841,7 +846,7 @@ class GameController extends GetxController {
     if (reachedFirstRow(player1.position) || reachedLastRow(player2.position)) {
       Get.defaultDialog(
         title: "",
-        content: singlePlayer
+        content: singlePlayerGame
             ? reachedFirstRow(player1.position)
                 ? const Text("You WON! BRAVO!")
                 : const Text("You LOST! Let's play again!")
@@ -911,7 +916,6 @@ class GameController extends GetxController {
     late int score;
 
     calculatePossibleMoves();
-
     simulationOn = true;
 
     // create simulation game (simulation players and fence).
@@ -934,10 +938,9 @@ class GameController extends GetxController {
       probableMoves: getProbableMoves(),
     );
 
-    // walk through 1000 iterations
-    for (int iteration = 0; iteration < 1000; iteration++) {
+    // walk through iterations
+    for (int iteration = 0; iteration < simulationNumber!; iteration++) {
       // print('NEW ITERATION');
-      // print("root.position: ${root.position}");
       simulationTurn = turn;
 
       // create simulation game (simulation players and fence).
@@ -968,13 +971,10 @@ class GameController extends GetxController {
 
     // pick up the best move in the current position
     return root.getBestMove(0);
-    // return getBestMove(root, 0);
   }
 
   // Select most promising node
   TreeNode? select(TreeNode node) {
-    // print('select');
-    List<int>? prevEmptyValidFences;
     // make sure that we're dealing with non-terminal nodes
     while (!node.isTerminal) {
       // case where the node is fully expanded
@@ -1145,7 +1145,7 @@ class GameController extends GetxController {
         switchTurns();
       }
     }
-    // print("out of rollout");
+
     return reachedLastRow(simulationP2!.position) ? 1 : -1;
   }
 
@@ -1158,9 +1158,6 @@ class GameController extends GetxController {
       // update node's score
       node.score += score;
 
-      // print('node.position: ${node.position}');
-      // print('node.visits: ${node.visits}');
-      // print('node.score: ${node.score}');
       if (node.parent == null) {
         break;
       }
