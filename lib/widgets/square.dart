@@ -18,17 +18,17 @@ class Square extends StatelessWidget {
         gameController.move(index);
       },
       child: Container(
-        color: gameController.possibleMoves.contains(index)
+        color: gameController.game.possibleMoves.contains(index)
             ? Colors.lightBlueAccent
             : Colors.white,
-        child: (gameController.player1.position == index ||
-                gameController.player2.position == index)
+        child: (gameController.game.player1.position == index ||
+                gameController.game.player2.position == index)
             ? Container(
                 margin: const EdgeInsets.all(3),
                 decoration: BoxDecoration(
-                  color: gameController.player1.position == index
-                      ? gameController.player1.color
-                      : gameController.player2.color,
+                  color: gameController.game.player1.position == index
+                      ? gameController.game.player1.color
+                      : gameController.game.player2.color,
                   shape: BoxShape.circle,
                 ),
               )

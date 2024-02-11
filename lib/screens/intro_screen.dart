@@ -96,7 +96,7 @@ class IntroScreen extends StatelessWidget {
                       ElevatedButton(
                           onPressed: () {
                             gameController.playAgainstAI(true,
-                                simulationNum: 1500);
+                                simulationNum: 5000);
                             Get.to(() => GameScreen());
                           },
                           child: const Text("Strong")),
