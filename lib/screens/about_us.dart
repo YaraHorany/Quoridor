@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:quoridor/widgets/title.dart';
 import 'package:quoridor/widgets/content.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
@@ -12,11 +14,10 @@ class AboutPage extends StatelessWidget {
       backgroundColor: Colors.lightBlueAccent,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
-        centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.keyboard_arrow_left),
           onPressed: () => Get.back(),
-          iconSize: MediaQuery.of(context).size.width * 0.12,
+          iconSize: MediaQuery.of(context).size.width * 0.1,
         ),
         elevation: 0.0,
       ),
@@ -24,14 +25,11 @@ class AboutPage extends StatelessWidget {
         children: <Widget>[
           Card(
             color: Colors.transparent,
-            // margin: const EdgeInsets.only(left: 10.0, top: 10.0, right: 10.0),
             elevation: 0.0,
             child: Column(
               children: <Widget>[
                 // const Padding(padding: EdgeInsets.all(5.0)),
-                const Center(
-                  child: TitleText(title: "Quoridor", size: 0.2),
-                ),
+                const Center(child: TitleText(title: "Quoridor", size: 0.2)),
                 const Center(
                     child: ContentText(
                   content: "version: 3.7.0",
@@ -49,12 +47,8 @@ class AboutPage extends StatelessWidget {
               ],
             ),
           ),
-          Container(
-            margin: const EdgeInsets.only(left: 10.0, right: 10.0),
-            width: MediaQuery.of(context).size.width,
-            height: 1.0,
-            color: Colors.white,
-          ),
+          const SizedBox(height: 10),
+          _drawLine(context),
           const Card(
             color: Colors.transparent,
             elevation: 0.0,
@@ -70,12 +64,7 @@ class AboutPage extends StatelessWidget {
                   italicFont: true),
             ),
           ),
-          Container(
-            margin: const EdgeInsets.only(left: 10.0, right: 10.0),
-            width: MediaQuery.of(context).size.width,
-            height: 1.0,
-            color: Colors.white,
-          ),
+          _drawLine(context),
           Container(
             padding: const EdgeInsets.only(left: 6.0, right: 6.0, top: 5.0),
             child: Card(
@@ -87,39 +76,64 @@ class AboutPage extends StatelessWidget {
                 children: <Widget>[
                   const Center(
                     child: ContentText(
-                        content: "Contact Us", size: 0.06, italicFont: true),
+                        content: "Contact Me", size: 0.06, italicFont: true),
                   ),
                   const SizedBox(height: 5.0),
                   Row(
                     children: <Widget>[
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Icon(
-                          Icons.developer_mode,
-                          size: MediaQuery.of(context).size.height * 0.03,
-                        ),
+                      const Padding(padding: EdgeInsets.only(left: 5.0)),
+                      const Icon(
+                        Icons.email,
+                        color: Colors.white,
                       ),
-                      const SizedBox(width: 5.0),
-                      const Align(
-                        alignment: Alignment.center,
-                        child: ContentText(
-                          content: "We_developers",
-                          size: 0.06,
-                          italicFont: true,
-                        ),
+                      TextButton(
+                        onPressed: () async {
+                          final Uri emailLaunchUri = Uri(
+                            scheme: 'mailto',
+                            path: 'yara.horany1@gmail.com',
+                          );
+                          if (!await launchUrl(emailLaunchUri)) {
+                            throw Exception('Could not launch $emailLaunchUri');
+                          }
+                        },
+                        child: const ContentText(
+                            content: "  : yara.horany1@gmail.com",
+                            size: 0.04,
+                            italicFont: true),
+                      )
+                    ],
+                  ),
+                  Row(
+                    children: <Widget>[
+                      const Padding(padding: EdgeInsets.only(left: 5.0)),
+                      const FaIcon(FontAwesomeIcons.linkedinIn,
+                          color: Colors.white),
+                      TextButton(
+                        onPressed: () {
+                          _launchUrl(
+                              'https://www.linkedin.com/in/yara-horany-8a5045187/');
+                        },
+                        child: const ContentText(
+                            content:
+                                "  : linkedin.com/in/yara-horany-8a5045187",
+                            size: 0.04,
+                            italicFont: true),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 7.0),
                   Row(
-                    children: const <Widget>[
-                      Padding(padding: EdgeInsets.only(left: 5.0)),
-                      Text("Email us at :",
-                          style: TextStyle(color: Colors.white)),
-                      ContentText(
-                          content: "yara.horany1@gmail.com",
-                          size: 0.04,
-                          italicFont: true)
+                    children: <Widget>[
+                      const Padding(padding: EdgeInsets.only(left: 5.0)),
+                      const FaIcon(FontAwesomeIcons.github,
+                          color: Colors.white),
+                      TextButton(
+                          onPressed: () {
+                            _launchUrl('https://github.com/YaraHorany');
+                          },
+                          child: const ContentText(
+                              content: " : github.com/YaraHorany",
+                              size: 0.04,
+                              italicFont: true)),
                     ],
                   ),
                 ],
@@ -129,5 +143,19 @@ class AboutPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Widget _drawLine(BuildContext context) => Container(
+        margin: const EdgeInsets.only(left: 10.0, right: 10.0),
+        width: MediaQuery.of(context).size.width,
+        height: 1.0,
+        color: Colors.white,
+      );
+
+  void _launchUrl(String strUrl) async {
+    final Uri url = Uri.parse(strUrl);
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
   }
 }

@@ -59,7 +59,7 @@ class GameController extends GetxController {
     if (game.move(index)) {
       if (_winnerFound()) return;
       if (singlePlayerGame && game.player2.turn) {
-        aiMove();
+        _aiMove();
       }
       update();
     }
@@ -78,14 +78,14 @@ class GameController extends GetxController {
         if (msg == '') {
           update();
           if (singlePlayerGame && game.player2.turn) {
-            aiMove();
+            _aiMove();
           }
         } else {
-          popUpMessage(msg);
+          _popUpMessage(msg);
         }
       }
     } else {
-      popUpMessage('   There are no more\n walls for you to place');
+      _popUpMessage('   There are no more\n walls for you to place');
     }
   }
 
@@ -101,7 +101,7 @@ class GameController extends GetxController {
     }
   }
 
-  void popUpMessage(String message) {
+  void _popUpMessage(String message) {
     late Timer timer;
     int count = 0;
     timer = Timer.periodic(const Duration(seconds: 1), (_) {
@@ -154,7 +154,7 @@ class GameController extends GetxController {
     return false;
   }
 
-  Future<void> aiMove() async {
+  Future<void> _aiMove() async {
     late int randomPosition;
     late TreeNode node;
 
@@ -164,7 +164,7 @@ class GameController extends GetxController {
             .contains(game.player2.position + (2 * GameConstants.totalInRow))) {
       randomPosition = game.player2.position + (2 * GameConstants.totalInRow);
     } else {
-      node = search();
+      node = _search();
       randomPosition = node.position;
     }
     aiFirstMove = false;
@@ -174,7 +174,7 @@ class GameController extends GetxController {
   }
 
   // Search for the best move in the current position
-  TreeNode search() {
+  TreeNode _search() {
     TreeNode? node;
     late int score;
 

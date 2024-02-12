@@ -94,18 +94,19 @@ class Game {
 
   bool move(int index) {
     if (possibleMoves.contains(index)) {
-      changePosition(index);
-      switchTurns();
+      _changePosition(index);
+      _switchTurns();
       return true;
     }
     return false;
   }
 
+  // Move or place a fence.
   void play(int position) {
     if (squares.contains(position)) {
-      changePosition(position);
+      _changePosition(position);
     } else {
-      placeFence(
+      _placeFence(
         position,
         fences[position].type == FenceType.verticalFence ? true : false,
         true,
@@ -113,11 +114,11 @@ class Game {
       );
     }
     // Switch turns and calculate possible moves.
-    switchTurns();
+    _switchTurns();
   }
 
   // Change current player's position and increase turn counter.
-  void changePosition(int index) {
+  void _changePosition(int index) {
     turn++;
     if (player1.turn) {
       player1.position = index;
@@ -127,7 +128,7 @@ class Game {
   }
 
   // Switch turns and calculate possible moves for next player.
-  void switchTurns() {
+  void _switchTurns() {
     player1.changeTurn();
     player2.changeTurn();
     calculatePossibleMoves();
@@ -151,12 +152,12 @@ class Game {
             fences[boardIndex].type == FenceType.verticalFence
                 ? true
                 : false)) {
-          placeFence(
+          _placeFence(
               boardIndex,
               fences[boardIndex].type == FenceType.verticalFence ? true : false,
               true,
               false);
-          switchTurns();
+          _switchTurns();
           return '';
         } else {
           updateTemporaryFence(boardIndex, false, FenceType.squareFence, 0);
@@ -189,7 +190,7 @@ class Game {
   }
 
   // Place a fence vertically or horizontally and update fences number.
-  void placeFence(int boardIndex, bool isVertical, bool val, bool isTemp) {
+  void _placeFence(int boardIndex, bool isVertical, bool val, bool isTemp) {
     isVertical
         ? _placeVerticalFence(boardIndex, val)
         : _placeHorizontalFence(boardIndex, val);
@@ -215,6 +216,7 @@ class Game {
     }
   }
 
+  // Update emptyFences list.
   void updateEmptyFences(int boardIndex) {
     emptyFences.remove(boardIndex);
     if (fences[boardIndex].type == FenceType.horizontalFence) {
@@ -366,10 +368,10 @@ class Game {
     tempPlayer2 = Player.copy(obj: player2);
 
     // place a temporary fence.
-    placeFence(boardIndex, isVertical, true, true);
+    _placeFence(boardIndex, isVertical, true, true);
     result = tempPlayer1.bfsSearch(fences) && tempPlayer2.bfsSearch(fences);
     // remove temporary fence.
-    placeFence(boardIndex, isVertical, false, true);
+    _placeFence(boardIndex, isVertical, false, true);
 
     return result;
   }
@@ -644,7 +646,7 @@ class Game {
 
     for (int i = 0; i < emptyFences.length; i++) {
       // Add a temporary fence.
-      placeFence(
+      _placeFence(
         emptyFences[i],
         fences[emptyFences[i]].type == FenceType.verticalFence ? true : false,
         true,
@@ -673,7 +675,7 @@ class Game {
         fencesToInterruptPath.add(emptyFences[i]);
       }
       // Remove temporary fence.
-      placeFence(
+      _placeFence(
         emptyFences[i],
         fences[emptyFences[i]].type == FenceType.verticalFence ? true : false,
         false,
@@ -751,10 +753,8 @@ class Game {
 
   // Simulate the game via making random moves until reaching end of the game.
   int rollout(int position) {
-    List<int> probableMoves = [];
-    List<int> probableFences = [];
+    List<int> probableMoves = [], probableFences = [];
     int? probableFence;
-    int rolloutCount = 0;
 
     if (!reachedFirstRow(player1.position) &&
         !reachedLastRow(player2.position)) {
@@ -762,13 +762,12 @@ class Game {
 
       while (!reachedFirstRow(player1.position) &&
           !reachedLastRow(player2.position)) {
-        rolloutCount++;
-
         if (Random().nextDouble() < 0.7) {
           // Move pawn to one of the shortest paths.
           probableMoves = getMovesToShortestPath();
           print('probableMoves: $probableMoves');
-          changePosition(probableMoves[Random().nextInt(probableMoves.length)]);
+          _changePosition(
+              probableMoves[Random().nextInt(probableMoves.length)]);
         } else {
           probableFences = getProbableFences();
           if (!outOfFences() && probableFences.isNotEmpty) {
@@ -776,7 +775,7 @@ class Game {
             probableFence =
                 probableFences[Random().nextInt(probableFences.length)];
             // place a fence
-            placeFence(
+            _placeFence(
               probableFence,
               fences[probableFence].type == FenceType.verticalFence
                   ? true
@@ -786,13 +785,13 @@ class Game {
             );
           } else {
             // Randomly pick one of the possible moves.
-            changePosition(
+            _changePosition(
                 possibleMoves[Random().nextInt(possibleMoves.length)]);
           }
         }
 
         // Switch turns and calculate possible moves.
-        switchTurns();
+        _switchTurns();
       }
     }
     print('rollout: p1 pos: ${player1.position}');
