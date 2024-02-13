@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/game_controller.dart';
 import 'package:quoridor/widgets/board.dart';
+import '../models/player_model.dart';
 import 'intro_screen.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 class GameScreen extends StatelessWidget {
-  const GameScreen({Key? key}) : super(key: key);
+  final GameController gameController = Get.find<GameController>();
+  GameScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final GameController gameController = Get.find<GameController>();
-
     return Scaffold(
       body: Stack(
         children: [
@@ -27,44 +27,8 @@ class GameScreen extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          Column(
-                            children: [
-                              Row(
-                                children: [
-                                  const Text('Player'),
-                                  Container(
-                                    margin: const EdgeInsets.all(5),
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color: gameController.game.player1.color,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Obx(() => Text(gameController.game.player1.fences
-                                  .toString())),
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              Row(
-                                children: [
-                                  const Text('Player'),
-                                  Container(
-                                    margin: const EdgeInsets.all(5),
-                                    padding: const EdgeInsets.all(10),
-                                    decoration: BoxDecoration(
-                                      color: gameController.game.player2.color,
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Obx(() => Text(gameController.game.player2.fences
-                                  .toString())),
-                            ],
-                          ),
+                          _remainedFences(gameController.game.player1),
+                          _remainedFences(gameController.game.player2),
                         ],
                       ),
                       const SizedBox(height: 15),
@@ -79,89 +43,54 @@ class GameScreen extends StatelessWidget {
                 ),
               ),
               Expanded(
-                flex: 3,
+                flex: 2,
                 child: Board(),
               ),
               Expanded(
                 child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Draggable(
-                          feedback: Container(
-                            color: Colors.grey,
-                            width: 70,
-                            height: 15,
-                          ),
-                          onDragStarted: () {
-                            gameController.dragType = DragType.horizontalDrag;
-                            gameController.update();
-                          },
-                          data: Colors.grey,
-                          child: Container(
-                            color: Colors.grey,
-                            width: 70,
-                            height: 15,
-                          ),
-                        ),
+                        _draggableFence(DragType.horizontalDrag),
                         const SizedBox(height: 10),
-                        Draggable(
-                          feedback: Container(
-                            color: Colors.grey,
-                            width: 15,
-                            height: 70,
-                          ),
-                          onDragStarted: () {
-                            gameController.dragType = DragType.verticalDrag;
-                            gameController.update();
-                          },
-                          data: Colors.grey,
-                          child: Container(
-                            color: Colors.grey,
-                            width: 15,
-                            height: 70,
-                          ),
-                        ),
+                        _draggableFence(DragType.verticalDrag),
                       ],
                     ),
-                    Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: Colors.blue,
-                              side: const BorderSide(
-                                color: Colors.blue,
-                              ),
-                            ),
-                            onPressed: () {
-                              Get.defaultDialog(
-                                title: "",
-                                titlePadding: const EdgeInsets.all(0),
-                                middleText:
-                                    "Are you sure to start a new game? (Current game will be lost!)",
-                                textConfirm: "Start",
-                                onConfirm: () {
-                                  gameController.reset();
-                                  Get.to(() => IntroScreen());
-                                },
-                                textCancel: "Cancel",
-                                onCancel: () {
-                                  Get.to(() => const GameScreen());
-                                },
-                              );
-                            },
-                            child: const Text("New Game"),
-                          ),
-                          OutlinedButton(
-                            onPressed: () {
-                              // gameController.uploadFile();
-                            },
-                            child: const Text("Loading"),
-                          ),
-                        ],
+                    GestureDetector(
+                      onTap: () {
+                        Get.defaultDialog(
+                          title: "",
+                          titlePadding: const EdgeInsets.all(0),
+                          middleText:
+                              "Are you sure to start a new game? (Current game will be lost!)",
+                          textConfirm: "Start",
+                          onConfirm: () {
+                            gameController.reset();
+                            Get.to(() => IntroScreen());
+                          },
+                          textCancel: "Cancel",
+                          onCancel: () {
+                            Get.to(() => GameScreen());
+                          },
+                        );
+                      },
+                      child: Container(
+                        decoration: const BoxDecoration(
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(5.0)),
+                            color: Colors.blue),
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 10),
+                        child: const Center(
+                            child: Text(
+                          "New Game",
+                          style: TextStyle(color: Colors.white),
+                        )),
                       ),
                     ),
                   ],
@@ -184,4 +113,45 @@ class GameScreen extends StatelessWidget {
       ),
     );
   }
+
+  Widget _draggableFence(DragType dragType) {
+    double width = dragType == DragType.horizontalDrag ? 70 : 15;
+    double height = dragType == DragType.horizontalDrag ? 15 : 70;
+    return Draggable(
+      feedback: Container(
+        color: Colors.grey,
+        width: width,
+        height: height,
+      ),
+      onDragStarted: () {
+        gameController.dragType = dragType;
+        gameController.update();
+      },
+      data: Colors.grey,
+      child: Container(
+        color: Colors.grey,
+        width: width,
+        height: height,
+      ),
+    );
+  }
+
+  Widget _remainedFences(Player player) => Column(
+        children: [
+          Row(
+            children: [
+              const Text('Player'),
+              Container(
+                margin: const EdgeInsets.all(5),
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: player.color,
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ],
+          ),
+          Obx(() => Text(player.fences.toString())),
+        ],
+      );
 }

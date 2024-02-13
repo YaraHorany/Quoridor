@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quoridor/screens/about_us.dart';
+import 'package:quoridor/screens/about_me.dart';
 import 'package:quoridor/screens/game_screen.dart';
 import 'package:quoridor/screens/game_rules.dart';
 import 'package:quoridor/widgets/content.dart';
@@ -8,8 +8,9 @@ import 'package:get/get.dart';
 import '../controllers/game_controller.dart';
 
 class IntroScreen extends StatelessWidget {
-  IntroScreen({Key? key}) : super(key: key);
   final GameController gameController = Get.find<GameController>();
+
+  IntroScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -68,32 +69,57 @@ class IntroScreen extends StatelessWidget {
               onTap: () {
                 Get.defaultDialog(
                   title: "Choose AI level",
-                  titlePadding: const EdgeInsets.all(0),
+                  titlePadding: const EdgeInsets.all(10),
                   content: Column(
                     children: [
                       const Text("Higher level AI takes more time."),
-                      ElevatedButton(
+                      const SizedBox(height: 10),
+                      OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.blue,
+                            side: const BorderSide(
+                              color: Colors.blue,
+                            ),
+                          ),
                           onPressed: () {
                             gameController.playAgainstAI(true,
                                 simulationNum: 200);
                             Get.to(() => GameScreen());
                           },
                           child: const Text("Novice")),
-                      ElevatedButton(
+                      OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.blue,
+                            side: const BorderSide(
+                              color: Colors.blue,
+                            ),
+                          ),
                           onPressed: () {
                             gameController.playAgainstAI(true,
                                 simulationNum: 500);
                             Get.to(() => GameScreen());
                           },
                           child: const Text("Average")),
-                      ElevatedButton(
+                      OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.blue,
+                            side: const BorderSide(
+                              color: Colors.blue,
+                            ),
+                          ),
                           onPressed: () {
                             gameController.playAgainstAI(true,
                                 simulationNum: 1000);
                             Get.to(() => GameScreen());
                           },
                           child: const Text("Good")),
-                      ElevatedButton(
+                      OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: Colors.blue,
+                            side: const BorderSide(
+                              color: Colors.blue,
+                            ),
+                          ),
                           onPressed: () {
                             gameController.playAgainstAI(true,
                                 simulationNum: 5000);

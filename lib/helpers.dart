@@ -6,11 +6,9 @@ bool isNotLastColumn(int index) =>
 bool isNotLastRow(int index) =>
     index ~/ GameConstants.totalInRow != GameConstants.totalInRow - 1;
 
-bool inBoardRange(int index) {
-  return index >= 0 &&
-      index < GameConstants.totalInBoard &&
-      (index ~/ GameConstants.totalInRow) % 2 == 0;
-}
+bool inBoardRange(int index) => (index >= 0 &&
+    index < GameConstants.totalInBoard &&
+    (index ~/ GameConstants.totalInRow) % 2 == 0);
 
 bool reachedFirstRow(int index) {
   for (int i = 0; i < GameConstants.totalInRow; i += 2) {
