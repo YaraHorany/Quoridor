@@ -4,6 +4,7 @@ import 'package:quoridor/widgets/title.dart';
 import 'package:quoridor/widgets/content.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../utils/dimensions.dart';
 
 class AboutPage extends StatelessWidget {
   const AboutPage({super.key});
@@ -36,9 +37,9 @@ class AboutPage extends StatelessWidget {
                   size: 0.05,
                   italicFont: false,
                 )),
-                const SizedBox(height: 10),
+                SizedBox(height: Dimensions.height10),
                 ClipRRect(
-                  borderRadius: BorderRadius.circular(30.0),
+                  borderRadius: BorderRadius.circular(Dimensions.border30),
                   child: Image.asset(
                     'images/quoridor.jpg',
                     height: MediaQuery.of(context).size.height * 0.27,
@@ -47,15 +48,18 @@ class AboutPage extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: Dimensions.height10),
           _drawLine(context),
-          const Card(
+          Card(
             color: Colors.transparent,
             elevation: 0.0,
-            margin: EdgeInsets.all(10.0),
+            margin: EdgeInsets.symmetric(
+                vertical: Dimensions.height10, horizontal: Dimensions.width10),
             child: Padding(
-              padding: EdgeInsets.all(10.0),
-              child: ContentText(
+              padding: EdgeInsets.symmetric(
+                  vertical: Dimensions.height10,
+                  horizontal: Dimensions.width10),
+              child: const ContentText(
                   content:
                       "Quoridor is a two- or four-player intuitive strategy game"
                       "designed by Mirko Marchesi and published by Gigamic Games."
@@ -66,7 +70,10 @@ class AboutPage extends StatelessWidget {
           ),
           _drawLine(context),
           Container(
-            padding: const EdgeInsets.only(left: 6.0, right: 6.0, top: 5.0),
+            padding: EdgeInsets.only(
+                left: Dimensions.width5,
+                right: Dimensions.width5,
+                top: Dimensions.height5),
             child: Card(
               color: Colors.transparent,
               elevation: 0.0,
@@ -78,10 +85,11 @@ class AboutPage extends StatelessWidget {
                     child: ContentText(
                         content: "Contact Me", size: 0.06, italicFont: true),
                   ),
-                  const SizedBox(height: 5.0),
+                  SizedBox(height: Dimensions.height5),
                   Row(
                     children: <Widget>[
-                      const Padding(padding: EdgeInsets.only(left: 5.0)),
+                      Padding(
+                          padding: EdgeInsets.only(left: Dimensions.width5)),
                       const Icon(
                         Icons.email,
                         color: Colors.white,
@@ -105,7 +113,8 @@ class AboutPage extends StatelessWidget {
                   ),
                   Row(
                     children: <Widget>[
-                      const Padding(padding: EdgeInsets.only(left: 5.0)),
+                      Padding(
+                          padding: EdgeInsets.only(left: Dimensions.width5)),
                       const FaIcon(FontAwesomeIcons.linkedinIn,
                           color: Colors.white),
                       TextButton(
@@ -123,7 +132,8 @@ class AboutPage extends StatelessWidget {
                   ),
                   Row(
                     children: <Widget>[
-                      const Padding(padding: EdgeInsets.only(left: 5.0)),
+                      Padding(
+                          padding: EdgeInsets.only(left: Dimensions.width5)),
                       const FaIcon(FontAwesomeIcons.github,
                           color: Colors.white),
                       TextButton(
@@ -146,9 +156,10 @@ class AboutPage extends StatelessWidget {
   }
 
   Widget _drawLine(BuildContext context) => Container(
-        margin: const EdgeInsets.only(left: 10.0, right: 10.0),
-        width: MediaQuery.of(context).size.width,
-        height: 1.0,
+        margin: EdgeInsets.only(
+            left: Dimensions.width10, right: Dimensions.width10),
+        width: Dimensions.screenWidth,
+        height: Dimensions.height5 / 5,
         color: Colors.white,
       );
 

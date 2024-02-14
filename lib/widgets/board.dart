@@ -5,6 +5,7 @@ import 'package:quoridor/widgets/square.dart';
 import '../../models/fence_model.dart';
 import 'package:quoridor/controllers/game_controller.dart';
 import 'package:quoridor/utils/game_constants.dart';
+import '../utils/dimensions.dart';
 import 'fence.dart';
 
 class Board extends StatelessWidget {
@@ -19,8 +20,10 @@ class Board extends StatelessWidget {
         children: [
           Container(
             color: Colors.blue,
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            padding: EdgeInsets.symmetric(
+                horizontal: Dimensions.width10, vertical: Dimensions.height10),
+            margin: EdgeInsets.symmetric(
+                horizontal: Dimensions.width10, vertical: Dimensions.height10),
             child: GetBuilder<GameController>(
               builder: (context) => StaggeredGrid.count(
                 crossAxisCount: (GameConstants.squaresInRow * 2) +

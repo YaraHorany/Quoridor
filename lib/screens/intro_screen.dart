@@ -6,6 +6,7 @@ import 'package:quoridor/widgets/content.dart';
 import 'package:quoridor/widgets/title.dart';
 import 'package:get/get.dart';
 import '../controllers/game_controller.dart';
+import 'package:quoridor/utils/dimensions.dart';
 
 class IntroScreen extends StatelessWidget {
   final GameController gameController = Get.find<GameController>();
@@ -57,8 +58,8 @@ class IntroScreen extends StatelessWidget {
                   Image.asset(
                     'images/multiplayer.png',
                     color: Colors.white,
-                    width: MediaQuery.of(context).size.width * 0.5,
-                    height: MediaQuery.of(context).size.height * 0.3,
+                    width: Dimensions.screenWidth * 0.5,
+                    height: Dimensions.screenHeight * 0.3,
                   ),
                   const ContentText(
                       content: "MultiPlayer", size: 0.08, italicFont: false),
@@ -69,75 +70,31 @@ class IntroScreen extends StatelessWidget {
               onTap: () {
                 Get.defaultDialog(
                   title: "Choose AI level",
-                  titlePadding: const EdgeInsets.all(10),
+                  titleStyle: const TextStyle(color: Colors.lightBlueAccent),
+                  titlePadding: EdgeInsets.symmetric(
+                      vertical: Dimensions.height10,
+                      horizontal: Dimensions.width10),
                   content: Column(
                     children: [
-                      const Text("Higher level AI takes more time."),
-                      const SizedBox(height: 10),
-                      OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.blue,
-                            side: const BorderSide(
-                              color: Colors.blue,
-                            ),
-                          ),
-                          onPressed: () {
-                            gameController.playAgainstAI(true,
-                                simulationNum: 200);
-                            Get.to(() => GameScreen());
-                          },
-                          child: const Text("Novice")),
-                      OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.blue,
-                            side: const BorderSide(
-                              color: Colors.blue,
-                            ),
-                          ),
-                          onPressed: () {
-                            gameController.playAgainstAI(true,
-                                simulationNum: 500);
-                            Get.to(() => GameScreen());
-                          },
-                          child: const Text("Average")),
-                      OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.blue,
-                            side: const BorderSide(
-                              color: Colors.blue,
-                            ),
-                          ),
-                          onPressed: () {
-                            gameController.playAgainstAI(true,
-                                simulationNum: 1000);
-                            Get.to(() => GameScreen());
-                          },
-                          child: const Text("Good")),
-                      OutlinedButton(
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: Colors.blue,
-                            side: const BorderSide(
-                              color: Colors.blue,
-                            ),
-                          ),
-                          onPressed: () {
-                            gameController.playAgainstAI(true,
-                                simulationNum: 5000);
-                            Get.to(() => GameScreen());
-                          },
-                          child: const Text("Strong")),
+                      const Text("Higher level AI takes more time.",
+                          style: TextStyle(color: Colors.lightBlueAccent)),
+                      SizedBox(height: Dimensions.height10),
+                      _levelButton("Novice", 200),
+                      _levelButton("Average", 500),
+                      _levelButton("Good", 1000),
+                      _levelButton("Strong", 5000),
                     ],
                   ),
                 );
               },
               child: Column(
-                children: const [
+                children: [
                   Icon(
                     Icons.remove_from_queue,
-                    size: 180,
+                    size: Dimensions.icon180,
                     color: Colors.white,
                   ),
-                  ContentText(
+                  const ContentText(
                       content: "SinglePlayer", size: 0.08, italicFont: false),
                 ],
               ),
@@ -147,4 +104,18 @@ class IntroScreen extends StatelessWidget {
       ),
     );
   }
+
+  OutlinedButton _levelButton(String level, int numSimulations) =>
+      OutlinedButton(
+          style: OutlinedButton.styleFrom(
+            foregroundColor: Colors.lightBlueAccent,
+            side: const BorderSide(
+              color: Colors.blue,
+            ),
+          ),
+          onPressed: () {
+            gameController.playAgainstAI(true, simulationNum: numSimulations);
+            Get.to(() => GameScreen());
+          },
+          child: Text(level));
 }

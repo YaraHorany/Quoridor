@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../controllers/game_controller.dart';
 import 'package:quoridor/widgets/board.dart';
 import '../models/player_model.dart';
+import '../utils/dimensions.dart';
 import 'intro_screen.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -19,8 +20,11 @@ class GameScreen extends StatelessWidget {
             children: [
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.only(
-                      left: 30, right: 30, top: 30, bottom: 5),
+                  padding: EdgeInsets.only(
+                      left: Dimensions.width30,
+                      right: Dimensions.width30,
+                      top: Dimensions.height30,
+                      bottom: Dimensions.height5),
                   child: Column(
                     children: [
                       Row(
@@ -31,7 +35,7 @@ class GameScreen extends StatelessWidget {
                           _remainedFences(gameController.game.player2),
                         ],
                       ),
-                      const SizedBox(height: 15),
+                      SizedBox(height: Dimensions.height40),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -54,7 +58,7 @@ class GameScreen extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         _draggableFence(DragType.horizontalDrag),
-                        const SizedBox(height: 10),
+                        SizedBox(height: Dimensions.height10),
                         _draggableFence(DragType.verticalDrag),
                       ],
                     ),
@@ -77,15 +81,17 @@ class GameScreen extends StatelessWidget {
                         );
                       },
                       child: Container(
-                        decoration: const BoxDecoration(
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(5.0)),
-                            color: Colors.blue),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(Dimensions.radius5)),
+                            color: Colors.lightBlueAccent),
                         width: double.infinity,
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 10),
-                        margin: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: 10),
+                        padding: EdgeInsets.symmetric(
+                            horizontal: Dimensions.width10,
+                            vertical: Dimensions.height10),
+                        margin: EdgeInsets.symmetric(
+                            horizontal: Dimensions.width10,
+                            vertical: Dimensions.height10),
                         child: const Center(
                             child: Text(
                           "New Game",
@@ -114,9 +120,13 @@ class GameScreen extends StatelessWidget {
     );
   }
 
-  Widget _draggableFence(DragType dragType) {
-    double width = dragType == DragType.horizontalDrag ? 70 : 15;
-    double height = dragType == DragType.horizontalDrag ? 15 : 70;
+  Draggable _draggableFence(DragType dragType) {
+    double width = dragType == DragType.horizontalDrag
+        ? Dimensions.width10 * 7
+        : Dimensions.width5 * 3;
+    double height = dragType == DragType.horizontalDrag
+        ? Dimensions.height5 * 3
+        : Dimensions.height10 * 7;
     return Draggable(
       feedback: Container(
         color: Colors.grey,
@@ -136,14 +146,18 @@ class GameScreen extends StatelessWidget {
     );
   }
 
-  Widget _remainedFences(Player player) => Column(
+  Column _remainedFences(Player player) => Column(
         children: [
           Row(
             children: [
               const Text('Player'),
               Container(
-                margin: const EdgeInsets.all(5),
-                padding: const EdgeInsets.all(10),
+                margin: EdgeInsets.symmetric(
+                    vertical: Dimensions.height5,
+                    horizontal: Dimensions.width5),
+                padding: EdgeInsets.symmetric(
+                    vertical: Dimensions.height10,
+                    horizontal: Dimensions.width10),
                 decoration: BoxDecoration(
                   color: player.color,
                   shape: BoxShape.circle,

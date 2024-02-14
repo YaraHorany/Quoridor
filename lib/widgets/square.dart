@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quoridor/controllers/game_controller.dart';
+import '../utils/dimensions.dart';
 
 class Square extends StatelessWidget {
   final GameController gameController;
@@ -24,7 +25,9 @@ class Square extends StatelessWidget {
         child: (gameController.game.player1.position == index ||
                 gameController.game.player2.position == index)
             ? Container(
-                margin: const EdgeInsets.all(3),
+                margin: EdgeInsets.symmetric(
+                    vertical: Dimensions.height5 * 3 / 5,
+                    horizontal: Dimensions.width5 * 3 / 5),
                 decoration: BoxDecoration(
                   color: gameController.game.player1.position == index
                       ? gameController.game.player1.color
