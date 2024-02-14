@@ -13,109 +13,118 @@ class GameScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Column(
-            children: [
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsets.only(
-                      left: Dimensions.width30,
-                      right: Dimensions.width30,
-                      top: Dimensions.height30,
-                      bottom: Dimensions.height5),
+    return WillPopScope(
+      onWillPop: () async {
+        // Disable back button on game screen.
+        return false;
+      },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            Column(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        left: Dimensions.width30,
+                        right: Dimensions.width30,
+                        top: Dimensions.height30,
+                        bottom: Dimensions.height5),
+                    child: Column(
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _remainedFences(gameController.game.player1),
+                            _remainedFences(gameController.game.player2),
+                          ],
+                        ),
+                        SizedBox(height: Dimensions.height40),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Obx(() =>
+                                Text(gameController.msg.value.toString())),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Board(),
+                ),
+                Expanded(
                   child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          _remainedFences(gameController.game.player1),
-                          _remainedFences(gameController.game.player2),
+                          _draggableFence(DragType.horizontalDrag),
+                          SizedBox(height: Dimensions.height10),
+                          _draggableFence(DragType.verticalDrag),
                         ],
                       ),
-                      SizedBox(height: Dimensions.height40),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Obx(() => Text(gameController.msg.value.toString())),
-                        ],
+                      GestureDetector(
+                        onTap: () {
+                          Get.defaultDialog(
+                            title: "",
+                            titlePadding: const EdgeInsets.all(0),
+                            middleText:
+                                "Are you sure to start a new game? (Current game will be lost!)",
+                            middleTextStyle:
+                                const TextStyle(color: Colors.lightBlueAccent),
+                            textConfirm: "Start",
+                            onConfirm: () {
+                              gameController.reset();
+                              Get.to(() => IntroScreen());
+                            },
+                            textCancel: "Cancel",
+                            onCancel: () {
+                              Get.to(() => GameScreen());
+                            },
+                          );
+                        },
+                        child: Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                  Radius.circular(Dimensions.radius5)),
+                              color: Colors.blue),
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(
+                              horizontal: Dimensions.width10,
+                              vertical: Dimensions.height10),
+                          margin: EdgeInsets.symmetric(
+                              horizontal: Dimensions.width10,
+                              vertical: Dimensions.height10),
+                          child: const Center(
+                              child: Text(
+                            "New Game",
+                            style: TextStyle(color: Colors.white),
+                          )),
+                        ),
                       ),
                     ],
                   ),
                 ),
-              ),
-              Expanded(
-                flex: 2,
-                child: Board(),
-              ),
-              Expanded(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        _draggableFence(DragType.horizontalDrag),
-                        SizedBox(height: Dimensions.height10),
-                        _draggableFence(DragType.verticalDrag),
-                      ],
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        Get.defaultDialog(
-                          title: "",
-                          titlePadding: const EdgeInsets.all(0),
-                          middleText:
-                              "Are you sure to start a new game? (Current game will be lost!)",
-                          textConfirm: "Start",
-                          onConfirm: () {
-                            gameController.reset();
-                            Get.to(() => IntroScreen());
-                          },
-                          textCancel: "Cancel",
-                          onCancel: () {
-                            Get.to(() => GameScreen());
-                          },
-                        );
-                      },
-                      child: Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(Dimensions.radius5)),
-                            color: Colors.lightBlueAccent),
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: Dimensions.width10,
-                            vertical: Dimensions.height10),
-                        margin: EdgeInsets.symmetric(
-                            horizontal: Dimensions.width10,
-                            vertical: Dimensions.height10),
-                        child: const Center(
-                            child: Text(
-                          "New Game",
-                          style: TextStyle(color: Colors.white),
-                        )),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          Obx(() {
-            print('OBX');
-            return Center(
-              child: gameController.isLoading.value == true
-                  ? const SpinKitCircle(
-                      color: Colors.grey,
-                      size: 100.0,
-                    )
-                  : Container(),
-            );
-          }),
-        ],
+              ],
+            ),
+            Obx(() {
+              print('OBX');
+              return Center(
+                child: gameController.isLoading.value == true
+                    ? const SpinKitCircle(
+                        color: Colors.grey,
+                        size: 100.0,
+                      )
+                    : Container(),
+              );
+            }),
+          ],
+        ),
       ),
     );
   }

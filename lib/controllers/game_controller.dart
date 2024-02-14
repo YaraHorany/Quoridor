@@ -84,6 +84,7 @@ class GameController extends GetxController {
           _popUpMessage(msg);
         }
       }
+      update();
     } else {
       _popUpMessage('   There are no more\n walls for you to place');
     }

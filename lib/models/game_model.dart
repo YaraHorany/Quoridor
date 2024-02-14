@@ -177,12 +177,10 @@ class Game {
         fences[boardIndex].temporaryFence = val;
         if (fences[boardIndex].type == FenceType.verticalFence) {
           fences[boardIndex + GameConstants.totalInRow].temporaryFence = val;
-
           fences[boardIndex + (GameConstants.totalInRow * 2)].temporaryFence =
               val;
         } else {
           fences[boardIndex + 1].temporaryFence = val;
-
           fences[boardIndex + 2].temporaryFence = val;
         }
       }
