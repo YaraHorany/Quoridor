@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../utils/dimensions.dart';
 
 class ContentText extends StatelessWidget {
   final String content;
@@ -18,7 +19,9 @@ class ContentText extends StatelessWidget {
       content,
       style: TextStyle(
         color: Colors.white,
-        fontSize: size == null ? 14 : MediaQuery.of(context).size.width * size!,
+        fontSize: size == null
+            ? Dimensions.fontSize14
+            : Dimensions.screenWidth * size!,
         fontStyle: italicFont ? FontStyle.italic : FontStyle.normal,
         fontWeight: FontWeight.bold,
       ),

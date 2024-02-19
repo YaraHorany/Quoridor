@@ -70,18 +70,17 @@ class IntroScreen extends StatelessWidget {
               onTap: () {
                 Get.defaultDialog(
                   title: "Choose AI level",
-                  titleStyle: const TextStyle(color: Colors.lightBlueAccent),
+                  // titleStyle: const TextStyle(color: Colors.lightBlueAccent),
                   titlePadding: EdgeInsets.symmetric(
                       vertical: Dimensions.height10,
                       horizontal: Dimensions.width10),
                   content: Column(
                     children: [
-                      const Text("Higher level AI takes more time.",
-                          style: TextStyle(color: Colors.lightBlueAccent)),
+                      const Text("Higher level AI takes more time."),
                       SizedBox(height: Dimensions.height10),
-                      _levelButton("Novice", 200),
-                      _levelButton("Average", 500),
-                      _levelButton("Good", 1000),
+                      _levelButton("Novice", 500),
+                      _levelButton("Average", 1000),
+                      _levelButton("Good", 2000),
                       _levelButton("Strong", 5000),
                     ],
                   ),
@@ -108,14 +107,14 @@ class IntroScreen extends StatelessWidget {
   OutlinedButton _levelButton(String level, int numSimulations) =>
       OutlinedButton(
           style: OutlinedButton.styleFrom(
-            foregroundColor: Colors.lightBlueAccent,
-            side: const BorderSide(
-              color: Colors.blue,
-            ),
+            backgroundColor: Colors.blue,
           ),
           onPressed: () {
             gameController.playAgainstAI(true, simulationNum: numSimulations);
             Get.to(() => GameScreen());
           },
-          child: Text(level));
+          child: Text(
+            level,
+            style: const TextStyle(color: Colors.white),
+          ));
 }

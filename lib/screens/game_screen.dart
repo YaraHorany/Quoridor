@@ -53,7 +53,7 @@ class GameScreen extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  flex: 2,
+                  flex: 3,
                   child: Board(),
                 ),
                 Expanded(
@@ -74,18 +74,31 @@ class GameScreen extends StatelessWidget {
                             title: "",
                             titlePadding: const EdgeInsets.all(0),
                             middleText:
-                                "Are you sure to start a new game? (Current game will be lost!)",
-                            middleTextStyle:
-                                const TextStyle(color: Colors.lightBlueAccent),
-                            textConfirm: "Start",
-                            onConfirm: () {
-                              gameController.reset();
-                              Get.to(() => IntroScreen());
-                            },
-                            textCancel: "Cancel",
-                            onCancel: () {
-                              Get.to(() => GameScreen());
-                            },
+                                "Are you sure to start a new game? \n(Current game will be lost!)",
+                            actions: [
+                              OutlinedButton(
+                                  onPressed: () {
+                                    gameController.reset();
+                                    Get.to(() => IntroScreen());
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                  ),
+                                  child: const Text("Start",
+                                      style: TextStyle(color: Colors.white))),
+                              OutlinedButton(
+                                onPressed: () {
+                                  Get.back();
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  backgroundColor: Colors.blue,
+                                ),
+                                child: const Text(
+                                  "Cancel",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ],
                           );
                         },
                         child: Container(

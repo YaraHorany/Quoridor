@@ -7,6 +7,9 @@ import '../models/game_model.dart';
 import '../models/tree_node.dart';
 import '../models/player_model.dart';
 import 'package:quoridor/utils/game_constants.dart';
+import 'package:quoridor/utils/dimensions.dart';
+
+import '../screens/intro_screen.dart';
 
 enum DragType {
   horizontalDrag,
@@ -55,14 +58,28 @@ class GameController extends GetxController {
     }
   }
 
-  void move(int index) {
-    if (game.move(index)) {
+  Future<void> move(int index) async {
+    if (await game.move(index)) {
+      // print('true move controller');
       if (_winnerFound()) return;
-      if (singlePlayerGame && game.player2.turn) {
-        _aiMove();
-      }
+      // if (singlePlayerGame && game.player2.turn) {
+      //   print('singlePlayerGame && game.player2.turn');
+      //   await _aiMove();
+      //   print('after ai move');
+      // }
+      refresh();
       update();
+      refresh();
     }
+  }
+
+  void aiMove() async {
+    if (singlePlayerGame && game.player2.turn) {
+      // print('singlePlayerGame && game.player2.turn');
+      await _aiMove();
+      // print('after ai move');
+    }
+    update();
   }
 
   void drawFence(int boardIndex) {
@@ -86,7 +103,7 @@ class GameController extends GetxController {
       }
       update();
     } else {
-      _popUpMessage('   There are no more\n walls for you to place');
+      _popUpMessage('   There are no more\n fences for you to place');
     }
   }
 
@@ -128,23 +145,30 @@ class GameController extends GetxController {
                 children: [
                   const Text('                 PLAYER'),
                   Container(
-                    margin: const EdgeInsets.all(5),
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: reachedFirstRow(game.player1.position)
-                          ? game.player1.color
-                          : game.player2.color,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
+                      margin: EdgeInsets.symmetric(
+                          vertical: Dimensions.height5,
+                          horizontal: Dimensions.width5),
+                      padding: EdgeInsets.symmetric(
+                          vertical: Dimensions.height10,
+                          horizontal: Dimensions.width10),
+                      decoration: BoxDecoration(
+                        color: reachedFirstRow(game.player1.position)
+                            ? game.player1.color
+                            : game.player2.color,
+                        shape: BoxShape.circle,
+                      )),
                   const Text('WON'),
                 ],
               ),
         actions: [
-          TextButton(
-            child: const Text('Restart'),
+          OutlinedButton(
+            style: OutlinedButton.styleFrom(backgroundColor: Colors.blue),
+            child: const Text(
+              'Restart',
+              style: TextStyle(color: Colors.white),
+            ),
             onPressed: () {
-              Get.back();
+              Get.to(() => IntroScreen());
               reset();
             },
           ),
@@ -186,25 +210,30 @@ class GameController extends GetxController {
 
     // create root node
     TreeNode root = TreeNode(
-      position: simulationGame!.player2.position,
+      position: simulationGame!.player1.position,
       parent: null,
       isTerminal: reachedFirstRow(simulationGame!.player1.position) ||
           reachedLastRow(simulationGame!.player2.position),
       probableMoves: simulationGame!.getProbableMoves(),
     );
+    print('PROBABLE MOVES: ');
+    print(root.probableMoves);
 
     // walk through iterations
     for (int iteration = 0; iteration < numSimulations!; iteration++) {
-      print("iteration: $iteration");
+      // for (int iteration = 0; iteration < 50; iteration++) {
+      // print("iteration: $iteration");
+
       simulationGame = Game.copy(obj: game);
       simulationGame!.player1.fences.value = game.player1.fences.value;
       simulationGame!.player2.fences.value = game.player2.fences.value;
-      print('simulationGame.emptyFences: ${simulationGame!.emptyFences}');
-      for (int i = 0; i < GameConstants.totalInBoard; i++) {
-        if (simulationGame!.fences[i].placed == true) {
-          print('$i is placed');
-        }
-      }
+
+      // print('simulationGame.emptyFences: ${simulationGame!.emptyFences}');
+      // for (int i = 0; i < GameConstants.totalInBoard; i++) {
+      //   if (simulationGame!.fences[i].placed == true) {
+      //     print('$i is placed');
+      //   }
+      // }
 
       // select a node (selection phase)
       node = simulationGame!.select(root);

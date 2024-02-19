@@ -92,8 +92,10 @@ class Game {
     possibleMoves = player1.showPossibleMoves(fences, player2.position);
   }
 
-  bool move(int index) {
+  Future<bool> move(int index) async {
+    // print('move in game model');
     if (possibleMoves.contains(index)) {
+      // print('possibleMoves.contains(index)');
       _changePosition(index);
       _switchTurns();
       return true;
@@ -119,6 +121,7 @@ class Game {
 
   // Change current player's position and increase turn counter.
   void _changePosition(int index) {
+    // print('change position');
     turn++;
     if (player1.turn) {
       player1.position = index;
@@ -129,6 +132,7 @@ class Game {
 
   // Switch turns and calculate possible moves for next player.
   void _switchTurns() {
+    // print('switch turns');
     player1.changeTurn();
     player2.changeTurn();
     calculatePossibleMoves();
@@ -161,7 +165,7 @@ class Game {
           return '';
         } else {
           updateTemporaryFence(boardIndex, false, FenceType.squareFence, 0);
-          return 'Placing a wall here will make\n    an unwinnable position';
+          return 'Placing a fence here will make\n    an unwinnable position';
         }
       }
     }
@@ -257,8 +261,7 @@ class Game {
   bool opponentOutOfFences() =>
       player1.turn ? player2.outOfFences() : player1.outOfFences();
 
-  bool testIfAdjacentToOtherWallForVerticalWallTop(int boardIndex) {
-    // print('A');
+  bool testIfAdjacentToOtherFenceForVerticalFenceTop(int boardIndex) {
     if (inBoardRange(boardIndex - (GameConstants.totalInRow * 2))) {
       if (fences[boardIndex - GameConstants.totalInRow - 1].placed! ||
           fences[boardIndex - GameConstants.totalInRow + 1].placed! ||
@@ -271,8 +274,7 @@ class Game {
     return true;
   }
 
-  bool testIfAdjacentToOtherWallForVerticalWallBottom(int boardIndex) {
-    // print('B');
+  bool testIfAdjacentToOtherFenceForVerticalFenceBottom(int boardIndex) {
     if (inBoardRange(boardIndex + (GameConstants.totalInRow * 4))) {
       if (fences[boardIndex + (GameConstants.totalInRow * 3) - 1].placed! ||
           fences[boardIndex + (GameConstants.totalInRow * 3) + 1].placed! ||
@@ -285,8 +287,7 @@ class Game {
     return true;
   }
 
-  bool testIfAdjacentToOtherWallForVerticalWallMiddle(int boardIndex) {
-    // print('C');
+  bool testIfAdjacentToOtherFenceForVerticalFenceMiddle(int boardIndex) {
     if (fences[boardIndex + GameConstants.totalInRow - 1].placed! ||
         fences[boardIndex + GameConstants.totalInRow + 1].placed!) {
       return true;
@@ -294,16 +295,14 @@ class Game {
     return false;
   }
 
-  bool testIfConnectedOnTwoPointsForVerticalWall(int boardIndex) {
-    // print('D');
-    bool top = testIfAdjacentToOtherWallForVerticalWallTop(boardIndex);
-    bool bottom = testIfAdjacentToOtherWallForVerticalWallBottom(boardIndex);
-    bool middle = testIfAdjacentToOtherWallForVerticalWallMiddle(boardIndex);
+  bool testIfConnectedOnTwoPointsForVerticalFence(int boardIndex) {
+    bool top = testIfAdjacentToOtherFenceForVerticalFenceTop(boardIndex);
+    bool bottom = testIfAdjacentToOtherFenceForVerticalFenceBottom(boardIndex);
+    bool middle = testIfAdjacentToOtherFenceForVerticalFenceMiddle(boardIndex);
     return (top && bottom) || (top && middle) || (bottom && middle);
   }
 
-  bool testIfAdjacentToOtherWallForHorizontalWallLeft(int boardIndex) {
-    // print('E');
+  bool testIfAdjacentToOtherFenceForHorizontalFenceLeft(int boardIndex) {
     if (boardIndex % GameConstants.totalInRow != 0) {
       if (fences[boardIndex - 1 - GameConstants.totalInRow].placed! ||
           fences[boardIndex - 1 + GameConstants.totalInRow].placed! ||
@@ -316,8 +315,7 @@ class Game {
     return true;
   }
 
-  bool testIfAdjacentToOtherWallForHorizontalWallRight(int boardIndex) {
-    // print('F');
+  bool testIfAdjacentToOtherFenceForHorizontalFenceRight(int boardIndex) {
     if (boardIndex % GameConstants.totalInRow != 14) {
       if (fences[boardIndex + 3 - GameConstants.totalInRow].placed! ||
           fences[boardIndex + 3 + GameConstants.totalInRow].placed! ||
@@ -330,8 +328,7 @@ class Game {
     return true;
   }
 
-  bool testIfAdjacentToOtherWallForHorizontalWallMiddle(int boardIndex) {
-    // print('G');
+  bool testIfAdjacentToOtherFenceForHorizontalFenceMiddle(int boardIndex) {
     if (fences[boardIndex + 1 - GameConstants.totalInRow].placed! ||
         fences[boardIndex + 1 + GameConstants.totalInRow].placed!) {
       return true;
@@ -339,11 +336,11 @@ class Game {
     return false;
   }
 
-  bool testIfConnectedOnTwoPointsForHorizontalWall(int boardIndex) {
-    // print('H');
-    bool left = testIfAdjacentToOtherWallForHorizontalWallLeft(boardIndex);
-    bool right = testIfAdjacentToOtherWallForHorizontalWallRight(boardIndex);
-    bool middle = testIfAdjacentToOtherWallForHorizontalWallMiddle(boardIndex);
+  bool testIfConnectedOnTwoPointsForHorizontalFence(int boardIndex) {
+    bool left = testIfAdjacentToOtherFenceForHorizontalFenceLeft(boardIndex);
+    bool right = testIfAdjacentToOtherFenceForHorizontalFenceRight(boardIndex);
+    bool middle =
+        testIfAdjacentToOtherFenceForHorizontalFenceMiddle(boardIndex);
     return (left && right) || (left && middle) || (right && middle);
   }
 
@@ -353,11 +350,11 @@ class Game {
     late bool result;
 
     if (isVertical) {
-      if (!testIfConnectedOnTwoPointsForVerticalWall(boardIndex)) {
+      if (!testIfConnectedOnTwoPointsForVerticalFence(boardIndex)) {
         return true;
       }
     } else {
-      if (!testIfConnectedOnTwoPointsForHorizontalWall(boardIndex)) {
+      if (!testIfConnectedOnTwoPointsForHorizontalFence(boardIndex)) {
         return true;
       }
     }
@@ -377,7 +374,6 @@ class Game {
   List<int> getProbableMoves() {
     List<int> probableMoves = [];
     if (opponentOutOfFences()) {
-      // print('opponent out of fences');
       // Heuristic: If opponent has no walls left, my pawn moves only to one of the shortest paths.
       probableMoves += getMovesToShortestPath();
       // Heuristic: If opponent has no walls left, place walls only to interrupt the opponent's path, not to support my pawn.
@@ -403,43 +399,28 @@ class Game {
     return probableMoves.toSet().toList();
   }
 
+  // Return all the non placed fences that won't block any player from reaching the opposing baseline.
   List<int> getEmptyValidFences() {
     List<int> emptyValidFences = [];
-    for (int i = 0; i < GameConstants.totalInBoard; i++) {
-      if ((i ~/ GameConstants.totalInRow) % 2 == 0) {
-        // check vertical fences
-        if (i % 2 != 0 && isNotLastRow(i)) {
-          if (fences[i].placed == false &&
-              fences[i + GameConstants.totalInRow].placed == false &&
-              fences[i + (GameConstants.totalInRow * 2)].placed == false) {
-            if (canReachOtherSide(i, true)) {
-              emptyValidFences.add(i);
-            }
-          }
-        }
-      } else {
-        // check horizontal fences
-        if (i % 2 != 0 && isNotLastColumn(i)) {
-          if (fences[i].placed == false &&
-              fences[i + 1].placed == false &&
-              fences[i + 2].placed == false) {
-            if (canReachOtherSide(i, false)) {
-              emptyValidFences.add(i);
-            }
-          }
-        }
+    for (int i = 0; i < emptyFences.length; i++) {
+      if (canReachOtherSide(
+          emptyFences[i],
+          fences[emptyFences[i]].type == FenceType.verticalFence
+              ? true
+              : false)) {
+        emptyValidFences.add(emptyFences[i]);
       }
     }
     return emptyValidFences;
   }
 
+  // Return all fences which surround the player.
   List<int> getFencesNextPlayer(int position) {
-    // print('position $position');
     List<int> fencesNextPlayer = [];
     if (position >= (GameConstants.totalInRow * 2)) {
-      // print('row >= 1');
+      // row >= 1
       if (position % (GameConstants.totalInRow * 2) >= 2) {
-        // print('col >= 1');
+        // col >= 1
         if (emptyFences.contains(position - GameConstants.totalInRow - 2) &&
             canReachOtherSide(position - GameConstants.totalInRow - 2, false)) {
           fencesNextPlayer.add(position - GameConstants.totalInRow - 2);
@@ -453,12 +434,12 @@ class Game {
         if (position % (GameConstants.totalInRow * 2) >= 4 &&
             emptyFences.contains(position - GameConstants.totalInRow - 4) &&
             canReachOtherSide(position - GameConstants.totalInRow - 4, false)) {
-          // print("col >= 2");
+          // col >= 2
           fencesNextPlayer.add(position - GameConstants.totalInRow - 4);
         }
       }
       if (position % (GameConstants.totalInRow * 2) <= 14) {
-        // print('col <= 7');
+        // col <= 7
         if (emptyFences.contains(position - GameConstants.totalInRow) &&
             canReachOtherSide(position - GameConstants.totalInRow, false)) {
           fencesNextPlayer.add(position - GameConstants.totalInRow);
@@ -472,18 +453,18 @@ class Game {
         if (position % (GameConstants.totalInRow * 2) <= 12 &&
             emptyFences.contains(position - GameConstants.totalInRow + 2) &&
             canReachOtherSide(position - GameConstants.totalInRow + 2, false)) {
-          // print('col <= 6');
+          // col <= 6
           fencesNextPlayer.add(position - GameConstants.totalInRow + 2);
         }
       }
       if (position >= (GameConstants.totalInRow) * 4) {
-        // print('row >= 2');
+        // row >= 2
         if (position % (GameConstants.totalInRow * 2) >= 2 &&
             emptyFences
                 .contains(position - (GameConstants.totalInRow * 4) - 1) &&
             canReachOtherSide(
                 position - (GameConstants.totalInRow * 4) - 1, true)) {
-          // print('col >= 1');
+          // col >= 1
           fencesNextPlayer.add(position - (GameConstants.totalInRow * 4) - 1);
         }
         if (position % (GameConstants.totalInRow * 2) <= 14 &&
@@ -491,16 +472,16 @@ class Game {
                 .contains(position - (GameConstants.totalInRow * 4) + 1) &&
             canReachOtherSide(
                 position - (GameConstants.totalInRow * 4) + 1, true)) {
-          // print('col <= 7');
+          // col <= 7
           fencesNextPlayer.add(position - (GameConstants.totalInRow * 4) + 1);
         }
       }
     }
     if (position <
         (GameConstants.totalInRow * (GameConstants.totalInRow - 1))) {
-      // print('row <= 7');
+      // row <= 7
       if (position % (GameConstants.totalInRow * 2) >= 2) {
-        // print('col >= 1');
+        // col >= 1
         if (emptyFences.contains(position + GameConstants.totalInRow - 2) &&
             canReachOtherSide(position + GameConstants.totalInRow - 2, false)) {
           fencesNextPlayer.add(position + GameConstants.totalInRow - 2);
@@ -512,12 +493,12 @@ class Game {
         if (position % (GameConstants.totalInRow * 2) >= 4 &&
             emptyFences.contains(position + GameConstants.totalInRow - 4) &&
             canReachOtherSide(position + GameConstants.totalInRow - 4, false)) {
-          // print('col >= 2');
+          // col >= 2
           fencesNextPlayer.add(position + GameConstants.totalInRow - 4);
         }
       }
       if (position % (GameConstants.totalInRow * 2) <= 14) {
-        // print('col <= 7');
+        // col <= 7
         if (emptyFences.contains(position + GameConstants.totalInRow) &&
             canReachOtherSide(position + GameConstants.totalInRow, false)) {
           fencesNextPlayer.add(position + GameConstants.totalInRow);
@@ -529,19 +510,19 @@ class Game {
         if (position % (GameConstants.totalInRow * 2) <= 12 &&
             emptyFences.contains(position + GameConstants.totalInRow + 2) &&
             canReachOtherSide(position + GameConstants.totalInRow + 2, false)) {
-          // print('col <= 6');
+          // col <= 6
           fencesNextPlayer.add(position + GameConstants.totalInRow + 2);
         }
       }
       if (position <
           (GameConstants.totalInRow * (GameConstants.totalInRow - 3))) {
-        // print('row <= 6');
+        // row <= 6
         if (position % (GameConstants.totalInRow * 2) >= 2 &&
             emptyFences
                 .contains(position + (GameConstants.totalInRow * 2) - 1) &&
             canReachOtherSide(
                 position + (GameConstants.totalInRow * 2) - 1, true)) {
-          // print('col >= 1');
+          // col >= 1
           fencesNextPlayer.add(position + (GameConstants.totalInRow * 2) - 1);
         }
         if (position % (GameConstants.totalInRow * 2) <= 14 &&
@@ -549,7 +530,7 @@ class Game {
                 .contains(position + (GameConstants.totalInRow * 2) + 1) &&
             canReachOtherSide(
                 position + (GameConstants.totalInRow * 2) + 1, true)) {
-          // print('col <= 7');
+          // col <= 7
           fencesNextPlayer.add(position + (GameConstants.totalInRow * 2) + 1);
         }
       }
@@ -557,6 +538,7 @@ class Game {
     return fencesNextPlayer;
   }
 
+  // Return empty left and right side horizontal fences.
   List<int> getSideHorizontalFences() {
     List<int> sideHorizontalFences = [];
     for (int i = 0; i < 8; i++) {
@@ -574,7 +556,6 @@ class Game {
         sideHorizontalFences.add((GameConstants.totalInRow * 2 * (i + 1)) - 3);
       }
     }
-    // print('side horizontal fences: $sideHorizontalFences}');
     return sideHorizontalFences;
   }
 
@@ -763,7 +744,6 @@ class Game {
         if (Random().nextDouble() < 0.7) {
           // Move pawn to one of the shortest paths.
           probableMoves = getMovesToShortestPath();
-          print('probableMoves: $probableMoves');
           _changePosition(
               probableMoves[Random().nextInt(probableMoves.length)]);
         } else {
@@ -792,8 +772,7 @@ class Game {
         _switchTurns();
       }
     }
-    print('rollout: p1 pos: ${player1.position}');
-    print('rollout: p2 pos: ${player2.position}');
+
     return reachedLastRow(player2.position) ? 1 : -1;
   }
 
