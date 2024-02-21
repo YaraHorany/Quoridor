@@ -1,4 +1,4 @@
-# quoridor
+# Quoridor
 
 ## :gear: Technologies
 
@@ -7,6 +7,11 @@ Project is created with:
 - [Flutter](https://flutter.dev/) version: 3.7.0
 - [Dart](https://dart.dev/) version: 2.19.0
 - [Get](https://pub.dev/packages/get) version: 4.6.5
+- [Flutter_staggered_grid_view](https://pub.dev/packages/flutter_staggered_grid_view) version: 0.6.2
+- [Share_plus](https://pub.dev/packages/share_plus) version: 7.0.2
+- [Flutter_spinkit](https://pub.dev/packages/flutter_spinkit) version: 5.2.0
+- [Font_awesome_flutter](https://pub.dev/packages/font_awesome_flutter) version: 10.3.0
+- [Url_launcher](https://pub.dev/packages/url_launcher) version: 6.0.3
 
 ## Screenshots
 
