@@ -1,5 +1,9 @@
 # Quoridor
 
+## :book: Table of contents
+
+## :pencil: General info
+
 ## :gear: Technologies
 
 Project is created with:
@@ -13,7 +17,7 @@ Project is created with:
 - [Font_awesome_flutter](https://pub.dev/packages/font_awesome_flutter) version: 10.3.0
 - [Url_launcher](https://pub.dev/packages/url_launcher) version: 6.0.3
 
-## Screenshots
+## :camera_flash: Screenshots
 
 | Intro screen                                                              | Choose AI level window                                                       | Game rules screen                                                       | About Me screen                                                              |
 |---------------------------------------------------------------------------|------------------------------------------------------------------------------|-------------------------------------------------------------------------|------------------------------------------------------------------------------|
@@ -22,3 +26,5 @@ Project is created with:
 | Playing mode                                                              | New game window                                                              | Winning window                                                              | Losing window                                                              |
 |---------------------------------------------------------------------------|------------------------------------------------------------------------------|-----------------------------------------------------------------------------|----------------------------------------------------------------------------|
 | <img src="images/screen_shots/playing_mode.png" width="200" height="400"> | <img src="images/screen_shots/new_game_window.png" width="200" height="400"> | <img src="images/screen_shots/winning_window.png" width="200" height="400"> | <img src="images/screen_shots/losing_window.png" width="200" height="400"> |
+
+## :computer: Setup
