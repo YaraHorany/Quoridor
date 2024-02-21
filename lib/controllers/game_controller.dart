@@ -8,7 +8,6 @@ import '../models/tree_node.dart';
 import '../models/player_model.dart';
 import 'package:quoridor/utils/game_constants.dart';
 import 'package:quoridor/utils/dimensions.dart';
-
 import '../screens/intro_screen.dart';
 
 enum DragType {
@@ -58,25 +57,29 @@ class GameController extends GetxController {
     }
   }
 
-  Future<void> move(int index) async {
-    if (await game.move(index)) {
-      // print('true move controller');
+  void move(int index) {
+    if (game.move(index)) {
+      print('player 1 moved');
+      print(game.player1.position);
+      print(game.possibleMoves);
       if (_winnerFound()) return;
       // if (singlePlayerGame && game.player2.turn) {
       //   print('singlePlayerGame && game.player2.turn');
       //   await _aiMove();
       //   print('after ai move');
       // }
-      refresh();
+      print('before updating player1 move');
       update();
-      refresh();
+      print('after updating player1 move');
     }
   }
 
   void aiMove() async {
     if (singlePlayerGame && game.player2.turn) {
       // print('singlePlayerGame && game.player2.turn');
-      await _aiMove();
+      _aiMove();
+      // await _aiMove();
+      print('done with AI');
       // print('after ai move');
     }
     update();
@@ -179,7 +182,9 @@ class GameController extends GetxController {
     return false;
   }
 
-  Future<void> _aiMove() async {
+  // Future<void> _aiMove() async {
+  void _aiMove() {
+    print('ai Move');
     late int randomPosition;
     late TreeNode node;
 
@@ -200,6 +205,7 @@ class GameController extends GetxController {
 
   // Search for the best move in the current position
   TreeNode _search() {
+    print('ai search');
     TreeNode? node;
     late int score;
 
@@ -216,8 +222,8 @@ class GameController extends GetxController {
           reachedLastRow(simulationGame!.player2.position),
       probableMoves: simulationGame!.getProbableMoves(),
     );
-    print('PROBABLE MOVES: ');
-    print(root.probableMoves);
+    // print('PROBABLE MOVES: ');
+    // print(root.probableMoves);
 
     // walk through iterations
     for (int iteration = 0; iteration < numSimulations!; iteration++) {

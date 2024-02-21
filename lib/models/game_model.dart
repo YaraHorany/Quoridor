@@ -92,7 +92,7 @@ class Game {
     possibleMoves = player1.showPossibleMoves(fences, player2.position);
   }
 
-  Future<bool> move(int index) async {
+  bool move(int index) {
     // print('move in game model');
     if (possibleMoves.contains(index)) {
       // print('possibleMoves.contains(index)');
