@@ -16,7 +16,7 @@ class Board extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
+      child: Stack(
         children: [
           Container(
             color: Colors.blue,

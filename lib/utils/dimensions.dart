@@ -29,4 +29,7 @@ class Dimensions {
 
   // Font size
   static double fontSize14 = screenHeight / 59.59;
+
+  // Loading SpinKitCircle size
+  static double loadingCircle100 = screenHeight / 8.34;
 }

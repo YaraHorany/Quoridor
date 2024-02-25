@@ -73,6 +73,7 @@ class GameController extends GetxController {
 
   void drawFence(int boardIndex) {
     String? msg;
+    if (singlePlayerGame && game.player2.turn) return;
     if (!game.outOfFences()) {
       if (dragType == DragType.verticalDrag) {
         msg = game.checkAndUpdateFence(
@@ -97,6 +98,7 @@ class GameController extends GetxController {
   }
 
   void drawTemporaryFence(int boardIndex, bool val) {
+    if (singlePlayerGame && game.player2.turn) return;
     if (!game.outOfFences()) {
       if (dragType == DragType.verticalDrag) {
         game.updateTemporaryFence(boardIndex, val, FenceType.horizontalFence,

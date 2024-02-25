@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/game_controller.dart';
@@ -52,10 +53,7 @@ class GameScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                Expanded(
-                  flex: 3,
-                  child: Board(),
-                ),
+                Expanded(flex: 3, child: Board()),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -125,17 +123,22 @@ class GameScreen extends StatelessWidget {
                 ),
               ],
             ),
-            Obx(() {
-              print('OBX');
-              return Center(
+            Obx(
+              () => Center(
                 child: gameController.isLoading.value == true
-                    ? const SpinKitCircle(
-                        color: Colors.grey,
-                        size: 100.0,
+                    ? BackdropFilter(
+                        filter: ImageFilter.blur(
+                          sigmaX: 1,
+                          sigmaY: 1,
+                        ),
+                        child: SpinKitCircle(
+                          color: Colors.grey,
+                          size: Dimensions.loadingCircle100,
+                        ),
                       )
                     : Container(),
-              );
-            }),
+              ),
+            ),
           ],
         ),
       ),
