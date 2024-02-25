@@ -17,8 +17,6 @@ class Square extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         gameController.move(index);
-        gameController.update();
-        gameController.aiMove();
       },
       child: Container(
         color: gameController.game.possibleMoves.contains(index)
