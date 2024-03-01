@@ -1,11 +1,10 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../helpers.dart';
+import '../models/ai_model.dart';
 import '../models/fence_model.dart';
 import '../models/game_model.dart';
-import '../models/tree_node.dart';
 import '../models/player_model.dart';
 import 'package:quoridor/utils/game_constants.dart';
 import 'package:quoridor/utils/dimensions.dart';
@@ -18,14 +17,10 @@ enum DragType {
 
 class GameController extends GetxController {
   late Game game;
-  Game? simulationGame;
+  AI? ai;
   DragType? dragType;
-  RxString msg = "".obs;
   late bool singlePlayerGame;
-  int? numSimulations;
-  bool aiFirstMove = true;
-  RxBool isLoading = false.obs;
-  bool running = false;
+  RxString msg = "".obs;
 
   @override
   void onInit() {
@@ -46,7 +41,6 @@ class GameController extends GetxController {
   }
 
   void reset() {
-    aiFirstMove = true;
     game.reset();
     update();
   }
@@ -54,24 +48,24 @@ class GameController extends GetxController {
   void playAgainstAI(bool mood, {int? simulationNum}) {
     singlePlayerGame = mood;
     if (singlePlayerGame) {
-      numSimulations = simulationNum;
+      ai = AI(numSimulations: simulationNum!);
     }
   }
 
-  void move(int index) {
-    if (singlePlayerGame && game.player2.turn) {
-      return;
-    }
+  Future<void> move(int index) async {
+    if (singlePlayerGame && game.player2.turn) return;
     if (game.move(index)) {
       if (_winnerFound()) return;
       if (singlePlayerGame && game.player2.turn) {
-        _aiMove();
+        await ai!.chooseNextMove(game);
+        _winnerFound();
+        // update();
       }
       update();
     }
   }
 
-  void drawFence(int boardIndex) {
+  Future<void> drawFence(int boardIndex) async {
     String? msg;
     if (singlePlayerGame && game.player2.turn) return;
     if (!game.outOfFences()) {
@@ -81,17 +75,21 @@ class GameController extends GetxController {
       } else {
         msg = game.checkAndUpdateFence(boardIndex, FenceType.verticalFence, 1);
       }
+      update();
       if (msg != null) {
         if (msg == '') {
-          update();
+          // update();
           if (singlePlayerGame && game.player2.turn) {
-            _aiMove();
+            await ai!.chooseNextMove(game);
+            // update();
+            _winnerFound();
+            update();
           }
         } else {
           _popUpMessage(msg);
         }
       }
-      update();
+      // update();
     } else {
       _popUpMessage('   There are no more\n fences for you to place');
     }
@@ -168,94 +166,5 @@ class GameController extends GetxController {
       return true;
     }
     return false;
-  }
-
-  Future<void> _aiMove() async {
-    late int randomPosition;
-    late TreeNode node;
-
-    // Heuristic: For first move of each pawn go forward if possible
-    if (aiFirstMove &&
-        game.possibleMoves
-            .contains(game.player2.position + (2 * GameConstants.totalInRow))) {
-      randomPosition = game.player2.position + (2 * GameConstants.totalInRow);
-    } else {
-      isLoading.value = true;
-      node = await _search();
-      randomPosition = node.position;
-    }
-    aiFirstMove = false;
-
-    game.play(randomPosition);
-
-    _winnerFound();
-    update();
-  }
-
-  // Search for the best move in the current position
-  Future<TreeNode> _search() async {
-    TreeNode? node;
-    late int score;
-
-    game.calculatePossibleMoves(); // NOT SURE IF NEEDED
-    simulationGame = Game.copy(obj: game);
-    simulationGame!.player1.fences.value = game.player1.fences.value;
-    simulationGame!.player2.fences.value = game.player2.fences.value;
-
-    // create root node
-    TreeNode root = TreeNode(
-      position: simulationGame!.player2.position,
-      parent: null,
-      isTerminal: reachedFirstRow(simulationGame!.player1.position) ||
-          reachedLastRow(simulationGame!.player2.position),
-      probableMoves: simulationGame!.getProbableMoves(),
-    );
-
-    // Walk through // walk through iterations
-    await _runSimulations(
-        length: numSimulations!,
-        execute: (index) {
-          simulationGame = Game.copy(obj: game);
-          simulationGame!.player1.fences.value = game.player1.fences.value;
-          simulationGame!.player2.fences.value = game.player2.fences.value;
-
-          // select a node (selection phase)
-          node = simulationGame!.select(root);
-
-          // score current node (simulation phase)
-          score = simulationGame!.rollout(node!.position);
-
-          // backPropagate results
-          simulationGame!.backPropagate(node!, score);
-        });
-
-    isLoading.value = false;
-    print('isLoading.value: ${isLoading.value}');
-    // pick up the best move in the current position
-    return root.getBestMove(0);
-  }
-
-  // I divided my work into many small chunks
-  // and the next chunk will be added to the event queue when the current chunk finishes the execution.
-  // So the other events can be executed between the chunks.
-  // https://hackernoon.com/executing-heavy-tasks-without-blocking-the-main-thread-on-flutter-6mx31lh
-  Future<bool> _runSimulations({
-    required int length,
-    required Function(int index) execute,
-    int chunkLength = 25,
-  }) {
-    final completer = Completer<bool>();
-    exec(int i) {
-      if (i >= length) return completer.complete(true);
-      for (int j = i; j < min(length, i + chunkLength); j++) {
-        execute(j);
-      }
-      Future.delayed(const Duration(milliseconds: 0), () {
-        exec(i + chunkLength);
-      });
-    }
-
-    exec(0);
-    return completer.future;
   }
 }

@@ -64,40 +64,45 @@ class GameScreen extends StatelessWidget {
                           _draggableFence(DragType.horizontalDrag),
                           SizedBox(height: Dimensions.height10),
                           _draggableFence(DragType.verticalDrag),
+                          SizedBox(height: Dimensions.height10),
+                          Obx(() => Text(
+                              (gameController.ai!.winRate.value).toString())),
                         ],
                       ),
                       GestureDetector(
                         onTap: () {
-                          Get.defaultDialog(
-                            title: "",
-                            titlePadding: const EdgeInsets.all(0),
-                            middleText:
-                                "Are you sure to start a new game? \n(Current game will be lost!)",
-                            actions: [
-                              OutlinedButton(
+                          if (gameController.ai!.isLoading.value == false) {
+                            Get.defaultDialog(
+                              title: "",
+                              titlePadding: const EdgeInsets.all(0),
+                              middleText:
+                                  "Are you sure to start a new game? \n(Current game will be lost!)",
+                              actions: [
+                                OutlinedButton(
+                                    onPressed: () {
+                                      gameController.reset();
+                                      Get.to(() => IntroScreen());
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      backgroundColor: Colors.blue,
+                                    ),
+                                    child: const Text("Start",
+                                        style: TextStyle(color: Colors.white))),
+                                OutlinedButton(
                                   onPressed: () {
-                                    gameController.reset();
-                                    Get.to(() => IntroScreen());
+                                    Get.back();
                                   },
                                   style: OutlinedButton.styleFrom(
                                     backgroundColor: Colors.blue,
                                   ),
-                                  child: const Text("Start",
-                                      style: TextStyle(color: Colors.white))),
-                              OutlinedButton(
-                                onPressed: () {
-                                  Get.back();
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  backgroundColor: Colors.blue,
+                                  child: const Text(
+                                    "Cancel",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                 ),
-                                child: const Text(
-                                  "Cancel",
-                                  style: TextStyle(color: Colors.white),
-                                ),
-                              ),
-                            ],
-                          );
+                              ],
+                            );
+                          }
                         },
                         child: Container(
                           decoration: BoxDecoration(
@@ -125,7 +130,7 @@ class GameScreen extends StatelessWidget {
             ),
             Obx(
               () => Center(
-                child: gameController.isLoading.value == true
+                child: gameController.ai!.isLoading.value == true
                     ? BackdropFilter(
                         filter: ImageFilter.blur(
                           sigmaX: 1,

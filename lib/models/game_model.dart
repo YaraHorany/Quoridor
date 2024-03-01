@@ -1,7 +1,5 @@
-import 'dart:math';
 import 'package:quoridor/models/player_model.dart';
 import 'package:quoridor/models/fence_model.dart';
-import 'package:quoridor/models/tree_node.dart';
 import '../helpers.dart';
 import '../utils/game_constants.dart';
 
@@ -93,11 +91,9 @@ class Game {
   }
 
   bool move(int index) {
-    // print('move in game model');
     if (possibleMoves.contains(index)) {
-      // print('possibleMoves.contains(index)');
-      _changePosition(index);
-      _switchTurns();
+      changePosition(index);
+      switchTurns();
       return true;
     }
     return false;
@@ -106,9 +102,9 @@ class Game {
   // Move or place a fence.
   void play(int position) {
     if (squares.contains(position)) {
-      _changePosition(position);
+      changePosition(position);
     } else {
-      _placeFence(
+      placeFence(
         position,
         fences[position].type == FenceType.verticalFence ? true : false,
         true,
@@ -116,12 +112,11 @@ class Game {
       );
     }
     // Switch turns and calculate possible moves.
-    _switchTurns();
+    switchTurns();
   }
 
   // Change current player's position and increase turn counter.
-  void _changePosition(int index) {
-    // print('change position');
+  void changePosition(int index) {
     turn++;
     if (player1.turn) {
       player1.position = index;
@@ -131,8 +126,7 @@ class Game {
   }
 
   // Switch turns and calculate possible moves for next player.
-  void _switchTurns() {
-    // print('switch turns');
+  void switchTurns() {
     player1.changeTurn();
     player2.changeTurn();
     calculatePossibleMoves();
@@ -156,12 +150,12 @@ class Game {
             fences[boardIndex].type == FenceType.verticalFence
                 ? true
                 : false)) {
-          _placeFence(
+          placeFence(
               boardIndex,
               fences[boardIndex].type == FenceType.verticalFence ? true : false,
               true,
               false);
-          _switchTurns();
+          switchTurns();
           return '';
         } else {
           updateTemporaryFence(boardIndex, false, FenceType.squareFence, 0);
@@ -192,7 +186,7 @@ class Game {
   }
 
   // Place a fence vertically or horizontally and update fences number.
-  void _placeFence(int boardIndex, bool isVertical, bool val, bool isTemp) {
+  void placeFence(int boardIndex, bool isVertical, bool val, bool isTemp) {
     isVertical
         ? _placeVerticalFence(boardIndex, val)
         : _placeHorizontalFence(boardIndex, val);
@@ -363,10 +357,10 @@ class Game {
     tempPlayer2 = Player.copy(obj: player2);
 
     // place a temporary fence.
-    _placeFence(boardIndex, isVertical, true, true);
+    placeFence(boardIndex, isVertical, true, true);
     result = tempPlayer1.bfsSearch(fences) && tempPlayer2.bfsSearch(fences);
     // remove temporary fence.
-    _placeFence(boardIndex, isVertical, false, true);
+    placeFence(boardIndex, isVertical, false, true);
 
     return result;
   }
@@ -561,13 +555,11 @@ class Game {
 
   // Get moves which leads you to shortest path.
   List<int> getMovesToShortestPath() {
-    Player? tempPlayer1, tempPlayer2;
-    List<int>? prev;
+    List<int> prev = [], bestMoves = [];
     List<List<int>> possiblePaths = [];
-    List<int> bestMoves = [];
 
-    tempPlayer1 = Player.copy(obj: player1);
-    tempPlayer2 = Player.copy(obj: player2);
+    Player tempPlayer1 = Player.copy(obj: player1);
+    Player tempPlayer2 = Player.copy(obj: player2);
 
     if (player1.turn) {
       prev = tempPlayer1.bfs(fences, tempPlayer2.position);
@@ -594,14 +586,12 @@ class Game {
 
   // place walls only to interrupt the opponent's path.
   List<int> getFencesToInterruptPath() {
-    Player? tempPlayer1, tempPlayer2;
-    List<int> fencesToInterruptPath = [], emptyFences = [];
+    List<int> fencesToInterruptPath = [], emptyFences = [], prev = [];
     List<List<int>> possiblePaths = [];
-    List<int>? prev;
     late int minPath;
 
-    tempPlayer1 = Player.copy(obj: player1);
-    tempPlayer2 = Player.copy(obj: player2);
+    Player tempPlayer1 = Player.copy(obj: player1);
+    Player tempPlayer2 = Player.copy(obj: player2);
 
     if (player1.turn) {
       prev = tempPlayer2.bfs(fences, tempPlayer1.position);
@@ -625,7 +615,7 @@ class Game {
 
     for (int i = 0; i < emptyFences.length; i++) {
       // Add a temporary fence.
-      _placeFence(
+      placeFence(
         emptyFences[i],
         fences[emptyFences[i]].type == FenceType.verticalFence ? true : false,
         true,
@@ -654,7 +644,7 @@ class Game {
         fencesToInterruptPath.add(emptyFences[i]);
       }
       // Remove temporary fence.
-      _placeFence(
+      placeFence(
         emptyFences[i],
         fences[emptyFences[i]].type == FenceType.verticalFence ? true : false,
         false,
@@ -667,129 +657,20 @@ class Game {
 
   List<int> getProbableFences() {
     List<int> probableFences = [];
-    if (turn >= 3) {
+    if (turn >= 8) {
       // Disturb opponent
       probableFences += getFencesNextPlayer(
         player1.turn ? player2.position : player1.position,
       );
     }
-    if (turn >= 6) {
+    if (turn >= 8) {
       // Leftmost and rightmost horizontal fences
-      probableFences += getSideHorizontalFences();
+      // probableFences += getSideHorizontalFences();
       // Support myself
       probableFences += getFencesNextPlayer(
         player1.turn ? player1.position : player2.position,
       );
     }
     return probableFences;
-  }
-
-  // Select most promising node
-  TreeNode? select(TreeNode node) {
-    // make sure that we're dealing with non-terminal nodes
-    while (!node.isTerminal) {
-      // case where the node is fully expanded
-      if (node.isFullyExpanded) {
-        node = node.getBestMove(2);
-        play(node.position);
-        node.probableMoves ??= getProbableMoves();
-      }
-      // Case where the node is NOT fully expanded
-      else {
-        return expand(node);
-      }
-    }
-    return node;
-  }
-
-  TreeNode? expand(TreeNode node) {
-    for (final move in node.probableMoves!) {
-      // Make sure that current state (move) is not present in child nodes
-      if (!node.children.containsKey(move)) {
-        // Create a new node
-        TreeNode newNode = TreeNode(
-          position: move,
-          parent: node,
-          isTerminal: squares.contains(move)
-              ? player1.turn
-                  ? reachedFirstRow(move) || reachedLastRow(player2.position)
-                  : reachedFirstRow(player1.position) || reachedLastRow(move)
-              : false,
-        );
-        // Add child node to parent's node children list (dict)
-        node.children[move] = newNode;
-        // Case when node is fully expanded
-        if (node.probableMoves!.length == node.children.length) {
-          node.isFullyExpanded = true;
-        }
-        // return newly created node
-        return newNode;
-      }
-    }
-    // should not get here.
-    return null;
-  }
-
-  // Simulate the game via making random moves until reaching end of the game.
-  int rollout(int position) {
-    List<int> probableMoves = [], probableFences = [];
-    int? probableFence;
-
-    if (!reachedFirstRow(player1.position) &&
-        !reachedLastRow(player2.position)) {
-      play(position);
-
-      while (!reachedFirstRow(player1.position) &&
-          !reachedLastRow(player2.position)) {
-        if (Random().nextDouble() < 0.7) {
-          // Move pawn to one of the shortest paths.
-          probableMoves = getMovesToShortestPath();
-          _changePosition(
-              probableMoves[Random().nextInt(probableMoves.length)]);
-        } else {
-          probableFences = getProbableFences();
-          if (!outOfFences() && probableFences.isNotEmpty) {
-            // Place a probable fence.
-            probableFence =
-                probableFences[Random().nextInt(probableFences.length)];
-            // place a fence
-            _placeFence(
-              probableFence,
-              fences[probableFence].type == FenceType.verticalFence
-                  ? true
-                  : false,
-              true,
-              false,
-            );
-          } else {
-            // Randomly pick one of the possible moves.
-            _changePosition(
-                possibleMoves[Random().nextInt(possibleMoves.length)]);
-          }
-        }
-
-        // Switch turns and calculate possible moves.
-        _switchTurns();
-      }
-    }
-
-    return reachedLastRow(player2.position) ? 1 : -1;
-  }
-
-  // backPropagate the number of visits and score up to the root node
-  void backPropagate(TreeNode node, int score) {
-    while (true) {
-      // update node's visits
-      node.visits += 1;
-
-      // update node's score
-      node.score += score;
-
-      if (node.parent == null) {
-        break;
-      }
-      // set node to parent
-      node = node.parent!;
-    }
   }
 }
