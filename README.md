@@ -3,9 +3,14 @@
 ## :book: Table of contents
 
 ## :pencil: General info
+
+[Quoridor](https://en.wikipedia.org/wiki/Quoridor) is a two- or four-player intuitive strategy game designed by Mirko Marchesi and published by Gigamic Games. 
+Quoridor received the Mensa Mind Game award in 1997 and the Game Of The Year in the United States, 
+France, Canada and Belgium.
+
 Rules of the game:
 
-[Quoridor](https://en.wikipedia.org/wiki/Quoridor) is played on a game board of 81 square spaces (9×9). 
+Quoridor is played on a game board of 81 square spaces (9×9). 
 Each player is represented by a pawn which begins at the center space of one edge of the board (in a two-player game, the pawns begin opposite each other). 
 The objective is to be the first player to move their pawn to any space 
 on the opposite side of the game board from which it begins.
