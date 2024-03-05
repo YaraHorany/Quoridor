@@ -53,7 +53,7 @@ class GameScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                Expanded(flex: 3, child: Board()),
+                Expanded(flex: 2, child: Board()),
                 Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -65,13 +65,16 @@ class GameScreen extends StatelessWidget {
                           SizedBox(height: Dimensions.height10),
                           _draggableFence(DragType.verticalDrag),
                           SizedBox(height: Dimensions.height10),
-                          Obx(() => Text(
-                              (gameController.ai!.winRate.value).toString())),
+                          // Obx(() => Text(
+                          //     (gameController.ai!.winRate.value).toString())),
                         ],
                       ),
                       GestureDetector(
                         onTap: () {
-                          if (gameController.ai!.isLoading.value == false) {
+                          if (gameController.singlePlayerGame &&
+                              gameController.ai!.isLoading.value == true) {
+                            return;
+                          } else {
                             Get.defaultDialog(
                               title: "",
                               titlePadding: const EdgeInsets.all(0),
@@ -128,22 +131,24 @@ class GameScreen extends StatelessWidget {
                 ),
               ],
             ),
-            Obx(
-              () => Center(
-                child: gameController.ai!.isLoading.value == true
-                    ? BackdropFilter(
-                        filter: ImageFilter.blur(
-                          sigmaX: 1,
-                          sigmaY: 1,
-                        ),
-                        child: SpinKitCircle(
-                          color: Colors.grey,
-                          size: Dimensions.loadingCircle100,
-                        ),
-                      )
-                    : Container(),
-              ),
-            ),
+            gameController.singlePlayerGame == true
+                ? Obx(
+                    () => Center(
+                      child: gameController.ai!.isLoading.value == true
+                          ? BackdropFilter(
+                              filter: ImageFilter.blur(
+                                sigmaX: 1,
+                                sigmaY: 1,
+                              ),
+                              child: SpinKitCircle(
+                                color: Colors.grey,
+                                size: Dimensions.loadingCircle100,
+                              ),
+                            )
+                          : Container(),
+                    ),
+                  )
+                : Container()
           ],
         ),
       ),

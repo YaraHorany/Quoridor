@@ -36,11 +36,11 @@ class Square extends StatelessWidget {
                 ),
               )
             : Center(
-                child: Text(
-                  index.toString(),
-                  style: const TextStyle(color: Colors.blue),
+                // child: Text(
+                //   index.toString(),
+                //   style: const TextStyle(color: Colors.blue),
+                // ),
                 ),
-              ),
       ),
     );
   }

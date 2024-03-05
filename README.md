@@ -25,6 +25,7 @@ Project is created with:
 - [Flutter_spinkit](https://pub.dev/packages/flutter_spinkit) version: 5.2.0
 - [Font_awesome_flutter](https://pub.dev/packages/font_awesome_flutter) version: 10.3.0
 - [Url_launcher](https://pub.dev/packages/url_launcher) version: 6.0.3
+- [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) version: 0.13.1
 
 ## :camera_flash: Screenshots
 
