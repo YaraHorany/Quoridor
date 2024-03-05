@@ -48,12 +48,12 @@ class TreeNode {
       }
     }
     // return one of the best moves randomly
-    if (explorationConstant == 0) {
-      print('bestMoves:');
-      for (int j = 0; j < bestMoves.length; j++) {
-        print(bestMoves[j].position);
-      }
-    }
+    // if (explorationConstant == 0) {
+    //   print('bestMoves:');
+    //   for (int j = 0; j < bestMoves.length; j++) {
+    //     print(bestMoves[j].position);
+    //   }
+    // }
 
     return bestMoves[Random().nextInt(bestMoves.length)];
   }
@@ -81,10 +81,10 @@ class TreeNode {
       }
     }
     // return one of the best children randomly
-    print('maxSimulationsChild:');
-    for (int j = 0; j < maxSimulations.length; j++) {
-      print(maxSimulations[j].position);
-    }
+    // print('maxSimulationsChild:');
+    // for (int j = 0; j < maxSimulations.length; j++) {
+    //   print(maxSimulations[j].position);
+    // }
     return maxSimulations[Random().nextInt(maxSimulations.length)];
   }
 }

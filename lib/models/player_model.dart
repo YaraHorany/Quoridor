@@ -232,7 +232,6 @@ class Player {
   }
 
   List<int> bfs(List<FenceModel> tempFence, int opponentPosition) {
-    // print('bfs position before: $position');
     final queue = Queue<int>();
     List<int> visited = [];
     visited.add(position);

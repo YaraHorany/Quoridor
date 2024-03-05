@@ -584,7 +584,7 @@ class Game {
     return bestMoves;
   }
 
-  // place walls only to interrupt the opponent's path.
+  // place fences only to interrupt the opponent's path.
   List<int> getFencesToInterruptPath() {
     List<int> fencesToInterruptPath = [], emptyFences = [], prev = [];
     List<List<int>> possiblePaths = [];
@@ -651,7 +651,6 @@ class Game {
         true,
       );
     }
-    // print('fences to interrupt path: $fencesToInterruptPath');
     return fencesToInterruptPath;
   }
 
@@ -671,6 +670,6 @@ class Game {
         player1.turn ? player1.position : player2.position,
       );
     }
-    return probableFences;
+    return probableFences.toSet().toList();
   }
 }

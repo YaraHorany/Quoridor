@@ -61,6 +61,7 @@ class GameController extends GetxController {
         _winnerFound();
         // update();
       }
+      print(game.turn);
       update();
     }
   }

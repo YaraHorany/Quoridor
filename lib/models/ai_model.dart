@@ -39,8 +39,8 @@ class AI {
       node = await _search(game);
       randomPosition = node.position;
 
-      debugPrint('win rate:');
-      print(node.getWinRate());
+      // debugPrint('win rate:');
+      // print(node.getWinRate());
       winRate.value = node.getWinRate();
     }
 
@@ -52,6 +52,7 @@ class AI {
   Future<TreeNode> _search(Game game) async {
     TreeNode? node;
     late int score;
+    int rolloutCount = 0;
 
     game.calculatePossibleMoves(); // NOT SURE IF NEEDED
     copyGame(game);
@@ -70,6 +71,7 @@ class AI {
         length: numSimulations,
         execute: (index) {
           copyGame(game);
+          rolloutCount++;
 
           // select a node (selection phase)
           node = select(root);
@@ -79,6 +81,10 @@ class AI {
 
           // backPropagate results
           backPropagate(node!, score);
+
+          print('rollOut: $rolloutCount');
+          print('root.getBestMove(0)');
+          print(root.getBestMove(0).position);
         });
 
     isLoading.value = false;
@@ -129,6 +135,7 @@ class AI {
     return node;
   }
 
+  // A new child node is added to the tree to that node which was optimally reached during the selection process.
   TreeNode? expand(TreeNode node) {
     for (final move in node.probableMoves!) {
       // Make sure that current state (move) is not present in child nodes
@@ -167,11 +174,10 @@ class AI {
     if (!reachedFirstRow(simulationGame.player1.position) &&
         !reachedLastRow(simulationGame.player2.position)) {
       simulationGame.play(position);
-      // debugPrint('rollout');
+
       while (!reachedFirstRow(simulationGame.player1.position) &&
           !reachedLastRow(simulationGame.player2.position)) {
         if (Random().nextDouble() < 0.7) {
-          // debugPrint('move to shortest path');
           // Move pawn to one of the shortest paths.
           probableMoves = simulationGame.getMovesToShortestPath();
           simulationGame.changePosition(
@@ -179,7 +185,6 @@ class AI {
         } else {
           probableFences = simulationGame.getProbableFences();
           if (!simulationGame.outOfFences() && probableFences.isNotEmpty) {
-            // debugPrint('place a fence');
             // Place a probable fence.
             probableFence =
                 probableFences[Random().nextInt(probableFences.length)];
@@ -195,7 +200,6 @@ class AI {
             );
           } else {
             // Randomly pick one of the possible moves.
-            // debugPrint('randomly move');
             simulationGame.changePosition(simulationGame.possibleMoves[
                 Random().nextInt(simulationGame.possibleMoves.length)]);
           }

@@ -78,10 +78,10 @@ class IntroScreen extends StatelessWidget {
                     children: [
                       const Text("Higher level AI takes more time."),
                       SizedBox(height: Dimensions.height10),
-                      _levelButton("Novice", 2500),
-                      _levelButton("Average", 7500),
-                      _levelButton("Good", 20000),
-                      _levelButton("Strong", 30000),
+                      _levelButton("Novice", 500), //2500
+                      _levelButton("Average", 5000), // 7500
+                      _levelButton("Good", 7500), // 20000
+                      _levelButton("Strong", 10000), // 60000
                     ],
                   ),
                 );
