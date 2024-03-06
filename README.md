@@ -8,14 +8,14 @@ France, Canada and Belgium.
 
 ## :book: Rules
 
-Quoridor is played on a game board of 81 square spaces (9×9). 
+Quoridor is played on a game board of 81 square spaces (9×9).<br />
 Each player is represented by a pawn which begins at the center space of 
-one edge of the board (in a two-player game, the pawns begin opposite each other).
+one edge of the board (in a two-player game, the pawns begin opposite each other).<br />
 They also control a certain number of "fences" that they use to 
 block their opponent(s) from moving their own pawns across the board. 
 Each turn a player can either move his pawn or place a fence. 
 The only real rule about fence placement is that you must always 
-leave a path for your opponent(s) to be able to reach his goal.
+leave a path for your opponent(s) to be able to reach his goal.<br />
 The objective is to be the first player to move their pawn to any space 
 on the opposite side of the game board from which it begins.
 
