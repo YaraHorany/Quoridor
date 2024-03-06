@@ -6,29 +6,50 @@ The Application is built with Flutter and GetX State, Route & Dependency Managem
 
 ## :pencil: General info
 
-[Quoridor](https://en.wikipedia.org/wiki/Quoridor) is a two- or four-player intuitive strategy game designed by Mirko Marchesi and published by Gigamic Games. 
+[Quoridor](https://en.wikipedia.org/wiki/Quoridor) is a two- or four-player intuitive strategy game 
+designed by Mirko Marchesi and published by Gigamic Games. 
 Quoridor received the Mensa Mind Game award in 1997 and the Game Of The Year in the United States, 
 France, Canada and Belgium.
 
 ## :clipboard: Rules
 
-Quoridor is played on a game board of 81 square spaces (9×9).<br />
-Each player is represented by a pawn which begins at the center space of 
-one edge of the board (in a two-player game, the pawns begin opposite each other).<br />
-Players also control a certain number of "fences" that they use to 
-block their opponent(s) from moving their own pawns across the board. 
-Each turn a player can either move his pawn or place a fence. 
-The only real rule about fence placement is that you must always 
-leave a path for your opponent(s) to be able to reach his goal.<br />
-The objective is to be the first player to move their pawn to any space 
-on the opposite side of the game board from which it begins.
+- **Board:** Quoridor is played on a game board of 81 square cells (9×9) 
+and each player starts with 10 fences.
+
+- **Game setup:** Each player is represented by a pawn (Green or Orange) 
+which begins at the center space of the baseline.
+
+- **Gameplay:** The green player starts first, then players alternate turns.
+Each player in turn, chooses to move his pawn or to put up one of his fences.
+if he runs out of fences, then he can only move his pawn.
+
+- **Pawn moves:** The pawns are moved one square at a time,
+horizontally or vertically, forwards or backwards.
+
+- **Positioning of the fences:** Fences can be placed between 2 sets of 2 squares.
+The fences can be used to block their opponent from moving their own pawns across the board.
+The only real rule about fence placement is that you must always
+leave a path for your opponent to be able to reach his goal.
+
+- **End of the game:** The first player to move their pawn to any
+of the squares opposite of his baseline is the winner.
 
 ## :cloud: Overview
 
 In this project you can choose to play a multi player game OR 
 a single player game (AI will play against the user).
 This AI agent playing Quoridor is based on [Monte Carlo tree search (MCTS)](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search).
+MCTS is divided in 4 different steps: Selection, Expansion, Simulation and Backpropagation.
 I added some heuristics to the algorithm to improve the performance of MCTS.
+
+The number of rollouts per move for each AI level is following.
+
+| Level   | Rollouts per Move |
+|---------|-------------------|
+| Novice  | 2,500             |
+| Average | 7,500             |
+| Good    | 20,000            |
+| Strong  | 30,000            |
 
 ## :gear: Technologies
 
@@ -55,5 +76,5 @@ Project is created with:
 
 ## :open_book: References
 
-Victor Massagué Respall, Joseph Alexander Brown and Hamma Aslam. 
+- Victor Massagué Respall, Joseph Alexander Brown and Hamma Aslam. 
 [Monte Carlo Tree Search for Quoridor](https://www.researchgate.net/publication/327679826_Monte_Carlo_Tree_Search_for_Quoridor). 2018.
