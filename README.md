@@ -13,6 +13,11 @@ Each player is represented by a pawn which begins at the center space of one edg
 The objective is to be the first player to move their pawn to any space 
 on the opposite side of the game board from which it begins.
 
+## :cloud: Overview
+
+In this project you can choose to play a multi player game OR 
+a single player game (AI will play against the user).
+
 ## :gear: Technologies
 
 Project is created with:
@@ -25,7 +30,6 @@ Project is created with:
 - [Flutter_spinkit](https://pub.dev/packages/flutter_spinkit) version: 5.2.0
 - [Font_awesome_flutter](https://pub.dev/packages/font_awesome_flutter) version: 10.3.0
 - [Url_launcher](https://pub.dev/packages/url_launcher) version: 6.0.3
-- [flutter_launcher_icons](https://pub.dev/packages/flutter_launcher_icons) version: 0.13.1
 
 ## :camera_flash: Screenshots
 

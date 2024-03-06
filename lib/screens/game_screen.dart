@@ -5,6 +5,7 @@ import '../controllers/game_controller.dart';
 import 'package:quoridor/widgets/board.dart';
 import '../models/player_model.dart';
 import '../utils/dimensions.dart';
+import '../widgets/content.dart';
 import 'intro_screen.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
@@ -82,15 +83,18 @@ class GameScreen extends StatelessWidget {
                                   "Are you sure to start a new game? \n(Current game will be lost!)",
                               actions: [
                                 OutlinedButton(
-                                    onPressed: () {
-                                      gameController.reset();
-                                      Get.to(() => IntroScreen());
-                                    },
-                                    style: OutlinedButton.styleFrom(
-                                      backgroundColor: Colors.blue,
-                                    ),
-                                    child: const Text("Start",
-                                        style: TextStyle(color: Colors.white))),
+                                  onPressed: () {
+                                    gameController.reset();
+                                    Get.to(() => IntroScreen());
+                                  },
+                                  style: OutlinedButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                  ),
+                                  child: const ContentText(
+                                    content: 'Start',
+                                    italicFont: false,
+                                  ),
+                                ),
                                 OutlinedButton(
                                   onPressed: () {
                                     Get.back();
@@ -98,9 +102,9 @@ class GameScreen extends StatelessWidget {
                                   style: OutlinedButton.styleFrom(
                                     backgroundColor: Colors.blue,
                                   ),
-                                  child: const Text(
-                                    "Cancel",
-                                    style: TextStyle(color: Colors.white),
+                                  child: const ContentText(
+                                    content: 'Cancel',
+                                    italicFont: false,
                                   ),
                                 ),
                               ],
@@ -120,10 +124,11 @@ class GameScreen extends StatelessWidget {
                               horizontal: Dimensions.width10,
                               vertical: Dimensions.height10),
                           child: const Center(
-                              child: Text(
-                            "New Game",
-                            style: TextStyle(color: Colors.white),
-                          )),
+                            child: ContentText(
+                              content: 'New Game',
+                              italicFont: false,
+                            ),
+                          ),
                         ),
                       ),
                     ],

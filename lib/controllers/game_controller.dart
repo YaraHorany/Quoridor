@@ -40,11 +40,13 @@ class GameController extends GetxController {
     update();
   }
 
+  // Reset the game
   void reset() {
     game.reset();
     update();
   }
 
+  // Initialize an AI only if it's a single player game.
   void playAgainstAI(bool mood, {int? simulationNum}) {
     singlePlayerGame = mood;
     if (singlePlayerGame) {
@@ -52,6 +54,7 @@ class GameController extends GetxController {
     }
   }
 
+  // Move the pawns and check if the game has ended.
   Future<void> move(int index) async {
     if (singlePlayerGame && game.player2.turn) return;
     if (game.move(index)) {
@@ -61,11 +64,11 @@ class GameController extends GetxController {
         _winnerFound();
         // update();
       }
-      print(game.turn);
       update();
     }
   }
 
+  // Draw a horizontal/vertical fence.
   Future<void> drawFence(int boardIndex) async {
     String? msg;
     if (singlePlayerGame && game.player2.turn) return;
@@ -96,6 +99,7 @@ class GameController extends GetxController {
     }
   }
 
+  // Draw a temporary horizontal/vertical fence.
   void drawTemporaryFence(int boardIndex, bool val) {
     if (singlePlayerGame && game.player2.turn) return;
     if (!game.outOfFences()) {
@@ -109,6 +113,7 @@ class GameController extends GetxController {
     }
   }
 
+  // Show a message on the screen
   void _popUpMessage(String message) {
     late Timer timer;
     int count = 0;
@@ -122,6 +127,7 @@ class GameController extends GetxController {
     });
   }
 
+  // Check if there's a winner and display an appropriate dialog.
   bool _winnerFound() {
     if (reachedFirstRow(game.player1.position) ||
         reachedLastRow(game.player2.position)) {

@@ -106,15 +106,16 @@ class IntroScreen extends StatelessWidget {
 
   OutlinedButton _levelButton(String level, int numSimulations) =>
       OutlinedButton(
-          style: OutlinedButton.styleFrom(
-            backgroundColor: Colors.blue,
-          ),
-          onPressed: () {
-            gameController.playAgainstAI(true, simulationNum: numSimulations);
-            Get.to(() => GameScreen());
-          },
-          child: Text(
-            level,
-            style: const TextStyle(color: Colors.white),
-          ));
+        style: OutlinedButton.styleFrom(
+          backgroundColor: Colors.blue,
+        ),
+        onPressed: () {
+          gameController.playAgainstAI(true, simulationNum: numSimulations);
+          Get.to(() => GameScreen());
+        },
+        child: ContentText(
+          content: level,
+          italicFont: false,
+        ),
+      );
 }
