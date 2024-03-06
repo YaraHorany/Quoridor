@@ -10,7 +10,7 @@ The Application is built with Flutter and GetX State, Route & Dependency Managem
 Quoridor received the Mensa Mind Game award in 1997 and the Game Of The Year in the United States, 
 France, Canada and Belgium.
 
-## :book: Rules
+## :clipboard: Rules
 
 Quoridor is played on a game board of 81 square spaces (9×9).<br />
 Each player is represented by a pawn which begins at the center space of 
@@ -53,4 +53,7 @@ Project is created with:
 |---------------------------------------------------------------------------|------------------------------------------------------------------------------|-----------------------------------------------------------------------------|----------------------------------------------------------------------------|
 | <img src="images/screen_shots/playing_mode.png" width="200" height="400"> | <img src="images/screen_shots/new_game_window.png" width="200" height="400"> | <img src="images/screen_shots/winning_window.png" width="200" height="400"> | <img src="images/screen_shots/losing_window.png" width="200" height="400"> |
 
-## :computer: Setup
+## :open_book: References
+
+Victor Massagué Respall, Joseph Alexander Brown and Hamma Aslam. 
+[Monte Carlo Tree Search for Quoridor](https://www.researchgate.net/publication/327679826_Monte_Carlo_Tree_Search_for_Quoridor). 2018.
