@@ -37,11 +37,11 @@ of the squares opposite of his baseline is the winner.
 ## :cloud: Overview
 
 In this project you can choose to play a multi player game OR 
-a single player game (AI will play against the user).
-The AI agent playing Quoridor is based on [Monte Carlo tree search (MCTS)](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search).
+a single player game (AI will play against the user).<br />
+The AI agent playing Quoridor is based on [Monte Carlo tree search (MCTS)](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search).<br />
 Monte Carlo tree search is a heuristic search algorithm that relies on intelligent tree search to make decisions. 
-It’s most often used to perform game simulations.
-The algorithm has four phases: Selection, Expansion, Simulation and Backpropagation.
+It’s most often used to perform game simulations.<br />
+The algorithm has four phases: Selection, Expansion, Simulation and Backpropagation.<br />
 I added some heuristics to the algorithm to improve the performance of MCTS.
 
 ## :gear: Technologies
