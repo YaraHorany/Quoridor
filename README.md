@@ -38,18 +38,11 @@ of the squares opposite of his baseline is the winner.
 
 In this project you can choose to play a multi player game OR 
 a single player game (AI will play against the user).
-This AI agent playing Quoridor is based on [Monte Carlo tree search (MCTS)](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search).
-MCTS is divided in 4 different steps: Selection, Expansion, Simulation and Backpropagation.
+The AI agent playing Quoridor is based on [Monte Carlo tree search (MCTS)](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search).
+Monte Carlo tree search is a heuristic search algorithm that relies on intelligent tree search to make decisions. 
+It’s most often used to perform game simulations.
+The algorithm has four phases: Selection, Expansion, Simulation and Backpropagation.
 I added some heuristics to the algorithm to improve the performance of MCTS.
-
-The number of rollouts per move for each AI level is following.
-
-| Level   | Rollouts per Move |
-|---------|-------------------|
-| Novice  | 2,500             |
-| Average | 7,500             |
-| Good    | 20,000            |
-| Strong  | 30,000            |
 
 ## :gear: Technologies
 
