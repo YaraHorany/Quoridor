@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'package:flutter/cupertino.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:quoridor/models/tree_node.dart';
 import '../helpers.dart';
@@ -13,7 +12,6 @@ class AI {
   late Game simulationGame;
   bool aiFirstMove = true;
   RxBool isLoading = false.obs;
-  RxDouble winRate = 0.0.obs;
 
   AI({required this.numSimulations});
 
@@ -38,10 +36,6 @@ class AI {
 
       node = await _search(game);
       randomPosition = node.position;
-
-      // debugPrint('win rate:');
-      // print(node.getWinRate());
-      winRate.value = node.getWinRate();
     }
 
     aiFirstMove = false;
@@ -52,7 +46,6 @@ class AI {
   Future<TreeNode> _search(Game game) async {
     TreeNode? node;
     late int score;
-    int rolloutCount = 0;
 
     game.calculatePossibleMoves(); // NOT SURE IF NEEDED
     copyGame(game);
@@ -71,7 +64,6 @@ class AI {
         length: numSimulations,
         execute: (index) {
           copyGame(game);
-          rolloutCount++;
 
           // select a node (selection phase)
           node = select(root);
@@ -81,10 +73,6 @@ class AI {
 
           // backPropagate results
           backPropagate(node!, score);
-
-          print('rollOut: $rolloutCount');
-          print('root.getBestMove(0)');
-          print(root.getBestMove(0).position);
         });
 
     isLoading.value = false;
@@ -117,7 +105,7 @@ class AI {
     return completer.future;
   }
 
-  // Select most promising node
+  // Select most promising node that is not fully expanded yet.
   TreeNode? select(TreeNode node) {
     // make sure that we're dealing with non-terminal nodes
     while (!node.isTerminal) {

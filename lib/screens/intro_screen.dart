@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:quoridor/screens/about_me.dart';
+import 'package:quoridor/screens/about.dart';
 import 'package:quoridor/screens/game_screen.dart';
 import 'package:quoridor/screens/game_rules.dart';
 import 'package:quoridor/widgets/content.dart';
@@ -70,7 +70,6 @@ class IntroScreen extends StatelessWidget {
               onTap: () {
                 Get.defaultDialog(
                   title: "Choose AI level",
-                  // titleStyle: const TextStyle(color: Colors.lightBlueAccent),
                   titlePadding: EdgeInsets.symmetric(
                       vertical: Dimensions.height10,
                       horizontal: Dimensions.width10),
@@ -78,10 +77,10 @@ class IntroScreen extends StatelessWidget {
                     children: [
                       const Text("Higher level AI takes more time."),
                       SizedBox(height: Dimensions.height10),
-                      _levelButton("Novice", 500), //2500
-                      _levelButton("Average", 5000), // 7500
-                      _levelButton("Good", 7500), // 20000
-                      _levelButton("Strong", 10000), // 60000
+                      _levelButton("Novice", 1000),
+                      _levelButton("Average", 2500),
+                      _levelButton("Good", 7500),
+                      _levelButton("Strong", 10000),
                     ],
                   ),
                 );

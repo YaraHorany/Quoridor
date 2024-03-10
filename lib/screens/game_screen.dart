@@ -66,8 +66,6 @@ class GameScreen extends StatelessWidget {
                           SizedBox(height: Dimensions.height10),
                           _draggableFence(DragType.verticalDrag),
                           SizedBox(height: Dimensions.height10),
-                          // Obx(() => Text(
-                          //     (gameController.ai!.winRate.value).toString())),
                         ],
                       ),
                       GestureDetector(

@@ -372,19 +372,14 @@ class Game {
       probableMoves += getMovesToShortestPath();
       // Heuristic: If opponent has no walls left, place walls only to interrupt the opponent's path, not to support my pawn.
       if (!outOfFences()) {
-        // print('player has fences');
         // Disturb opponent
-        // print('disturb opponent');
         probableMoves += getFencesNextPlayer(
           player1.turn ? player2.position : player1.position,
         );
-        // print('Add fences to interrupt path');
         probableMoves += getFencesToInterruptPath();
       }
     } else {
-      // print('opponent has fences');
       probableMoves += possibleMoves;
-      // print('All possible moves added');
       if (!outOfFences()) {
         probableMoves += getProbableFences();
       }
@@ -571,13 +566,10 @@ class Game {
       possiblePaths = tempPlayer2.findMinPaths(prev, tempPlayer1.position);
     }
     if (possiblePaths.isEmpty) {
-      // print('possible paths is empty');
-      // print('possibleMoves: $possibleMoves');
       bestMoves = possibleMoves;
     } else {
       for (int i = 0; i < possiblePaths.length; i++) {
         bestMoves.add(possiblePaths[i][1]);
-        // print('bestMoves: $bestMoves');
       }
     }
 
@@ -656,13 +648,11 @@ class Game {
 
   List<int> getProbableFences() {
     List<int> probableFences = [];
-    if (turn >= 8) {
+    if (turn >= 6) {
       // Disturb opponent
       probableFences += getFencesNextPlayer(
         player1.turn ? player2.position : player1.position,
       );
-    }
-    if (turn >= 8) {
       // Leftmost and rightmost horizontal fences
       // probableFences += getSideHorizontalFences();
       // Support myself

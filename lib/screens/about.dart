@@ -29,7 +29,6 @@ class AboutPage extends StatelessWidget {
             elevation: 0.0,
             child: Column(
               children: <Widget>[
-                // const Padding(padding: EdgeInsets.all(5.0)),
                 const Center(child: TitleText(title: "Quoridor", size: 0.2)),
                 const Center(
                     child: ContentText(

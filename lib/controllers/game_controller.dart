@@ -58,11 +58,11 @@ class GameController extends GetxController {
   Future<void> move(int index) async {
     if (singlePlayerGame && game.player2.turn) return;
     if (game.move(index)) {
+      update();
       if (_winnerFound()) return;
       if (singlePlayerGame && game.player2.turn) {
         await ai!.chooseNextMove(game);
         _winnerFound();
-        // update();
       }
       update();
     }
@@ -82,10 +82,8 @@ class GameController extends GetxController {
       update();
       if (msg != null) {
         if (msg == '') {
-          // update();
           if (singlePlayerGame && game.player2.turn) {
             await ai!.chooseNextMove(game);
-            // update();
             _winnerFound();
             update();
           }
@@ -93,7 +91,6 @@ class GameController extends GetxController {
           _popUpMessage(msg);
         }
       }
-      // update();
     } else {
       _popUpMessage('   There are no more\n fences for you to place');
     }

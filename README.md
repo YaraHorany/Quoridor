@@ -13,26 +13,30 @@ France, Canada and Belgium.
 
 ## :clipboard: Rules
 
-- **Board:** Quoridor is played on a game board of 81 square cells (9×9) 
-and each player starts with 10 fences.
+- **Board:** Quoridor is played in a nine by nine board (81 square cells). 
+We focus only on the two-player version, and each player starts with 10 fences.
 
 - **Game setup:** Each player is represented by a pawn (Green or Orange) 
 which begins at the center space of the baseline.
 
-- **Gameplay:** The green player starts first, then players alternate turns.
-Each player in turn, chooses to move his pawn or to put up one of his fences.
-if he runs out of fences, then he can only move his pawn.
+- **Gameplay:** The green player starts first, then players alternate turns.<br />
+Each player at his turn can choose to move his pawn or to place one of his fences. 
+Once the player runs out of fences, its pawn must be moved.
 
-- **Pawn moves:** The pawns are moved one square at a time,
-horizontally or vertically, forwards or backwards.
+- **Pawn moves:** Pawns are moved one square at a time, horizontally or vertically, 
+forwards or backwards. When two pawns face each other on neighboring squares which are 
+not separated by a fence, the player whose turn is it can jump over the opponent’s
+pawn and place himself behind the opponent’s pawn, thus advancing an extra square. 
+If there is a fence behind the pawn, the player can place his pawn to the left
+or the right of the opponent’s pawn. Fences may not be jumped, 
+including when moving laterally due to a fence being behind a jumped pawn.
 
-- **Positioning of the fences:** Fences can be placed between 2 sets of 2 squares.
-The fences can be used to block their opponent from moving their own pawns across the board.
-The only real rule about fence placement is that you must always
-leave a path for your opponent to be able to reach his goal.
+- **Positioning of the fences:** Fences can be placed directly between two spaces, in
+any groove not already occupied by a fence. 
+However, a fence may not be placed which cuts off the only remain- ing path of any pawn to the goal.
 
-- **End of the game:** The first player to move their pawn to any
-of the squares opposite of his baseline is the winner.
+- **End of the game:** The first player who reaches one of the 9 squares of his 
+opponent’s base line is the winner.
 
 ## :cloud: Overview
 
@@ -59,7 +63,7 @@ Project is created with:
 
 ## :camera_flash: Screenshots
 
-| Intro screen                                                              | Choose AI level window                                                       | Game rules screen                                                       | About Me screen                                                              |
+| Intro screen                                                              | Choose AI level window                                                       | Game rules screen                                                       | About screen                                                                 |
 |---------------------------------------------------------------------------|------------------------------------------------------------------------------|-------------------------------------------------------------------------|------------------------------------------------------------------------------|
 | <img src="images/screen_shots/intro_screen.png" width="200" height="400"> | <img src="images/screen_shots/choose_ai_level.png" width="200" height="400"> | <img src="images/screen_shots/game_rules.png" width="200" height="400"> | <img src="images/screen_shots/about_me_screen.png" width="200" height="400"> |
 
