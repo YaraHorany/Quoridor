@@ -51,9 +51,10 @@ It’s most often used to perform game simulations.<br />
 I have built a game tree with a root node, then it is expanded with random simulations. 
 In the process, we maintain the number of times we have visited a specific
 node and a win score, used to evaluate the state of the board. 
-In the end, we select the node with best results and higher win scores.
+In the end, we select the node with best results and higher win scores.<br />
 This algorithm consists of four phases: Selection, Expansion, Simulation and Backpropagation.<br />
-I added some heuristics to the algorithm to improve the performance of MCTS.
+I improved The system by adding a heuristic. The heuristic helps
+us to balance the placement of fences and the moves of the pawn.
 
 ## :gear: Technologies
 
@@ -77,6 +78,12 @@ Project is created with:
 | Playing mode                                                              | New game window                                                              | Winning window                                                              | Losing window                                                              |
 |---------------------------------------------------------------------------|------------------------------------------------------------------------------|-----------------------------------------------------------------------------|----------------------------------------------------------------------------|
 | <img src="images/screen_shots/playing_mode.png" width="200" height="400"> | <img src="images/screen_shots/new_game_window.png" width="200" height="400"> | <img src="images/screen_shots/winning_window.png" width="200" height="400"> | <img src="images/screen_shots/losing_window.png" width="200" height="400"> |
+
+## :arrow_forward: Future work
+
+Implementing Dynamic Simulation Monte Carlo Tree Search: Speed up the inference time 
+by Stopping the searching of MCTS earlier when we are confident with the 
+current searching result.
 
 ## :open_book: References
 
