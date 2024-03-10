@@ -24,28 +24,35 @@ Each player at his turn can choose to move his pawn or to place one of his fence
 Once the player runs out of fences, its pawn must be moved.
 
 - **Pawn moves:** Pawns are moved one square at a time, horizontally or vertically, 
-forwards or backwards. When two pawns face each other on neighboring squares which are 
+forwards or backwards.<br /> 
+When two pawns face each other on neighboring squares which are 
 not separated by a fence, the player whose turn is it can jump over the opponent’s
-pawn and place himself behind the opponent’s pawn, thus advancing an extra square. 
+pawn and place himself behind the opponent’s pawn, thus advancing an extra square.<br /> 
 If there is a fence behind the pawn, the player can place his pawn to the left
 or the right of the opponent’s pawn. Fences may not be jumped, 
 including when moving laterally due to a fence being behind a jumped pawn.
 
 - **Positioning of the fences:** Fences can be placed directly between two spaces, in
 any groove not already occupied by a fence. 
-However, a fence may not be placed which cuts off the only remain- ing path of any pawn to the goal.
+However, a fence may not be placed which cuts off the only remaining path of any pawn to the goal.
 
 - **End of the game:** The first player who reaches one of the 9 squares of his 
 opponent’s base line is the winner.
 
 ## :cloud: Overview
 
-In this project you can choose to play a multi player game OR 
-a single player game (AI will play against the user).<br />
-The AI agent playing Quoridor is based on [Monte Carlo tree search (MCTS)](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search).<br />
+In this project you can choose to play a Multi player game OR 
+a Single player game (AI will play against the user). <br />
+The AI agent playing Quoridor is based on [Monte Carlo tree search (MCTS)](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search),
+as it appears to be an efficient algorithm for this type of board game and
+game tree size.<br />
 Monte Carlo tree search is a heuristic search algorithm that relies on intelligent tree search to make decisions. 
 It’s most often used to perform game simulations.<br />
-The algorithm has four phases: Selection, Expansion, Simulation and Backpropagation.<br />
+I have built a game tree with a root node, then it is expanded with random simulations. 
+In the process, we maintain the number of times we have visited a specific
+node and a win score, used to evaluate the state of the board. 
+In the end, we select the node with best results and higher win scores.
+This algorithm consists of four phases: Selection, Expansion, Simulation and Backpropagation.<br />
 I added some heuristics to the algorithm to improve the performance of MCTS.
 
 ## :gear: Technologies
