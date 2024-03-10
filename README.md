@@ -81,7 +81,7 @@ Project is created with:
 
 ## :arrow_forward: Future work
 
-Implementing Dynamic Simulation Monte Carlo Tree Search: Speed up the inference time 
+Implementing [Dynamic Simulation Monte Carlo Tree Search](https://www.researchgate.net/publication/363389532_Learning_to_Stop_Dynamic_Simulation_Monte-Carlo_Tree_Search?_sg=PdR1-zyl9XwOyKhfiwXGoJbWyYHbAhqqCp11vSkJe_FkOjY8TsucMj-U5tUCPUJ8_q1gBvtLxxDF8-Q&_tp=eyJjb250ZXh0Ijp7ImZpcnN0UGFnZSI6InB1YmxpY2F0aW9uIiwicGFnZSI6Il9kaXJlY3QifX0): Speed up the inference time 
 by Stopping the searching of MCTS earlier when we are confident with the 
 current searching result.
 
