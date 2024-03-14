@@ -79,8 +79,8 @@ class IntroScreen extends StatelessWidget {
                       SizedBox(height: Dimensions.height10),
                       _levelButton("Novice", 1000),
                       _levelButton("Average", 2500),
-                      _levelButton("Good", 7500),
-                      _levelButton("Strong", 10000),
+                      _levelButton("Good", 5000),
+                      _levelButton("Strong", 7500),
                     ],
                   ),
                 );

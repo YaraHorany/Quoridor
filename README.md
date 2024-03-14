@@ -48,13 +48,13 @@ as it appears to be an efficient algorithm for this type of board game and
 game tree size.<br />
 Monte Carlo tree search is a heuristic search algorithm that relies on intelligent tree search to make decisions. 
 It’s most often used to perform game simulations.<br />
+This algorithm consists of four phases: Selection, Expansion, Simulation and Backpropagation.<br />
 I have built a game tree with a root node, then it is expanded with random simulations. 
 In the process, we maintain the number of times we have visited a specific
 node and a win score, used to evaluate the state of the board. 
 In the end, we select the node with best results and higher win scores.<br />
-This algorithm consists of four phases: Selection, Expansion, Simulation and Backpropagation.<br />
-I improved The system by adding a heuristic. The heuristic helps
-us to balance the placement of fences and the moves of the pawn.
+I improved The system by adding a heuristic to reduce the width and depth of the search tree.  
+It helps us to balance the placement of fences and the moves of the pawn.
 
 ## :gear: Technologies
 
@@ -81,9 +81,9 @@ Project is created with:
 
 ## :arrow_forward: Future work
 
-Implementing [Dynamic Simulation Monte Carlo Tree Search](https://www.researchgate.net/publication/363389532_Learning_to_Stop_Dynamic_Simulation_Monte-Carlo_Tree_Search?_sg=PdR1-zyl9XwOyKhfiwXGoJbWyYHbAhqqCp11vSkJe_FkOjY8TsucMj-U5tUCPUJ8_q1gBvtLxxDF8-Q&_tp=eyJjb250ZXh0Ijp7ImZpcnN0UGFnZSI6InB1YmxpY2F0aW9uIiwicGFnZSI6Il9kaXJlY3QifX0): Speed up the inference time 
-by Stopping the searching of MCTS earlier when we are confident with the 
-current searching result.
+Accelerating MCTS, the high computational cost of MCTS hinders its application to some real-time and more
+general scenarios.<br /> 
+Therefore, numerous works are devoted to accelerate MCTS and to reduce the search time.
 
 ## :open_book: References
 

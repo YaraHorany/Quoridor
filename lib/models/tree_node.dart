@@ -23,7 +23,17 @@ class TreeNode {
 
   double getWinRate() => score / visits;
 
-  // Select the best node basing on UCB formula
+  // Calculate the upper confidence bound for the tree.
+  double ucb1(TreeNode childNode, int explorationConstant) {
+    double exploitation = childNode.score / childNode.visits;
+    // double exploration =
+    //     explorationConstant * sqrt(log(visits / childNode.visits));
+    double exploration =
+        sqrt(explorationConstant * log(visits / childNode.visits));
+    return exploitation + exploration;
+  }
+
+  // Select the best node basing on UCB1 formula
   TreeNode getBestMove(int explorationConstant) {
     // Define best score & best moves
     double bestScore = -1.0 / 0.0; // minus infinity
@@ -33,8 +43,7 @@ class TreeNode {
     // Loop over child nodes
     for (final childNode in children.values) {
       // get move score using UCT formula
-      moveScore = childNode.score / childNode.visits +
-          explorationConstant * sqrt(log(visits / childNode.visits));
+      moveScore = ucb1(childNode, explorationConstant);
 
       // better move has been found
       if (moveScore > bestScore) {

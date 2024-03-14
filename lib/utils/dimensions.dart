@@ -11,6 +11,9 @@ class Dimensions {
   static double height10 = screenHeight / 83.42;
   static double height30 = screenHeight / 27.8;
   static double height40 = screenHeight / 20.85;
+  static double gameScreenHeight1 = Dimensions.screenHeight / 4.88;
+  static double gameScreenHeight2 =
+      Dimensions.screenHeight - (Dimensions.screenHeight / 2.44);
 
   // Dynamic widths
   static double width5 = screenWidth / 82.28;

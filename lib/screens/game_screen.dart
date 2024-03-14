@@ -25,7 +25,8 @@ class GameScreen extends StatelessWidget {
           children: [
             Column(
               children: [
-                Expanded(
+                SizedBox(
+                  height: Dimensions.gameScreenHeight1,
                   child: Padding(
                     padding: EdgeInsets.only(
                         left: Dimensions.width30,
@@ -54,8 +55,9 @@ class GameScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                Expanded(flex: 2, child: Board()),
-                Expanded(
+                SizedBox(height: Dimensions.gameScreenHeight2, child: Board()),
+                SizedBox(
+                  height: Dimensions.gameScreenHeight1,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
