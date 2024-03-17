@@ -42,7 +42,7 @@ opponent’s base line is the winner.
 ## :cloud: Overview
 
 In this project you can choose to play a Multi player game OR 
-a Single player game (AI will play against the user). <br />
+a Single player game (AI will play against the user) with four levels: Novice, Average, Good And Strong. <br />
 The AI agent playing Quoridor is based on [Monte Carlo tree search (MCTS)](https://en.wikipedia.org/wiki/Monte_Carlo_tree_search),
 as it appears to be an efficient algorithm for this type of board game and
 game tree size.<br />
